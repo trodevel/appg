@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4903 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4907 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -15,12 +15,6 @@ sub new
 
     bless $self, $class;
     return $self;
-}
-
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return "#error 'not implemented yet'";
 }
 
 
@@ -41,19 +35,6 @@ sub new
     return $self;
 }
 
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-
-    my $prefix = "";
-
-    if( $self->{is_unsigned} == 1 )
-    {
-        $prefix = "u";
-    }
-    return "${prefix}int" . $self->{bit_width} . "_t";
-}
-
 ############################################################
 package Float;
 
@@ -70,16 +51,6 @@ sub new
     return $self;
 }
 
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    if( $self->{is_double} == 1 )
-    {
-        return "double";
-    }
-    return "float";
-}
-
 ############################################################
 package String;
 
@@ -93,12 +64,6 @@ sub new
     my $self = $class->SUPER::new();
     bless $self, $class;
     return $self;
-}
-
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return "std::string";
 }
 
 ############################################################
@@ -117,12 +82,6 @@ sub new
     return $self;
 }
 
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return $self->{name};
-}
-
 ############################################################
 package Vector;
 
@@ -137,12 +96,6 @@ sub new
     $self->{value_type}  = $_[1];
     bless $self, $class;
     return $self;
-}
-
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return "std::vector<" . $self->{value_type}->to_cpp_decl() . ">";
 }
 
 ############################################################
@@ -160,12 +113,6 @@ sub new
     $self->{mapped_type}      = $_[2];
     bless $self, $class;
     return $self;
-}
-
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return "std::map<" . $self->{key_type}->to_cpp_decl() . ", " . $self->{mapped_type}->to_cpp_decl() . ">";
 }
 
 ############################################################

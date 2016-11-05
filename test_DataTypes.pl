@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4903 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4907 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
 
 use DataTypes;
+use DataTypes_cpp;
 
 {
     my $obj = new Integer( 0, 8 );

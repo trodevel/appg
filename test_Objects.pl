@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4906 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4911 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -8,6 +8,7 @@ my $VER="1.0";
 use strict;
 use warnings;
 use Objects;
+use Objects_cpp;
 
 {
     my @members = ( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
@@ -28,6 +29,13 @@ use Objects;
         new ElementExt( new Integer( 1, 8 ), "mm", new ValidRange( 1, 0, 1, 1, 59, 1 ), 0 )
          );
     my $obj = new Object( "TimeRange24",  \@members  );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my @members = (
+        new ElementExt( new Integer( 1, 32 ), "user_id", new ValidRange( 1, 1, 1, 1, 32768, 0 ), 0 ),
+         );
+    my $obj = new BaseMessage( "GenericRequest",  \@members, undef );
     print $obj->to_cpp_decl() . "\n";
 }
 {

@@ -1,14 +1,14 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4911 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4910 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
-package IObject;
+package EnumElement;
 use strict;
 use warnings;
 
-require Elements;
+require DataTypes;
 
 sub new
 {
@@ -16,7 +16,7 @@ sub new
     my $self =
     {
         name      => shift,
-        members   => shift,
+        value     => shift,
     };
 
     bless $self, $class;
@@ -24,30 +24,51 @@ sub new
 }
 
 ############################################################
-package Enum;
+package Element;
 use strict;
 use warnings;
 
-our @ISA = qw( IObject );
+require DataTypes;
 
 sub new
 {
-    my ($class) = @_;
-
-    my $self = $class->SUPER::new( $_[1], $_[3] );
-
-    $self->{data_type}  = $_[2];
+    my $class = shift;
+    my $self =
+    {
+        data_type => shift,
+        name      => shift,
+    };
 
     bless $self, $class;
     return $self;
 }
 
 ############################################################
-package Object;
+package ValidRange;
+
+sub new
+{
+    my $class = shift;
+    my $self =
+    {
+        has_from          => shift,
+        from              => shift,
+        is_inclusive_from => shift,
+        has_to            => shift,
+        to                => shift,
+        is_inclusive_to   => shift,
+    };
+
+    bless $self, $class;
+    return $self;
+}
+
+############################################################
+package ElementExt;
 use strict;
 use warnings;
 
-our @ISA = qw( IObject );
+our @ISA = qw( Element );
 
 sub new
 {
@@ -55,44 +76,8 @@ sub new
 
     my $self = $class->SUPER::new( $_[1], $_[2] );
 
-    bless $self, $class;
-    return $self;
-}
-
-############################################################
-package BaseMessage;
-use strict;
-use warnings;
-
-our @ISA = qw( IObject );
-
-sub new
-{
-    my ($class) = @_;
-
-    my $self = $class->SUPER::new( $_[1], $_[2] );
-
-    $self->{base_class}  = $_[3];
-
-    bless $self, $class;
-    return $self;
-}
-
-############################################################
-package Message;
-use strict;
-use warnings;
-
-our @ISA = qw( IObject );
-
-sub new
-{
-    my ($class) = @_;
-
-    my $self = $class->SUPER::new( $_[1], $_[2] );
-
-    $self->{base_class}  = $_[3];
-    $self->{message_id}  = 0;
+    $self->{valid_range_or_size} = $_[3];
+    $self->{is_array}            = $_[4];
 
     bless $self, $class;
     return $self;
