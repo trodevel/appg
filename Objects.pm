@@ -166,7 +166,7 @@ sub to_cpp_decl
 
     my $body = "";
 
-    $body = $body . "enum\n" . main::bracketize( "message_id = " . $self->{message_id} . "\n" ) . "\n";
+    $body = $body . "enum\n" . main::bracketize( "message_id = " . $self->{message_id} . "\n", 1 ) . "\n";
 
     my @array = @{ $self->{members} };
 
