@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4885 $ $Date:: 2016-11-04 #$ $Author: serge $
+# $Revision: 4903 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -103,28 +103,6 @@ sub to_cpp_decl()
 
 ############################################################
 package UserDefined;
-
-use strict;
-our @ISA = qw( Generic );
-
-sub new
-{
-    my ($class) = @_;
-
-    my $self = $class->SUPER::new();
-    $self->{name}  = $_[1];
-    bless $self, $class;
-    return $self;
-}
-
-sub to_cpp_decl()
-{
-    my( $self ) = @_;
-    return $self->{name};
-}
-
-############################################################
-package Enum;
 
 use strict;
 our @ISA = qw( Generic );

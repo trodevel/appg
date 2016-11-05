@@ -1,12 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4900 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4904 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
 sub bracketize
 {
-    my ( $body ) = @_;
+    my ( $body, $must_put_semicolon ) = @_;
 
     my $res = "{\n";
 
@@ -16,7 +16,15 @@ sub bracketize
         $res = $res . "    " . $line . "\n";
     }
 
-    $res = $res . "}\n";
+    my $semic = "";
+
+    if( defined $must_put_semicolon && $must_put_semicolon == 1 )
+    {
+        $semic = ";";
+    }
+
+    $res = $res . "}$semic\n";
+
 
     return  $res;
 }
@@ -45,6 +53,45 @@ sub to_cpp_decl
 {
     my( $self ) = @_;
     return '#error not implemented yet';
+}
+
+############################################################
+package Enum;
+use strict;
+use warnings;
+
+our @ISA = qw( IObject );
+
+sub new
+{
+    my ($class) = @_;
+
+    my $self = $class->SUPER::new( $_[1], $_[3] );
+
+    $self->{data_type}  = $_[2];
+
+    bless $self, $class;
+    return $self;
+}
+
+sub to_cpp_decl
+{
+    my( $self ) = @_;
+
+    my $res =
+"enum class " . $self->{name} ." : " . $self->{data_type}->to_cpp_decl() . "\n";
+
+    my @array = @{ $self->{members} };
+
+    my $body = "";
+    foreach( @array )
+    {
+        $body = $body . $_->to_cpp_decl() . "\n";
+    }
+
+    $res = $res . main::bracketize( $body, 1 );
+
+    return $res;
 }
 
 ############################################################
@@ -79,7 +126,7 @@ sub to_cpp_decl
         $body = $body . $_->to_cpp_decl() . "\n";
     }
 
-    $res = $res . main::bracketize( $body );
+    $res = $res . main::bracketize( $body, 1 );
 
     return $res;
 }
@@ -128,7 +175,7 @@ sub to_cpp_decl
         $body = $body . $_->to_cpp_decl() . "\n";
     }
 
-    $res = $res . main::bracketize( $body );
+    $res = $res . main::bracketize( $body, 1 );
 
     return $res;
 }

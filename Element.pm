@@ -1,7 +1,39 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4893 $ $Date:: 2016-11-04 #$ $Author: serge $
+# $Revision: 4902 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
+
+############################################################
+package EnumElement;
+use strict;
+use warnings;
+
+require DataTypes;
+
+sub new
+{
+    my $class = shift;
+    my $self =
+    {
+        name      => shift,
+        value     => shift,
+    };
+
+    bless $self, $class;
+    return $self;
+}
+
+sub to_cpp_decl
+{
+    my( $self ) = @_;
+
+    if( defined $self->{value} && $self->{value} ne '' )
+    {
+        return sprintf( "%-20s = %s,", $self->{name}, $self->{value} );
+    }
+
+    return $self->{name} . ",";
+}
 
 ############################################################
 package Element;

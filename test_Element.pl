@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4893 $ $Date:: 2016-11-04 #$ $Author: serge $
+# $Revision: 4902 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
@@ -11,6 +11,14 @@ use Element;
 
 {
     my $obj = new Element( new Integer( 0, 8 ), "number_of_users" );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new EnumElement( "IDLE", undef );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new EnumElement( "RED", 0 );
     print $obj->to_cpp_decl() . "\n";
 }
 {

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4885 $ $Date:: 2016-11-04 #$ $Author: serge $
+# $Revision: 4903 $ $Date:: 2016-11-05 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
@@ -53,10 +53,6 @@ use DataTypes;
 }
 {
     my $obj = new Map( new Integer( 0, 16 ), new String );
-    print $obj->to_cpp_decl() . "\n";
-}
-{
-    my $obj = new Enum( "MyEnum" );
     print $obj->to_cpp_decl() . "\n";
 }
 {
