@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4945 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 4953 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -33,6 +33,21 @@ sub bracketize
 }
 
 ############################################################
+sub array_to_cpp_decl
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . $_->to_cpp_decl() . "\n";
+    }
+
+    return $res;
+}
+############################################################
 package IObject;
 
 sub to_cpp_decl
@@ -51,13 +66,9 @@ sub to_cpp_decl
     my $res =
 "enum class " . $self->{name} ." : " . $self->{data_type}->to_cpp_decl() . "\n";
 
-    my @array = @{ $self->{members} };
+    my @decls = @{ $self->{decls} };
 
-    my $body = "";
-    foreach( @array )
-    {
-        $body = $body . $_->to_cpp_decl() . "\n";
-    }
+    my $body = main::array_to_cpp_decl( \@decls );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -75,13 +86,12 @@ sub to_cpp_decl
 "// Object\n" .
 "struct " . $self->{name} ."\n";
 
+    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    my $body = "";
-    foreach( @array )
-    {
-        $body = $body . $_->to_cpp_decl() . "\n";
-    }
+    my $body = main::array_to_cpp_decl( \@decls );
+
+    $body = $body . main::array_to_cpp_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -106,14 +116,12 @@ sub to_cpp_decl
 
     $res = $res . "\n";
 
-    my $body = "";
-
+    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    foreach( @array )
-    {
-        $body = $body . $_->to_cpp_decl() . "\n";
-    }
+    my $body = main::array_to_cpp_decl( \@decls );
+
+    $body = $body . main::array_to_cpp_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -142,12 +150,13 @@ sub to_cpp_decl
 
     $body = $body . "enum\n" . main::bracketize( "message_id = " . $self->{message_id} . "\n", 1 ) . "\n";
 
+
+    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    foreach( @array )
-    {
-        $body = $body . $_->to_cpp_decl() . "\n";
-    }
+    $body = $body . main::array_to_cpp_decl( \@decls );
+
+    $body = $body . main::array_to_cpp_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 

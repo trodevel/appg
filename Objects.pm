@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4911 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4953 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -16,7 +16,7 @@ sub new
     my $self =
     {
         name      => shift,
-        members   => shift,
+        decls     => shift,     # declarations
     };
 
     bless $self, $class;
@@ -43,7 +43,7 @@ sub new
 }
 
 ############################################################
-package Object;
+package ObjectWithMembers;
 use strict;
 use warnings;
 
@@ -54,6 +54,27 @@ sub new
     my ($class) = @_;
 
     my $self = $class->SUPER::new( $_[1], $_[2] );
+
+    $self->{members}  = $_[3];
+
+    bless $self, $class;
+    return $self;
+}
+
+############################################################
+package Object;
+use strict;
+use warnings;
+
+our @ISA = qw( ObjectWithMembers );
+
+sub new
+{
+    my ($class) = @_;
+
+    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
+
+    $self->{base_class}  = $_[4];
 
     bless $self, $class;
     return $self;
@@ -64,15 +85,15 @@ package BaseMessage;
 use strict;
 use warnings;
 
-our @ISA = qw( IObject );
+our @ISA = qw( ObjectWithMembers );
 
 sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2] );
+    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
 
-    $self->{base_class}  = $_[3];
+    $self->{base_class}  = $_[4];
 
     bless $self, $class;
     return $self;
@@ -83,15 +104,15 @@ package Message;
 use strict;
 use warnings;
 
-our @ISA = qw( IObject );
+our @ISA = qw( ObjectWithMembers );
 
 sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2] );
+    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
 
-    $self->{base_class}  = $_[3];
+    $self->{base_class}  = $_[4];
     $self->{message_id}  = 0;
 
     bless $self, $class;
