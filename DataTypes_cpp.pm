@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4907 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -14,6 +14,16 @@ sub to_cpp_decl()
     return "#error 'not implemented yet'";
 }
 
+
+############################################################
+package Boolean;
+
+sub to_cpp_decl()
+{
+    my( $self ) = @_;
+
+    return "bool";
+}
 
 ############################################################
 package Integer;

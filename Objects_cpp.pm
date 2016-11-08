@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4911 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4945 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -72,6 +72,7 @@ sub to_cpp_decl
     my( $self ) = @_;
 
     my $res =
+"// Object\n" .
 "struct " . $self->{name} ."\n";
 
     my @array = @{ $self->{members} };
@@ -94,7 +95,9 @@ sub to_cpp_decl
 {
     my( $self ) = @_;
 
-    my $res = "struct " . $self->{name};
+    my $res =
+"// Base message\n" .
+"struct " . $self->{name};
 
     if( defined $self->{base_class} && $self->{base_class} ne '' )
     {
@@ -124,7 +127,9 @@ sub to_cpp_decl
 {
     my( $self ) = @_;
 
-    my $res = "struct " . $self->{name};
+    my $res =
+"// Message\n" .
+"struct " . $self->{name};
 
     if( defined $self->{base_class} && $self->{base_class} ne '' )
     {

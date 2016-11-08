@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4907 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
@@ -8,6 +8,10 @@ my $VER="1.0";
 use DataTypes;
 use DataTypes_cpp;
 
+{
+    my $obj = new Boolean();
+    print $obj->to_cpp_decl() . "\n";
+}
 {
     my $obj = new Integer( 0, 8 );
     print $obj->to_cpp_decl() . "\n";

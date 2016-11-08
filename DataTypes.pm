@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4907 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -17,6 +17,22 @@ sub new
     return $self;
 }
 
+
+############################################################
+package Boolean;
+
+use strict;
+our @ISA = qw( Generic );
+
+sub new
+{
+    my ($class) = @_;
+
+    my $self = $class->SUPER::new();
+
+    bless $self, $class;
+    return $self;
+}
 
 ############################################################
 package Integer;
