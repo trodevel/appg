@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4910 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4955 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -19,6 +19,16 @@ sub to_cpp_decl
     }
 
     return $self->{name} . ",";
+}
+
+############################################################
+package ConstElement;
+
+sub to_cpp_decl
+{
+    my( $self ) = @_;
+
+    return sprintf( "static const %-20s %-10s = %s;", $self->{data_type}->to_cpp_decl(), $self->{name}, $self->{value} );
 }
 
 ############################################################

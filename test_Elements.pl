@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4910 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4955 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
@@ -20,6 +20,14 @@ use Elements_cpp;
 }
 {
     my $obj = new EnumElement( "RED", 0 );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new ConstElement( new Integer( 1, 16 ), "HTTP_PORT", 80 );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new ConstElement( new Float( 1 ), "PI", 3.141592 );
     print $obj->to_cpp_decl() . "\n";
 }
 {

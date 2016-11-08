@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4910 $ $Date:: 2016-11-05 #$ $Author: serge $
+# $Revision: 4955 $ $Date:: 2016-11-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -15,6 +15,27 @@ sub new
     my $class = shift;
     my $self =
     {
+        name      => shift,
+        value     => shift,
+    };
+
+    bless $self, $class;
+    return $self;
+}
+
+############################################################
+package ConstElement;
+use strict;
+use warnings;
+
+require DataTypes;
+
+sub new
+{
+    my $class = shift;
+    my $self =
+    {
+        data_type => shift,
         name      => shift,
         value     => shift,
     };
