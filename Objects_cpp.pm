@@ -1,36 +1,11 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4953 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 4957 $ $Date:: 2016-11-09 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
 require Elements_cpp;
-
-############################################################
-sub bracketize
-{
-    my ( $body, $must_put_semicolon ) = @_;
-
-    my $res = "{\n";
-
-    my @lines = split /\n/, $body;
-    foreach my $line( @lines )
-    {
-        $res = $res . "    " . $line . "\n";
-    }
-
-    my $semic = "";
-
-    if( defined $must_put_semicolon && $must_put_semicolon == 1 )
-    {
-        $semic = ";";
-    }
-
-    $res = $res . "}$semic\n";
-
-
-    return  $res;
-}
+require "gen_tools.pl";
 
 ############################################################
 sub array_to_cpp_decl
