@@ -1,27 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4957 $ $Date:: 2016-11-09 #$ $Author: serge $
+# $Revision: 4969 $ $Date:: 2016-11-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
 require Elements_cpp;
 require "gen_tools.pl";
 
-############################################################
-sub array_to_cpp_decl
-{
-    my( $array_ref ) = @_;
-
-    my @array = @{ $array_ref };
-
-    my $res = "";
-    foreach( @array )
-    {
-        $res = $res . $_->to_cpp_decl() . "\n";
-    }
-
-    return $res;
-}
 ############################################################
 package IObject;
 

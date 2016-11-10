@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4953 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 4964 $ $Date:: 2016-11-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -16,11 +16,19 @@ sub new
     my $self =
     {
         name      => shift,
-        decls     => shift,     # declarations
+        decls     => [],     # reference to an annonymous array
     };
 
     bless $self, $class;
     return $self;
+}
+
+sub add_decl
+{
+    my ( $self, $elem ) = @_;
+
+    push @{ $self->{decls} }, $elem;
+
 }
 
 ############################################################
@@ -34,7 +42,7 @@ sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[3] );
+    my $self = $class->SUPER::new( $_[1] );
 
     $self->{data_type}  = $_[2];
 
@@ -53,12 +61,20 @@ sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2] );
+    my $self = $class->SUPER::new( $_[1] );
 
-    $self->{members}  = $_[3];
+    $self->{members}  = [];
 
     bless $self, $class;
     return $self;
+}
+
+sub add_member
+{
+    my ( $self, $elem ) = @_;
+
+    push @{ $self->{members} }, $elem;
+
 }
 
 ############################################################
@@ -72,9 +88,9 @@ sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
+    my $self = $class->SUPER::new( $_[1] );
 
-    $self->{base_class}  = $_[4];
+    $self->{base_class}  = $_[2];
 
     bless $self, $class;
     return $self;
@@ -91,9 +107,9 @@ sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
+    my $self = $class->SUPER::new( $_[1] );
 
-    $self->{base_class}  = $_[4];
+    $self->{base_class}  = $_[2];
 
     bless $self, $class;
     return $self;
@@ -110,9 +126,9 @@ sub new
 {
     my ($class) = @_;
 
-    my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
+    my $self = $class->SUPER::new( $_[1] );
 
-    $self->{base_class}  = $_[4];
+    $self->{base_class}  = $_[2];
     $self->{message_id}  = 0;
 
     bless $self, $class;

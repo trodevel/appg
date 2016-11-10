@@ -1,27 +1,11 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4959 $ $Date:: 2016-11-09 #$ $Author: serge $
+# $Revision: 4969 $ $Date:: 2016-11-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
 require Objects_cpp;
 require "gen_tools.pl";
-
-############################################################
-sub array_to_cpp_decl
-{
-    my( $array_ref ) = @_;
-
-    my @array = @{ $array_ref };
-
-    my $res = "";
-    foreach( @array )
-    {
-        $res = $res . $_->to_cpp_decl() . "\n";
-    }
-
-    return $res;
-}
 
 ############################################################
 package File;
@@ -42,6 +26,10 @@ sub to_cpp_decl
     $body = $body . main::array_to_cpp_decl( \@objs );
     $body = $body . main::array_to_cpp_decl( \@base_msgs );
     $body = $body . main::array_to_cpp_decl( \@msgs );
+
+    $body = main::namespacize( $self->{name}, $body );
+
+    $body = main::namespacize( 'apg', $body );
 
     my $res = main::ifndef_define_prot( $self->{name}, "decl", $body );
 

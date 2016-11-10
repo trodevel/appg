@@ -1,8 +1,23 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4958 $ $Date:: 2016-11-09 #$ $Author: serge $
+# $Revision: 4971 $ $Date:: 2016-11-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
+############################################################
+sub tabulate
+{
+    my ( $body ) = @_;
+
+    my $res = "";
+
+    my @lines = split /\n/, $body;
+    foreach my $line( @lines )
+    {
+        $res = $res . "    " . $line . "\n";
+    }
+
+    return  $res;
+}
 ############################################################
 sub bracketize
 {
@@ -10,11 +25,7 @@ sub bracketize
 
     my $res = "{\n";
 
-    my @lines = split /\n/, $body;
-    foreach my $line( @lines )
-    {
-        $res = $res . "    " . $line . "\n";
-    }
+    $res = $res . tabulate( $body );
 
     my $semic = "";
 
@@ -38,8 +49,23 @@ sub ifndef_define
     my $res =
 "#ifndef $guard_h\n" .
 "#define $guard_h\n\n" .
-$body . "\n" .
+$body .
 "#endif // $guard_h\n" ;
+
+    return $res;
+}
+############################################################
+sub namespacize
+{
+    my ( $name, $body ) = @_;
+
+    my $res =
+"namespace $name\n" .
+"{\n\n" .
+$body .
+"} // namespace $name\n\n" ;
+
+    return $res;
 }
 ############################################################
 sub ifndef_define_prot
@@ -49,6 +75,21 @@ sub ifndef_define_prot
     my $guard = uc "APG_${protocol_name}_${file_name}";
 
     return ifndef_define( $guard, $body );
+}
+############################################################
+sub array_to_cpp_decl
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . $_->to_cpp_decl() . "\n";
+    }
+
+    return $res;
 }
 ############################################################
 
