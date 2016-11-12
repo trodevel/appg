@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4971 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 4987 $ $Date:: 2016-11-11 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -87,6 +87,21 @@ sub array_to_cpp_decl
     foreach( @array )
     {
         $res = $res . $_->to_cpp_decl() . "\n";
+    }
+
+    return $res;
+}
+############################################################
+sub array_to_cpp_include
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . '#include "'.  $_ . ".h\"\n";
     }
 
     return $res;

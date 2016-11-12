@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4969 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 4981 $ $Date:: 2016-11-11 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -24,6 +24,7 @@ sub to_cpp_decl
     my( $self ) = @_;
 
     my $res =
+"// Enum\n" .
 "enum class " . $self->{name} ." : " . $self->{data_type}->to_cpp_decl() . "\n";
 
     my @decls = @{ $self->{decls} };

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4972 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 4988 $ $Date:: 2016-11-11 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -9,7 +9,10 @@ use strict;
 use warnings;
 use File_cpp;
 
-my $file = new File( "generic" );
+my $file = new File( "example" );
+
+$file->add_include( "../generic" );
+$file->add_include( "communication" );
 
 {
     my $obj = new Object( "SomeObject" );

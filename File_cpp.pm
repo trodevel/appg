@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4969 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 4983 $ $Date:: 2016-11-11 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
@@ -30,6 +30,9 @@ sub to_cpp_decl
     $body = main::namespacize( $self->{name}, $body );
 
     $body = main::namespacize( 'apg', $body );
+
+    $body = "// includes\n" .
+        main::array_to_cpp_include( \@includes ) . "\n" . $body;
 
     my $res = main::ifndef_define_prot( $self->{name}, "decl", $body );
 
