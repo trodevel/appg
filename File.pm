@@ -1,9 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4970 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 4991 $ $Date:: 2016-11-14 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
+
+require "mycrc32.pl";
+
 package File;
 use strict;
 use warnings;
@@ -56,6 +59,8 @@ sub add_base_msg
 sub add_msg
 {
     my ( $self, $elem ) = @_;
+
+    $elem->{message_id} = main::mycrc32( $self->{name} . ':' . $elem->{name} );
 
     push @{ $self->{msgs} }, $elem;
 }
