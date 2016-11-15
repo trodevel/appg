@@ -1,37 +1,37 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5000 $ $Date:: 2016-11-15 #$ $Author: serge $
+# $Revision: 5006 $ $Date:: 2016-11-15 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
 require Objects_cpp;
-require "gen_tools.pl";
+require "gen_tools_cpp.pl";
 
 ############################################################
 package File;
 
-sub to_cpp_include_guards
+sub to_include_guards
 {
     my( $self, $body, $prefix, $must_include_myself ) = @_;
 
     my @includes  = @{ $self->{includes} };     # includes
 
-    $body = main::namespacize( $self->{name}, $body );
+    $body = gtcpp::namespacize( $self->{name}, $body );
 
-    $body = main::namespacize( 'apg', $body );
+    $body = gtcpp::namespacize( 'apg', $body );
 
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
         $body =
-            main::to_cpp_include( $self->{name} ) . "    // self\n\n" . $body;
+            gtcpp::to_include( $self->{name} ) . "    // self\n\n" . $body;
     }
     else
     {
         $body = "// includes\n" .
-            main::array_to_cpp_include( \@includes ) . "\n" . $body;
+            gtcpp::array_to_include( \@includes ) . "\n" . $body;
     }
 
-    my $res = main::ifndef_define_prot( $self->{name}, $prefix, $body );
+    my $res = gtcpp::ifndef_define_prot( $self->{name}, $prefix, $body );
 
     return $res;
 }
@@ -49,12 +49,12 @@ sub to_cpp_decl
     my @base_msgs = @{ $self->{base_msgs} };    # base messages
     my @msgs      = @{ $self->{msgs} };         # messages
 
-    $body = $body . main::array_to_cpp_decl( \@enums );
-    $body = $body . main::array_to_cpp_decl( \@objs );
-    $body = $body . main::array_to_cpp_decl( \@base_msgs );
-    $body = $body . main::array_to_cpp_decl( \@msgs );
+    $body = $body . gtcpp::array_to_decl( \@enums );
+    $body = $body . gtcpp::array_to_decl( \@objs );
+    $body = $body . gtcpp::array_to_decl( \@base_msgs );
+    $body = $body . gtcpp::array_to_decl( \@msgs );
 
-    my $res = $self->to_cpp_include_guards( $body, "decl" );
+    my $res = $self->to_include_guards( $body, "decl" );
 
     return $res;
 }

@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4981 $ $Date:: 2016-11-11 #$ $Author: serge $
+# $Revision: 5006 $ $Date:: 2016-11-15 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
 require Elements_cpp;
 require "gen_tools.pl";
+require "gen_tools_cpp.pl";
 
 ############################################################
 package IObject;
@@ -29,7 +30,7 @@ sub to_cpp_decl
 
     my @decls = @{ $self->{decls} };
 
-    my $body = main::array_to_cpp_decl( \@decls );
+    my $body = gtcpp::array_to_decl( \@decls );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -50,9 +51,9 @@ sub to_cpp_decl
     my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    my $body = main::array_to_cpp_decl( \@decls );
+    my $body = gtcpp::array_to_decl( \@decls );
 
-    $body = $body . main::array_to_cpp_decl( \@array );
+    $body = $body . gtcpp::array_to_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -80,9 +81,9 @@ sub to_cpp_decl
     my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    my $body = main::array_to_cpp_decl( \@decls );
+    my $body = gtcpp::array_to_decl( \@decls );
 
-    $body = $body . main::array_to_cpp_decl( \@array );
+    $body = $body . gtcpp::array_to_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -115,9 +116,9 @@ sub to_cpp_decl
     my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    $body = $body . main::array_to_cpp_decl( \@decls );
+    $body = $body . gtcpp::array_to_decl( \@decls );
 
-    $body = $body . main::array_to_cpp_decl( \@array );
+    $body = $body . gtcpp::array_to_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
