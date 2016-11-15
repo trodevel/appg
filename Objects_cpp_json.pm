@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4952 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 4992 $ $Date:: 2016-11-15 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -26,6 +26,12 @@ sub to_cpp_json
     return $res;
 }
 
+sub to_cpp_to_json_decl
+{
+    my( $self ) = @_;
+
+    my $res = "std::string to_json( const " . $self->{name} . " & o );";
+}
 ############################################################
 package Enum;
 

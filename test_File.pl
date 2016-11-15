@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4988 $ $Date:: 2016-11-11 #$ $Author: serge $
+# $Revision: 4995 $ $Date:: 2016-11-15 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -8,6 +8,7 @@ my $VER="1.0";
 use strict;
 use warnings;
 use File_cpp;
+use File_cpp_json;
 
 my $file = new File( "example" );
 
@@ -77,3 +78,9 @@ $file->add_include( "communication" );
 }
 
 print $file->to_cpp_decl() . "\n";
+
+
+print "**********************************\n";
+
+print $file->to_cpp_to_json_decl() . "\n";
+
