@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5006 $ $Date:: 2016-11-15 #$ $Author: serge $
+# $Revision: 5017 $ $Date:: 2016-11-16 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
@@ -43,6 +43,9 @@ sub to_cpp_decl
     my( $self ) = @_;
 
     my $body = "";
+
+    # protocol object
+    $body = $body . $self->{prot_object}->to_cpp_decl() . "\n";
 
     my @enums     = @{ $self->{enums} };        # enums
     my @objs      = @{ $self->{objs} };         # objects

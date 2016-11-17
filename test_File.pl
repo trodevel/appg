@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4995 $ $Date:: 2016-11-15 #$ $Author: serge $
+# $Revision: 5008 $ $Date:: 2016-11-16 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -12,6 +12,7 @@ use File_cpp_json;
 
 my $file = new File( "example" );
 
+$file->set_base_prot( "generic" );
 $file->add_include( "../generic" );
 $file->add_include( "communication" );
 
