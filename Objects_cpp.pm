@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5014 $ $Date:: 2016-11-16 #$ $Author: serge $
+# $Revision: 5021 $ $Date:: 2016-11-17 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -17,13 +17,25 @@ sub to_cpp_decl
     return '#error not implemented yet';
 }
 
-sub append_base_protocol()
+sub get_base_class()
+{
+    my( $self ) = @_;
+
+    if( defined $self->{base_prot} && $self->{base_prot} ne '' )
+    {
+        return $self->{base_prot};
+    }
+
+    return "apg::Object";
+}
+
+sub append_base_class()
 {
     my( $self, $body ) = @_;
 
-    $body = $body . ": public Object";
+    my $base = $self->get_base_class();
 
-    return $body;
+    return $body . ": public $base";
 }
 
 ############################################################
@@ -47,6 +59,21 @@ sub to_cpp_decl
 }
 
 ############################################################
+package ObjectWithMembers;
+
+sub get_base_class()
+{
+    my( $self ) = @_;
+
+    if( defined $self->{base_class} && $self->{base_class} ne '' )
+    {
+        return $self->{base_class};
+    }
+
+    return $self->SUPER::get_base_class();
+}
+
+############################################################
 package Object;
 
 sub to_cpp_decl
@@ -57,7 +84,7 @@ sub to_cpp_decl
 "// Object\n" .
 "struct " . $self->{name};
 
-    $res = $self->append_base_protocol( $res ) . "\n";
+    $res = $self->append_base_class( $res ) . "\n";
 
     my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
@@ -82,16 +109,7 @@ sub to_cpp_decl
 "// Base message\n" .
 "struct " . $self->{name};
 
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
-    {
-        $res = $res . ": public " . $self->{base_class};
-    }
-    else
-    {
-        $res = $self->append_base_protocol( $res );
-    }
-
-    $res = $res . "\n";
+    $res = $self->append_base_class( $res ) . "\n";
 
     my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
@@ -116,16 +134,7 @@ sub to_cpp_decl
 "// Message\n" .
 "struct " . $self->{name};
 
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
-    {
-        $res = $res . ": public " . $self->{base_class};
-    }
-    else
-    {
-        $res = $self->append_base_protocol( $res );
-    }
-
-    $res = $res . "\n";
+    $res = $self->append_base_class( $res ) . "\n";
 
     my $body = "";
 

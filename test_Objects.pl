@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4965 $ $Date:: 2016-11-10 #$ $Author: serge $
+# $Revision: 5018 $ $Date:: 2016-11-17 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -19,6 +19,7 @@ use Objects_cpp;
     my $obj = new Object( "AnotherObject" );
     $obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
     $obj->add_member( new ElementExt( new Vector( new Integer( 0, 16 ) ), "user_ids", undef, 1 ) );
+    $obj->set_base_class( "test" );
     print $obj->to_cpp_decl() . "\n";
 }
 {

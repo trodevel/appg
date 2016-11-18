@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5013 $ $Date:: 2016-11-16 #$ $Author: serge $
+# $Revision: 5020 $ $Date:: 2016-11-17 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -86,6 +86,13 @@ sub add_member
 
 }
 
+sub set_base_class
+{
+    my ( $self, $elem ) = @_;
+
+    $self->{base_class} = $elem;
+}
+
 ############################################################
 package Object;
 use strict;
@@ -103,13 +110,6 @@ sub new
 
     bless $self, $class;
     return $self;
-}
-
-sub set_base_class
-{
-    my ( $self, $elem ) = @_;
-
-    $self->{base_class} = $elem;
 }
 
 ############################################################

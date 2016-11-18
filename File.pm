@@ -1,12 +1,14 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5016 $ $Date:: 2016-11-16 #$ $Author: serge $
+# $Revision: 5023 $ $Date:: 2016-11-17 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
 
 require "mycrc32.pl";
 require "Objects.pm";
+
+############################################################
 
 package File;
 use strict;
@@ -19,7 +21,7 @@ sub new
     {
         name      => shift,
         base_prot   => undef, # base protocol
-        prot_object => BaseMessage->new( "XObject" ), # protocol base object
+        prot_object => Object->new( "Object" ), # protocol base object
         includes  => [],    # includes
         enums     => [],    # enums
         objs      => [],    # objects
@@ -36,7 +38,8 @@ sub set_base_prot
     my ( $self, $elem ) = @_;
 
     $self->{base_prot}   = $elem;
-#    $self->{prot_object}->set_base_class( $elem );
+
+    $self->{prot_object}->set_base_prot( $elem . "::Object" );
 }
 
 sub add_include
