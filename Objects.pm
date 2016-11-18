@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5020 $ $Date:: 2016-11-17 #$ $Author: serge $
+# $Revision: 5024 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -17,7 +17,6 @@ sub new
     {
         name      => shift,
         decls     => [],     # reference to an annonymous array
-        base_prot => undef,  # base protocol
     };
 
 
@@ -31,13 +30,6 @@ sub add_decl
 
     push @{ $self->{decls} }, $elem;
 
-}
-
-sub set_base_prot
-{
-    my ( $self, $elem ) = @_;
-
-    $self->{base_prot} = $elem;
 }
 
 ############################################################

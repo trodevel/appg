@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5006 $ $Date:: 2016-11-15 #$ $Author: serge $
+# $Revision: 5029 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -69,6 +69,21 @@ sub array_to_cpp_to_json_decl
     foreach( @array )
     {
         $res = $res . $_->to_cpp_to_json_decl() . "\n";
+    }
+
+    return $res;
+}
+############################################################
+sub array_to_cpp_to_json_impl
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . $_->to_cpp_to_json_impl() . "\n";
     }
 
     return $res;

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5021 $ $Date:: 2016-11-17 #$ $Author: serge $
+# $Revision: 5024 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -21,12 +21,7 @@ sub get_base_class()
 {
     my( $self ) = @_;
 
-    if( defined $self->{base_prot} && $self->{base_prot} ne '' )
-    {
-        return $self->{base_prot};
-    }
-
-    return "apg::Object";
+    return "Object";
 }
 
 sub append_base_class()

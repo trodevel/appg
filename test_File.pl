@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5022 $ $Date:: 2016-11-17 #$ $Author: serge $
+# $Revision: 5032 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -84,4 +84,8 @@ print $file->to_cpp_decl() . "\n";
 print "**********************************\n";
 
 print $file->to_cpp_to_json_decl() . "\n";
+
+print "**********************************\n";
+
+print $file->to_cpp_to_json_impl() . "\n";
 

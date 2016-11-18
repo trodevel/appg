@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5017 $ $Date:: 2016-11-16 #$ $Author: serge $
+# $Revision: 5030 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
@@ -10,15 +10,25 @@ require "gen_tools_cpp.pl";
 ############################################################
 package File;
 
+############################################################
+sub namespacize
+{
+    my( $self, $body ) = @_;
+
+    my $res = gtcpp::namespacize( $self->{name}, $body );
+
+    $res = gtcpp::namespacize( 'apg', $res );
+
+    return $res;
+}
+############################################################
 sub to_include_guards
 {
     my( $self, $body, $prefix, $must_include_myself ) = @_;
 
     my @includes  = @{ $self->{includes} };     # includes
 
-    $body = gtcpp::namespacize( $self->{name}, $body );
-
-    $body = gtcpp::namespacize( 'apg', $body );
+    $body = $self->namespacize( $body );
 
     if( defined $must_include_myself && $must_include_myself == 1 )
     {

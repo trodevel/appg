@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5023 $ $Date:: 2016-11-17 #$ $Author: serge $
+# $Revision: 5025 $ $Date:: 2016-11-18 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -21,7 +21,7 @@ sub new
     {
         name      => shift,
         base_prot   => undef, # base protocol
-        prot_object => Object->new( "Object" ), # protocol base object
+        prot_object => Object->new( "Object", "apg::Object" ), # protocol base object
         includes  => [],    # includes
         enums     => [],    # enums
         objs      => [],    # objects
@@ -39,7 +39,7 @@ sub set_base_prot
 
     $self->{base_prot}   = $elem;
 
-    $self->{prot_object}->set_base_prot( $elem . "::Object" );
+    $self->{prot_object}->set_base_class( $elem . "::Object" );
 }
 
 sub add_include
@@ -60,16 +60,12 @@ sub add_obj
 {
     my ( $self, $elem ) = @_;
 
-    $elem->set_base_prot( $self->{base_prot} );
-
     push @{ $self->{objs} }, $elem;
 }
 
 sub add_base_msg
 {
     my ( $self, $elem ) = @_;
-
-    $elem->set_base_prot( $self->{base_prot} );
 
     push @{ $self->{base_msgs} }, $elem;
 }
@@ -79,8 +75,6 @@ sub add_msg
     my ( $self, $elem ) = @_;
 
     $elem->{message_id} = main::mycrc32( $self->{name} . ':' . $elem->{name} );
-
-    $elem->set_base_prot( $self->{base_prot} );
 
     push @{ $self->{msgs} }, $elem;
 }
