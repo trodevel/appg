@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5036 $ $Date:: 2016-11-18 #$ $Author: serge $
+# $Revision: 5048 $ $Date:: 2016-11-19 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -23,7 +23,7 @@ sub to_cpp_json
         $base = $self->{base_class};
     }
 
-    $res = $res . "<< to_json( static_cast<const " . $base . "*>( this ) )\n";
+    $res = $res . "<< " . gtcpp::base_class_to_json( $base ) . "\n";
 
     my @array = @{ $self->{members} };
 

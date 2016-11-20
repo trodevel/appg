@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5029 $ $Date:: 2016-11-18 #$ $Author: serge $
+# $Revision: 5050 $ $Date:: 2016-11-20 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -96,6 +96,13 @@ sub to_include
     return '#include "'.  $name . '.h"';
 }
 ############################################################
+sub to_include_to_json
+{
+    my( $name ) = @_;
+
+    return '#include "'.  $name . '_to_json.h"';
+}
+############################################################
 sub array_to_include
 {
     my( $array_ref ) = @_;
@@ -109,6 +116,36 @@ sub array_to_include
     }
 
     return $res;
+}
+############################################################
+sub array_to_include_to_json
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . to_include_to_json(  $_ ) . "\n";
+    }
+
+    return $res;
+}
+############################################################
+sub base_class_to_json
+{
+    my( $base ) = @_;
+
+    my $namespace = "";
+
+    if( $base =~ /(.*)::([a-zA-Z0-9_]+)/ )
+    {
+        $namespace = $1;
+        return $namespace . "::to_json( this )";
+    }
+
+    return "to_json( static_cast<const " . $base . "*>( this ) )";
 }
 ############################################################
 
