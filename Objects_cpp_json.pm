@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5048 $ $Date:: 2016-11-19 #$ $Author: serge $
+# $Revision: 5062 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -76,6 +76,20 @@ sub to_cpp_json
     my( $self ) = @_;
 
     return "";
+}
+
+sub to_cpp_to_json_func_name
+{
+    my( $self ) = @_;
+
+    return "std::string to_json( " . $self->{name} . " o )";
+}
+
+sub to_cpp_to_json_decl
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_to_json_func_name() . ";";
 }
 
 ############################################################

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5024 $ $Date:: 2016-11-18 #$ $Author: serge $
+# $Revision: 5066 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -44,9 +44,7 @@ sub to_cpp_decl
 "// Enum\n" .
 "enum class " . $self->{name} ." : " . $self->{data_type}->to_cpp_decl() . "\n";
 
-    my @decls = @{ $self->{decls} };
-
-    my $body = gtcpp::array_to_decl( \@decls );
+    my $body = gtcpp::array_to_decl( $self->{elements} );
 
     $res = $res . main::bracketize( $body, 1 );
 
@@ -81,10 +79,9 @@ sub to_cpp_decl
 
     $res = $self->append_base_class( $res ) . "\n";
 
-    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    my $body = gtcpp::array_to_decl( \@decls );
+    my $body = gtcpp::array_to_decl( $self->{enums} );
 
     $body = $body . gtcpp::array_to_decl( \@array );
 
@@ -106,10 +103,9 @@ sub to_cpp_decl
 
     $res = $self->append_base_class( $res ) . "\n";
 
-    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    my $body = gtcpp::array_to_decl( \@decls );
+    my $body = gtcpp::array_to_decl( $self->{enums} );
 
     $body = $body . gtcpp::array_to_decl( \@array );
 
@@ -135,11 +131,9 @@ sub to_cpp_decl
 
     $body = $body . "enum\n" . main::bracketize( "message_id = " . $self->{message_id} . "\n", 1 ) . "\n";
 
-
-    my @decls = @{ $self->{decls} };
     my @array = @{ $self->{members} };
 
-    $body = $body . gtcpp::array_to_decl( \@decls );
+    $body = $body . gtcpp::array_to_decl( $self->{enums} );
 
     $body = $body . gtcpp::array_to_decl( \@array );
 

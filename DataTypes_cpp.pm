@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
+# $Revision: 5063 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -65,6 +65,15 @@ sub to_cpp_decl()
 
 ############################################################
 package UserDefined;
+
+sub to_cpp_decl()
+{
+    my( $self ) = @_;
+    return $self->{name};
+}
+
+############################################################
+package UserDefinedEnum;
 
 sub to_cpp_decl()
 {

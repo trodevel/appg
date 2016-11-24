@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5024 $ $Date:: 2016-11-18 #$ $Author: serge $
+# $Revision: 5066 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -16,7 +16,6 @@ sub new
     my $self =
     {
         name      => shift,
-        decls     => [],     # reference to an annonymous array
     };
 
 
@@ -24,13 +23,6 @@ sub new
     return $self;
 }
 
-sub add_decl
-{
-    my ( $self, $elem ) = @_;
-
-    push @{ $self->{decls} }, $elem;
-
-}
 
 ############################################################
 package Enum;
@@ -46,9 +38,17 @@ sub new
     my $self = $class->SUPER::new( $_[1] );
 
     $self->{data_type}  = $_[2];
+    $self->{elements}   = [];
 
     bless $self, $class;
     return $self;
+}
+
+sub add_element
+{
+    my ( $self, $elem ) = @_;
+
+    push @{ $self->{elements} }, $elem;
 }
 
 ############################################################
@@ -64,10 +64,18 @@ sub new
 
     my $self = $class->SUPER::new( $_[1] );
 
+    $self->{enums}    = [];
     $self->{members}  = [];
 
     bless $self, $class;
     return $self;
+}
+
+sub add_enum
+{
+    my ( $self, $elem ) = @_;
+
+    push @{ $self->{enums} }, $elem;
 }
 
 sub add_member

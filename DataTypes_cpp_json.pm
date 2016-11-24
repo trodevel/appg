@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4940 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 5063 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -63,6 +63,16 @@ sub to_cpp_json()
     my( $self, $value ) = @_;
 
     return "json_helper::to_object( $value )";
+}
+
+############################################################
+package UserDefinedEnum;
+
+sub to_cpp_json()
+{
+    my( $self, $value ) = @_;
+
+    return "$value";
 }
 
 ############################################################

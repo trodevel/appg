@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
+# $Revision: 5063 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -84,6 +84,22 @@ sub new
 
 ############################################################
 package UserDefined;
+
+use strict;
+our @ISA = qw( Generic );
+
+sub new
+{
+    my ($class) = @_;
+
+    my $self = $class->SUPER::new();
+    $self->{name}  = $_[1];
+    bless $self, $class;
+    return $self;
+}
+
+############################################################
+package UserDefinedEnum;
 
 use strict;
 our @ISA = qw( Generic );

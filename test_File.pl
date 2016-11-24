@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5041 $ $Date:: 2016-11-19 #$ $Author: serge $
+# $Revision: 5066 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -43,7 +43,7 @@ $file->add_include( "communication" );
     $file->add_msg( $obj );
 }
 {
-    my $obj = new Message( "Request", "base::Request" );
+    my $obj = new Message( "Request1", "base::Request" );
     $file->add_msg( $obj );
 }
 {
@@ -55,21 +55,21 @@ $file->add_include( "communication" );
 }
 {
     my $obj = new Enum( "Colors", new Integer( 0, 8 ) );
-    $obj->add_decl( new EnumElement( "RED", undef ) );
-    $obj->add_decl( new EnumElement( "GREEN", undef ) );
-    $obj->add_decl( new EnumElement( "BLUE", undef ) );
+    $obj->add_element( new EnumElement( "RED", undef ) );
+    $obj->add_element( new EnumElement( "GREEN", undef ) );
+    $obj->add_element( new EnumElement( "BLUE", undef ) );
     $file->add_enum( $obj );
 }
 {
     my $enum = new Enum( "State", new Integer( 0, 8 ) );
 
-    $enum->add_decl( new EnumElement( "DISCONNECTED", 1 ) );
-    $enum->add_decl( new EnumElement( "CONNECTING", 2 ) );
-    $enum->add_decl( new EnumElement( "CONNECTED", 3 ) );
+    $enum->add_element( new EnumElement( "DISCONNECTED", 1 ) );
+    $enum->add_element( new EnumElement( "CONNECTING", 2 ) );
+    $enum->add_element( new EnumElement( "CONNECTED", 3 ) );
 
     my $obj = new Message( "Request3", "base::Request" );
 
-    $obj->add_decl( $enum );
+    $obj->add_enum( $enum );
     $obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
     $obj->add_member( new ElementExt( new Vector( new Integer( 0, 16 ) ), "user_ids", undef, undef ) );
     $obj->add_member( new ElementExt( new Map( new Integer( 1, 16 ), new String ), "id_to_name", undef, undef ) );

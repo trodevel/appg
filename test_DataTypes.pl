@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4922 $ $Date:: 2016-11-07 #$ $Author: serge $
+# $Revision: 5063 $ $Date:: 2016-11-24 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
@@ -62,5 +62,9 @@ use DataTypes_cpp;
 }
 {
     my $obj = new UserDefined( "MyObject" );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new UserDefinedEnum( "MyEnum" );
     print $obj->to_cpp_decl() . "\n";
 }
