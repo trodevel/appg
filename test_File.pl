@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5066 $ $Date:: 2016-11-24 #$ $Author: serge $
+# $Revision: 5073 $ $Date:: 2016-11-25 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -73,7 +73,7 @@ $file->add_include( "communication" );
     $obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
     $obj->add_member( new ElementExt( new Vector( new Integer( 0, 16 ) ), "user_ids", undef, undef ) );
     $obj->add_member( new ElementExt( new Map( new Integer( 1, 16 ), new String ), "id_to_name", undef, undef ) );
-    $obj->add_member( new Element( new UserDefined( "State" ), "state" ) );
+    $obj->add_member( new Element( new UserDefinedEnum( "State" ), "state" ) );
 
     $file->add_msg( $obj );
 }

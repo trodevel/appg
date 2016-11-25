@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4951 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 5073 $ $Date:: 2016-11-25 #$ $Author: serge $
 # 1.0   - 16b05 - initial version
 
 require Elements;
@@ -13,7 +13,7 @@ sub to_cpp_json
 {
     my( $self ) = @_;
 
-    return $self->{name};
+    return "to_json( " . $self->{name} . " )";
 }
 
 ############################################################

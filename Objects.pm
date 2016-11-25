@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5066 $ $Date:: 2016-11-24 #$ $Author: serge $
+# $Revision: 5069 $ $Date:: 2016-11-25 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -39,6 +39,7 @@ sub new
 
     $self->{data_type}  = $_[2];
     $self->{elements}   = [];
+    $self->{parent}     = undef;
 
     bless $self, $class;
     return $self;
@@ -49,6 +50,28 @@ sub add_element
     my ( $self, $elem ) = @_;
 
     push @{ $self->{elements} }, $elem;
+}
+
+sub set_parent
+{
+    my ( $self, $v ) = @_;
+
+    $self->{parent} = $v;
+}
+
+# @return name with parent name
+sub get_full_name
+{
+    my ( $self ) = @_;
+
+    my $parent = "";
+
+    if( defined $self->{parent} && $self->{parent} ne '' )
+    {
+        $parent = $self->{parent} . "::";
+    }
+
+    return $parent . $self->{name};
 }
 
 ############################################################
@@ -74,6 +97,8 @@ sub new
 sub add_enum
 {
     my ( $self, $elem ) = @_;
+
+    $elem->set_parent( $self->{name} );
 
     push @{ $self->{enums} }, $elem;
 }

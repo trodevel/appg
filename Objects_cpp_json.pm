@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5062 $ $Date:: 2016-11-24 #$ $Author: serge $
+# $Revision: 5073 $ $Date:: 2016-11-25 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -82,7 +82,7 @@ sub to_cpp_to_json_func_name
 {
     my( $self ) = @_;
 
-    return "std::string to_json( " . $self->{name} . " o )";
+    return "std::string to_json( const " . $self->get_full_name() . " o )";
 }
 
 sub to_cpp_to_json_decl
@@ -92,6 +92,17 @@ sub to_cpp_to_json_decl
     return $self->to_cpp_to_json_func_name() . ";";
 }
 
+sub to_cpp_to_json_impl_body
+{
+    my( $self ) = @_;
+
+    my $res =
+        "std::ostringstream os;\n\n" .
+        "os << static_cast<" . $self->{data_type}->to_cpp_decl() . ">( o );\n\n" .
+        "return os.str();";
+
+    return $res;
+}
 ############################################################
 package ObjectWithMembers;
 
