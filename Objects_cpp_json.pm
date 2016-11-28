@@ -1,6 +1,24 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5073 $ $Date:: 2016-11-25 #$ $Author: serge $
+# Objects
+#
+# Copyright (C) 2016 Sergey Kolevatov
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+# $Revision: 5083 $ $Date:: 2016-11-28 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -9,31 +27,6 @@ require Objects_cpp;
 
 ############################################################
 package IObject;
-
-sub to_cpp_json
-{
-    my( $self ) = @_;
-
-    my $res = "";
-
-    my $base = "Object";
-
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
-    {
-        $base = $self->{base_class};
-    }
-
-    $res = $res . "<< " . gtcpp::base_class_to_json( $base ) . "\n";
-
-    my @array = @{ $self->{members} };
-
-    foreach( @array )
-    {
-        $res = $res . "<< " . $_->to_cpp_json() . "\n";
-    }
-
-    return $res;
-}
 
 sub to_cpp_to_json_func_name
 {
@@ -71,13 +64,6 @@ sub to_cpp_to_json_impl_body
 ############################################################
 package Enum;
 
-sub to_cpp_json
-{
-    my( $self ) = @_;
-
-    return "";
-}
-
 sub to_cpp_to_json_func_name
 {
     my( $self ) = @_;
@@ -106,24 +92,71 @@ sub to_cpp_to_json_impl_body
 ############################################################
 package ObjectWithMembers;
 
+sub to_cpp_to_json_impl_body_kern
+{
+    my( $self, $must_bracketize ) = @_;
+
+    my $res =
+        "std::ostringstream os;\n\n" .
+        "os ";
+
+    my $base = "Object";
+
+    if( defined $self->{base_class} && $self->{base_class} ne '' )
+    {
+        $base = $self->{base_class};
+    }
+
+    $res = $res . "<< " . gtcpp::base_class_to_json( $base ) . "\n";
+
+    my @array = @{ $self->{members} };
+
+    foreach( @array )
+    {
+        $res = $res . "<< " . $_->to_cpp_json() . "\n";
+    }
+
+    my $last_line = "os.str();";
+
+    if( defined $must_bracketize && $must_bracketize ne 0 )
+    {
+        $last_line = "json_helper::bracketize( os.str() );";
+    }
+
+    $res = $res . ";\n\n" .
+        "return " . $last_line;
+
+    return $res;
+}
+
 sub to_cpp_to_json_impl_body
 {
     my( $self ) = @_;
 
-    my $res =
-        "std::ostringstream os;\n\n" .
-        "os " . $self->SUPER::to_cpp_json() . ";\n\n" .
-        "return os.str();";
-
-    return $res;
+    return $self->to_cpp_to_json_impl_body_kern( 0 );
 }
+
 ############################################################
 package Object;
+
+sub to_cpp_to_json_impl_body
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_to_json_impl_body_kern( 1 );
+}
 
 ############################################################
 package BaseMessage;
 
 ############################################################
 package Message;
+
+sub to_cpp_to_json_impl_body
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_to_json_impl_body_kern( 1 );
+}
 
 ############################################################

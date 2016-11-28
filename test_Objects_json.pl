@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5074 $ $Date:: 2016-11-25 #$ $Author: serge $
+# $Revision: 5079 $ $Date:: 2016-11-28 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 my $VER="1.0";
@@ -67,6 +67,7 @@ use Objects_cpp_json;
     $obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
     $obj->add_member( new ElementExt( new Vector( new Integer( 0, 16 ) ), "user_ids", undef, undef ) );
     $obj->add_member( new ElementExt( new Map( new Integer( 1, 16 ), new String ), "id_to_name", undef, undef ) );
+    $obj->add_member( new Element( new UserDefined( "TimeRange24" ), "time_range" ) );
     $obj->add_member( new Element( new UserDefinedEnum( "State" ), "state" ) );
     
     print $obj->to_cpp_to_json_impl() . "\n";
