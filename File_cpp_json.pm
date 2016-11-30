@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5086 $ $Date:: 2016-11-29 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File_cpp;
@@ -73,7 +73,10 @@ sub to_cpp_to_json_impl
 
     $body = $self->namespacize( $body );
 
-    $body = "#include <sstream>    // std::ostringstream\n\n" . $body;
+    $body =
+        "#include <sstream>            // std::ostringstream\n\n" .
+        "#include \"json_helper.h\"      // json_helper\n\n" .
+        $body;
 
     my $incl = gtcpp::to_include_to_json( $self->{name} ) . "    // self\n\n";
 

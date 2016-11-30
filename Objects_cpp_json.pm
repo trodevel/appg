@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5083 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5088 $ $Date:: 2016-11-29 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -99,6 +99,11 @@ sub to_cpp_to_json_impl_body_kern
     my $res =
         "std::ostringstream os;\n\n" .
         "os ";
+
+    if( defined $self->{protocol} )
+    {
+        $res = $res . "<< json_helper::to_pair( \"Message\", \"" . $self->get_full_name() . "\" )\n";
+    }
 
     my $base = "Object";
 

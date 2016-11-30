@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5087 $ $Date:: 2016-11-29 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -36,11 +36,18 @@ sub new
         name      => shift,
     };
 
+    $self->{protocol} = undef;
 
     bless $self, $class;
     return $self;
 }
 
+sub set_protocol
+{
+    my ( $self, $elem ) = @_;
+
+    $self->{protocol} = $elem;
+}
 
 ############################################################
 package Enum;
@@ -194,4 +201,15 @@ sub new
     return $self;
 }
 
+sub get_full_name
+{
+    my ( $self ) = @_;
+
+    if( not defined $self->{protocol} || $self->{protocol} eq '' )
+    {
+        die "protocol is not defined for " . $self->{name} . "\n";
+    }
+
+    return $self->{protocol} . "::" . $self->{name};
+}
 ############################################################

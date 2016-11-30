@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5089 $ $Date:: 2016-11-29 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -93,6 +93,7 @@ sub add_msg
     my ( $self, $elem ) = @_;
 
     $elem->{message_id} = main::mycrc32( $self->{name} . ':' . $elem->{name} );
+    $elem->set_protocol( $self->{name} );
 
     push @{ $self->{msgs} }, $elem;
 }
