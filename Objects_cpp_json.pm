@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5102 $ $Date:: 2016-11-30 #$ $Author: serge $
+# $Revision: 5119 $ $Date:: 2016-12-01 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -32,7 +32,7 @@ sub to_cpp_to_json_func_name
 {
     my( $self ) = @_;
 
-    return "std::string to_json( const " . $self->{name} . " & o )";
+    return "std::string to_json( const " . $self->get_full_name_apg() . " & o )";
 }
 
 sub to_cpp_to_json_decl
@@ -68,7 +68,7 @@ sub to_cpp_to_json_func_name
 {
     my( $self ) = @_;
 
-    return "std::string to_json( const " . $self->get_full_name() . " o )";
+    return "std::string to_json( const " . $self->get_full_name_apg() . " o )";
 }
 
 sub to_cpp_to_json_decl
@@ -100,17 +100,12 @@ sub to_cpp_to_json_impl_body_kern
         "std::ostringstream os;\n\n" .
         "os ";
 
-    if( defined $self->{protocol} )
+    if( $self->{is_message} )
     {
         $res = $res . "<< json_helper::to_pair( \"Message\", json_helper::to_string( \"" . $self->get_full_name() . "\" ) )\n";
     }
 
-    my $base = "Object";
-
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
-    {
-        $base = $self->{base_class};
-    }
+    my $base = $self->get_full_base_class_apg();
 
     $res = $res . "<< " . gtcpp::base_class_to_json( $base ) . "\n";
 

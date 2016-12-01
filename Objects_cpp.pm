@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5119 $ $Date:: 2016-12-01 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -40,6 +40,46 @@ sub get_base_class()
     my( $self ) = @_;
 
     return "Object";
+}
+
+sub get_full_base_class()
+{
+    my( $self ) = @_;
+
+    return $self->get_protocol_name() . "::Object";
+}
+
+sub get_full_base_class_apg()
+{
+    my ( $self ) = @_;
+
+    return "apg::" . $self->get_full_base_class();
+}
+
+sub get_protocol_name
+{
+    my ( $self ) = @_;
+
+    if( not defined $self->{protocol} || ( defined $self->{protocol} && $self->{protocol} eq '' ) )
+    {
+        die "protocol is not defined for " . $self->{name} . "\n";
+    }
+
+    return $self->{protocol};
+}
+
+sub get_full_name
+{
+    my ( $self ) = @_;
+
+    return $self->get_protocol_name() . "::" . $self->{name};
+}
+
+sub get_full_name_apg
+{
+    my ( $self ) = @_;
+
+    return "apg::" . $self->get_full_name();
 }
 
 sub append_base_class()
@@ -67,6 +107,21 @@ sub to_cpp_decl
     $res = $res . main::bracketize( $body, 1 );
 
     return $res;
+}
+
+# @return name with parent name
+sub get_full_name
+{
+    my ( $self ) = @_;
+
+    my $parent = "";
+
+    if( defined $self->{parent} && $self->{parent} ne '' )
+    {
+        $parent = $self->{parent} . "::";
+    }
+
+    return $self->get_protocol_name() . "::" . $parent . $self->{name};
 }
 
 ############################################################

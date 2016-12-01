@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5087 $ $Date:: 2016-11-29 #$ $Author: serge $
+# $Revision: 5115 $ $Date:: 2016-12-01 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -84,21 +84,6 @@ sub set_parent
     $self->{parent} = $v;
 }
 
-# @return name with parent name
-sub get_full_name
-{
-    my ( $self ) = @_;
-
-    my $parent = "";
-
-    if( defined $self->{parent} && $self->{parent} ne '' )
-    {
-        $parent = $self->{parent} . "::";
-    }
-
-    return $parent . $self->{name};
-}
-
 ############################################################
 package ObjectWithMembers;
 use strict;
@@ -112,8 +97,9 @@ sub new
 
     my $self = $class->SUPER::new( $_[1] );
 
-    $self->{enums}    = [];
-    $self->{members}  = [];
+    $self->{enums}      = [];
+    $self->{members}    = [];
+    $self->{is_message} = 0;
 
     bless $self, $class;
     return $self;
@@ -141,6 +127,19 @@ sub set_base_class
     my ( $self, $elem ) = @_;
 
     $self->{base_class} = $elem;
+}
+
+# @descr need to set protocol for all declarations
+sub set_protocol
+{
+    my ( $self, $elem ) = @_;
+
+    $self->SUPER::set_protocol( $elem );
+
+    foreach( @{ $self->{enums} } )
+    {
+        $_->set_protocol( $elem );
+    }
 }
 
 ############################################################
@@ -196,20 +195,10 @@ sub new
 
     $self->{base_class}  = $_[2];
     $self->{message_id}  = 0;
+    $self->{is_message}  = 1;
 
     bless $self, $class;
     return $self;
 }
 
-sub get_full_name
-{
-    my ( $self ) = @_;
-
-    if( not defined $self->{protocol} || $self->{protocol} eq '' )
-    {
-        die "protocol is not defined for " . $self->{name} . "\n";
-    }
-
-    return $self->{protocol} . "::" . $self->{name};
-}
 ############################################################

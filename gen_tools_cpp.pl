@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5118 $ $Date:: 2016-12-01 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -170,15 +170,7 @@ sub base_class_to_json
 {
     my( $base ) = @_;
 
-    my $namespace = "";
-
-    if( $base =~ /(.*)::([a-zA-Z0-9_]+)/ )
-    {
-        $namespace = $1;
-        return $namespace . "::to_json( this )";
-    }
-
-    return "to_json( static_cast<const " . $base . "*>( this ) )";
+    return "to_json( static_cast< const " . $base . " & >( o ) )";
 }
 ############################################################
 

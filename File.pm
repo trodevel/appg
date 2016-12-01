@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5089 $ $Date:: 2016-11-29 #$ $Author: serge $
+# $Revision: 5110 $ $Date:: 2016-12-01 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -58,6 +58,7 @@ sub set_base_prot
     $self->{base_prot}   = $elem;
 
     $self->{prot_object}->set_base_class( $elem . "::Object" );
+    $self->{prot_object}->set_protocol( $self->{name} );
 }
 
 sub add_include
@@ -71,6 +72,8 @@ sub add_enum
 {
     my ( $self, $elem ) = @_;
 
+    $elem->set_protocol( $self->{name} );
+
     push @{ $self->{enums} }, $elem;
 }
 
@@ -78,12 +81,16 @@ sub add_obj
 {
     my ( $self, $elem ) = @_;
 
+    $elem->set_protocol( $self->{name} );
+
     push @{ $self->{objs} }, $elem;
 }
 
 sub add_base_msg
 {
     my ( $self, $elem ) = @_;
+
+    $elem->set_protocol( $self->{name} );
 
     push @{ $self->{base_msgs} }, $elem;
 }
