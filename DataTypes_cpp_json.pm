@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5081 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 5101 $ $Date:: 2016-11-30 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -70,7 +70,7 @@ sub to_cpp_json()
 {
     my( $self, $value ) = @_;
 
-    return "$value";
+    return "json_helper::to_string( $value )";
 }
 
 ############################################################
@@ -110,7 +110,7 @@ sub to_cpp_json()
 {
     my( $self, $value ) = @_;
 
-    return "json_helper::to_object( $value )";
+    return "json_helper::to_map( $value )";
 }
 
 ############################################################

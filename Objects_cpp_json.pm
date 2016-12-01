@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5088 $ $Date:: 2016-11-29 #$ $Author: serge $
+# $Revision: 5102 $ $Date:: 2016-11-30 #$ $Author: serge $
 # 1.0   - 16b08 - initial version
 
 require Objects;
@@ -102,7 +102,7 @@ sub to_cpp_to_json_impl_body_kern
 
     if( defined $self->{protocol} )
     {
-        $res = $res . "<< json_helper::to_pair( \"Message\", \"" . $self->get_full_name() . "\" )\n";
+        $res = $res . "<< json_helper::to_pair( \"Message\", json_helper::to_string( \"" . $self->get_full_name() . "\" ) )\n";
     }
 
     my $base = "Object";

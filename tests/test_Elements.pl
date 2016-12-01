@@ -1,9 +1,11 @@
 #!/usr/bin/perl -w
 
-# $Revision: 4955 $ $Date:: 2016-11-08 #$ $Author: serge $
+# $Revision: 5093 $ $Date:: 2016-11-30 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
+
+BEGIN {push @INC, '..'}
 
 use strict;
 use warnings;

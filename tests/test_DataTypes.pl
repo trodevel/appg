@@ -1,9 +1,11 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5063 $ $Date:: 2016-11-24 #$ $Author: serge $
+# $Revision: 5095 $ $Date:: 2016-11-30 #$ $Author: serge $
 # 1.0   - 16a17 - initial version
 
 my $VER="1.0";
+
+BEGIN {push @INC, '..'}
 
 use DataTypes;
 use DataTypes_cpp;
@@ -50,6 +52,10 @@ use DataTypes_cpp;
 }
 {
     my $obj = new Float( 1 );
+    print $obj->to_cpp_decl() . "\n";
+}
+{
+    my $obj = new String();
     print $obj->to_cpp_decl() . "\n";
 }
 {
