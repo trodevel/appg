@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 5093 $ $Date:: 2016-11-30 #$ $Author: serge $
+# $Revision: 12436 $ $Date:: 2019-12-07 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -81,14 +81,14 @@ $file->add_include( "communication" );
     $file->add_msg( $obj );
 }
 
-print $file->to_cpp_decl() . "\n";
+open WCPP_H, ">", "example.h";
 
+print WCPP_H $file->to_cpp_decl() . "\n";
 
-print "**********************************\n";
+open WCPP_JSON_H, ">", "example_to_json.h";
 
-print $file->to_cpp_to_json_decl() . "\n";
+print WCPP_JSON_H $file->to_cpp_to_json_decl() . "\n";
 
-print "**********************************\n";
+open WCPP_JSON_CPP, ">", "example_to_json.cpp";
 
-print $file->to_cpp_to_json_impl() . "\n";
-
+print WCPP_JSON_CPP $file->to_cpp_to_json_impl() . "\n";
