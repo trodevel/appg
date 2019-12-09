@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5120 $ $Date:: 2016-12-01 #$ $Author: serge $
+# $Revision: 12449 $ $Date:: 2019-12-09 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
@@ -29,13 +29,16 @@ require "gen_tools_cpp.pl";
 package File;
 
 ############################################################
-sub namespacize
+sub namespacize($)
 {
     my( $self, $body ) = @_;
 
     my $res = gtcpp::namespacize( $self->{name}, $body );
 
-    $res = gtcpp::namespacize( 'apg', $res );
+    if( $self->{must_use_ns} )
+    {
+        $res = gtcpp::namespacize( 'apg', $res );
+    }
 
     return $res;
 }

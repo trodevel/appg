@@ -44,9 +44,9 @@ sub  trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };
 
 ###############################################
 
-sub read_config_file($$)
+sub read_config_file($$$)
 {
-    my ( $filename, $array_ref ) = @_;
+    my ( $filename, $array_ref, $line_num_ref ) = @_;
 
     unless( -e $filename )
     {
@@ -73,7 +73,8 @@ sub read_config_file($$)
 
         next if( $line =~ /^#/ );	# ignore comments
 
-        $array_ref->{$lines} = $line;
+        push( @$array_ref,  $line );
+        push( @$line_num_ref, $lines );
 
         #print "DEBUG: $lines: $line\n";
     }
@@ -83,19 +84,48 @@ sub read_config_file($$)
 
 ###############################################
 
+sub parse_obj($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $name ) = @_;
+
+    my $obj = new Object( $name );
+    #$obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
+
+    for( ; $$i_ref < $size; $$i_ref++ )
+    {
+
+    my $line = @$array_ref[$$i_ref];
+
+    if ( $line =~ /^obj_end/ )
+    {
+        print STDERR "DEBUG: obj_end\n";
+        $$file_ref->add_obj( $obj );
+        return;
+    }
+
+    }
+
+    die( "incomplete object $name\n" );
+}
+
+###############################################
+
 sub parse($$)
 {
     my ( $array_ref, $file_ref ) = @_;
 
-    foreach my $res ( sort keys %$array_ref )
-    {
-    my $line = $array_ref->{$res};
+    my $size = scalar( @$array_ref );
 
-    #print STDERR "DEBUG: res=$res, line=$line\n";
+    for( my $i = 0; $i < $size; $i++ )
+    {
+    my $line = @$array_ref[$i];
+
+    #print STDERR "DEBUG: i=$i, line=$line\n";
 
     if ( $line =~ /protocol ([a-zA-Z0-9_]*)/ )
     {
         print STDERR "DEBUG: protocol $1\n";
+        $$file_ref->set_name( $1 );
     }
     elsif ( $line =~ /base ([a-zA-Z0-9_]*)/ )
     {
@@ -107,9 +137,11 @@ sub parse($$)
         print STDERR "DEBUG: include '$1'\n";
         $$file_ref->add_include( $1 );
     }
-    elsif ( $line =~ /protocol ([a-zA-Z0-9_]*)/ )
+    elsif ( $line =~ /obj ([a-zA-Z0-9_]*)/ )
     {
-        print STDERR "DEBUG: protocol $1\n";
+        print STDERR "DEBUG: obj $1\n";
+
+        parse_obj( $array_ref, $file_ref, $size, \$i, $1 );
     }
     else
     {
@@ -124,9 +156,9 @@ sub parse($$)
 
 sub print_help
 {
-    print STDERR "\nUsage: code_gen.sh --input_file <input.txt> --output <output.cpp>\n";
+    print STDERR "\nUsage: code_gen.sh --input_file <input.txt> --output_file <output.h>\n";
     print STDERR "\nExamples:\n";
-    print STDERR "\ncode_gen.sh --input_file protocol.txt --output_file protocol.cpp\n";
+    print STDERR "\ncode_gen.sh --input_file protocol.txt --output_file protocol.h\n";
     print STDERR "\n";
     exit
 }
@@ -150,13 +182,16 @@ GetOptions(
 print STDERR "input_file  = $input_file\n";
 print STDERR "output file = $output_file\n";
 
-my %input = ();
+my @input = ();
+my @line_num = ();
 
-read_config_file( $input_file, \%input );
+read_config_file( $input_file, \@input, \@line_num );
 
 my $file = new File( "example" );
 
-parse( \%input, \$file );
+parse( \@input, \$file );
+
+$file->set_use_ns( 0 );
 
 open FO, ">", $output_file;
 

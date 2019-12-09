@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5110 $ $Date:: 2016-12-01 #$ $Author: serge $
+# $Revision: 12448 $ $Date:: 2019-12-09 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -45,10 +45,18 @@ sub new
         objs      => [],    # objects
         base_msgs => [],    # base messages
         msgs      => [],    # messages
+        must_use_ns     => 0,     # should use APG namespace
     };
 
     bless $self, $class;
     return $self;
+}
+
+sub set_name($)
+{
+    my ( $self, $name ) = @_;
+
+    $self->{name}       = $name;
 }
 
 sub set_base_prot
@@ -103,6 +111,13 @@ sub add_msg
     $elem->set_protocol( $self->{name} );
 
     push @{ $self->{msgs} }, $elem;
+}
+
+sub set_use_ns($)
+{
+    my ( $self, $v ) = @_;
+
+    $self->{must_use_ns} = $v;
 }
 
 ############################################################
