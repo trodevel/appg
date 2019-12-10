@@ -84,25 +84,109 @@ sub read_config_file($$$)
 
 ###############################################
 
+sub is_int($)
+{
+    my ( $line ) = @_;
+
+    return 1 if ( $line =~ /^([u]*)int(8|16|32|64) / );
+
+    return 0;
+}
+
+###############################################
+
+use constant VR_REGEXP => '(:\s*(([\(\[])\s*([0-9]*)|)\s*,\s*(([0-9]*)\s*([\)\]])|)|)';
+
+sub to_ValidRange($)
+{
+    my ( $line ) = @_;
+
+    die "malformed valid range '$line'" if( $line !~ /${\VR_REGEXP}/ );
+
+    my $open_bracket  = $3;
+    my $from          = $4;
+    my $to            = $6;
+    my $close_bracket = $7;
+
+    my $has_from = ( defined $2 and $2 ne '' ) ? 1 : 0;
+    my $has_to   = ( defined $5 and $5 ne '' ) ? 1 : 0;
+
+    $from     = ( $has_from ) ? $from + 0 : 0;
+    $to       = ( $has_to ) ? $to + 0 : 0;
+
+    my $is_inclusive_from = ( $has_from and $open_bracket eq '[' ) ? 1 : 0;
+    my $is_inclusive_to   = ( $has_to and $close_bracket eq ']' ) ? 1 : 0;
+
+    print STDERR "DEBUG: to_ValidRange: incl_from=$is_inclusive_from from=$from to=$to incl_to=$is_inclusive_to\n";
+
+    my $res = new ValidRange( $has_from, $from, $is_inclusive_from, $has_to, $to, $is_inclusive_to );
+
+    return $res;
+}
+
+###############################################
+
+sub parse_int($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "malformed object $line" if( $line !~ /^([u]*)int(8|16|32|64) ([a-zA-Z0-9_]*)\s*${\VR_REGEXP}/ );
+
+    #my @tokens = split( " ", $line );
+
+    #print STDERR "DEBUG: " . join(", ", @tokens) . "\n";
+
+    my $u = $1;
+    my $bits = $2;
+    my $name = $3;
+    my $valid = $4;
+
+    print STDERR "DEBUG: parse_int: u=$u bits=$bits name=$name valid='$valid'\n";
+
+    my $is_unsigned = ( defined $u and $u eq 'u' ) ? 1 : 0;
+    $bits = $bits + 0;
+
+    my $valid_range = undef;
+
+    if( defined $valid and $valid ne '' )
+    {
+        $valid_range = to_ValidRange( $valid );
+    }
+
+    $$parent_ref->add_member( new ElementExt( new Integer( $is_unsigned, $bits ), $name, $valid_range, 0 ) );
+}
+
+###############################################
+
 sub parse_obj($$$$$)
 {
-    my ( $array_ref, $file_ref, $size, $i_ref, $name ) = @_;
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "malformed object $line" if( $line !~ /obj ([a-zA-Z0-9_]*)/ );
+
+    $$i_ref++;
+
+    my $name = $1;
 
     my $obj = new Object( $name );
-    #$obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );
 
     for( ; $$i_ref < $size; $$i_ref++ )
     {
+        #print STDERR "DEBUG: i=$$i_ref size=$size\n";
 
-    my $line = @$array_ref[$$i_ref];
+        my $line = @$array_ref[$$i_ref];
 
-    if ( $line =~ /^obj_end/ )
-    {
-        print STDERR "DEBUG: obj_end\n";
-        $$file_ref->add_obj( $obj );
-        return;
-    }
-
+        if ( $line =~ /^obj_end/ )
+        {
+            print STDERR "DEBUG: obj_end\n";
+            $$file_ref->add_obj( $obj );
+            return;
+        }
+        elsif ( is_int( $line ) )
+        {
+            print STDERR "DEBUG: int\n";
+            parse_int( \$obj, $line );
+        }
     }
 
     die( "incomplete object $name\n" );
@@ -118,36 +202,36 @@ sub parse($$)
 
     for( my $i = 0; $i < $size; $i++ )
     {
-    my $line = @$array_ref[$i];
+        my $line = @$array_ref[$i];
 
-    #print STDERR "DEBUG: i=$i, line=$line\n";
+        #print STDERR "DEBUG: i=$i, line=$line\n";
 
-    if ( $line =~ /protocol ([a-zA-Z0-9_]*)/ )
-    {
-        print STDERR "DEBUG: protocol $1\n";
-        $$file_ref->set_name( $1 );
-    }
-    elsif ( $line =~ /base ([a-zA-Z0-9_]*)/ )
-    {
-        print STDERR "DEBUG: base protocol $1\n";
-        $$file_ref->set_base_prot( $1 );
-    }
-    elsif ( $line =~ /include "([a-zA-Z0-9_\/\.\-]*)"/ )
-    {
-        print STDERR "DEBUG: include '$1'\n";
-        $$file_ref->add_include( $1 );
-    }
-    elsif ( $line =~ /obj ([a-zA-Z0-9_]*)/ )
-    {
-        print STDERR "DEBUG: obj $1\n";
+        if ( $line =~ /protocol ([a-zA-Z0-9_]*)/ )
+        {
+            print STDERR "DEBUG: protocol $1\n";
+            $$file_ref->set_name( $1 );
+        }
+        elsif ( $line =~ /base ([a-zA-Z0-9_]*)/ )
+        {
+            print STDERR "DEBUG: base protocol $1\n";
+            $$file_ref->set_base_prot( $1 );
+        }
+        elsif ( $line =~ /include "([a-zA-Z0-9_\/\.\-]*)"/ )
+        {
+            print STDERR "DEBUG: include '$1'\n";
+            $$file_ref->add_include( $1 );
+        }
+        elsif ( $line =~ /obj ([a-zA-Z0-9_]*)/ )
+        {
+            print STDERR "DEBUG: obj $1\n";
 
-        parse_obj( $array_ref, $file_ref, $size, \$i, $1 );
-    }
-    else
-    {
-        print STDERR "DEBUG: unknown line $line\n";
-        next;
-    }
+            parse_obj( $array_ref, $file_ref, $size, \$i, $line );
+        }
+        else
+        {
+            print STDERR "DEBUG: unknown line $line\n";
+            next;
+        }
     }
 
 }
