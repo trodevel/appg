@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12453 $ $Date:: 2019-12-09 #$ $Author: serge $
+# $Revision: 12467 $ $Date:: 2019-12-10 #$ $Author: serge $
 
 ############################################################
 
@@ -33,6 +33,20 @@ include "communication"
 ############################################################
 
 obj SomeObject
+
+    uint8 is_ready
+    int16 min
+    int16 max
+
+    int16 a : (10, 15)
+    int16 b : (10, 15]
+    int16 c : [10, 15)
+    int16 d : [10, 15]
+    int16 e : (10,
+    int16 f : [10,
+    int16 g : , 15)
+    int16 h : , 15]
+
 obj_end
 
 ############################################################
