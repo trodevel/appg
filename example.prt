@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12467 $ $Date:: 2019-12-10 #$ $Author: serge $
+# $Revision: 12488 $ $Date:: 2019-12-11 #$ $Author: serge $
 
 ############################################################
 
@@ -42,10 +42,23 @@ obj SomeObject
     int16 b : (10, 15]
     int16 c : [10, 15)
     int16 d : [10, 15]
-    int16 e : (10,
-    int16 f : [10,
-    int16 g : , 15)
-    int16 h : , 15]
+    int16 e : (10,)
+    int16 f : [10,)
+    int16 g : (, 15)
+    int16 h : (, 15]
+    int16 i : [0.5, 1.5]
+
+    bool  is_enabled
+
+    float factor : (, 2.0]
+
+    double price : (0,)
+
+    string name
+
+    string id : (1,)
+
+    string product_description : [0,256)
 
 obj_end
 
