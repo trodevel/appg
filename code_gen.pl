@@ -84,32 +84,29 @@ sub read_config_file($$$)
 
 ###############################################
 
-sub is_int($)
-{
-    my ( $line ) = @_;
-
-    return 1 if ( $line =~ /^([u]*)int(8|16|32|64) / );
-
-    return 0;
-}
+use constant REGEXP_POD    => '(bool|([u]*)int(8|16|32|64)|float|double|string)';
+use constant REGEXP_BOOL   => 'bool';
+use constant REGEXP_INT    => '([u]*)int(8|16|32|64)';
+use constant REGEXP_FLOAT  => 'float';
+use constant REGEXP_DOUBLE => 'double';
+use constant REGEXP_STR    => 'string';
+use constant REGEXP_VR => '(:\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])|)';
 
 ###############################################
-
-use constant VR_REGEXP => '(:\s*(([\(\[])\s*([0-9]*)|)\s*,\s*(([0-9]*)\s*([\)\]])|)|)';
 
 sub to_ValidRange($)
 {
     my ( $line ) = @_;
 
-    die "malformed valid range '$line'" if( $line !~ /${\VR_REGEXP}/ );
+    die "malformed valid range '$line'" if( $line !~ /${\REGEXP_VR}/ );
 
-    my $open_bracket  = $3;
-    my $from          = $4;
-    my $to            = $6;
-    my $close_bracket = $7;
+    my $open_bracket  = $2;
+    my $from          = $3;
+    my $to            = $4;
+    my $close_bracket = $5;
 
-    my $has_from = ( defined $2 and $2 ne '' ) ? 1 : 0;
-    my $has_to   = ( defined $5 and $5 ne '' ) ? 1 : 0;
+    my $has_from = ( defined $from and $from ne '' ) ? 1 : 0;
+    my $has_to   = ( defined $to and $to ne '' ) ? 1 : 0;
 
     $from     = ( $has_from ) ? $from + 0 : 0;
     $to       = ( $has_to ) ? $to + 0 : 0;
@@ -126,25 +123,125 @@ sub to_ValidRange($)
 
 ###############################################
 
-sub parse_int($$)
+sub to_Boolean($)
 {
-    my ( $parent_ref, $line ) = @_;
+    my ( $line ) = @_;
 
-    die "malformed object $line" if( $line !~ /^([u]*)int(8|16|32|64) ([a-zA-Z0-9_]*)\s*${\VR_REGEXP}/ );
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_BOOL}/ );
 
-    #my @tokens = split( " ", $line );
+    my $res = new Boolean();
 
-    #print STDERR "DEBUG: " . join(", ", @tokens) . "\n";
+    return $res;
+}
+
+sub to_Integer($)
+{
+    my ( $line ) = @_;
+
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_INT}/ );
 
     my $u = $1;
     my $bits = $2;
-    my $name = $3;
-    my $valid = $4;
 
-    print STDERR "DEBUG: parse_int: u=$u bits=$bits name=$name valid='$valid'\n";
+    print STDERR "DEBUG: to_Integer: u=$u bits=$bits\n";
 
     my $is_unsigned = ( defined $u and $u eq 'u' ) ? 1 : 0;
     $bits = $bits + 0;
+
+    my $res = new Integer( $is_unsigned, $bits );
+
+    return $res;
+}
+
+sub to_Float($)
+{
+    my ( $line ) = @_;
+
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_FLOAT}/ );
+
+    my $res = new Float( 0 );
+
+    return $res;
+}
+
+sub to_Double($)
+{
+    my ( $line ) = @_;
+
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_DOUBLE}/ );
+
+    my $res = new Float( 1 );
+
+    return $res;
+}
+
+sub to_String($)
+{
+    my ( $line ) = @_;
+
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_STR}/ );
+
+    my $res = new String();
+
+    return $res;
+}
+
+###############################################
+
+sub to_pod($)
+{
+    my ( $line ) = @_;
+
+    if( $line =~ /^${\REGEXP_BOOL}/ )
+    {
+        return to_Boolean( $line );
+    }
+    elsif( $line =~ /^${\REGEXP_INT}/ )
+    {
+        return to_Integer( $line );
+    }
+    elsif( $line =~ /^${\REGEXP_FLOAT}/ )
+    {
+        return to_Float( $line );
+    }
+    elsif( $line =~ /^${\REGEXP_DOUBLE}/ )
+    {
+        return to_Double( $line );
+    }
+    elsif( $line =~ /^${\REGEXP_STR}/ )
+    {
+        return to_String( $line );
+    }
+
+    die "to_pod: unknown data type '$line'\n";
+}
+
+###############################################
+
+sub is_string($)
+{
+    my ( $line ) = @_;
+
+    return 1 if ( $line =~ /^${\REGEXP_STR}/ );
+
+    return 0;
+}
+
+###############################################
+
+sub parse_pod($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_pod: malformed object $line" if( $line !~ /^${\REGEXP_POD}\s*([a-zA-Z0-9_]*)\s*${\REGEXP_VR}/ );
+
+    my $dt_str  = $1;
+    my $name    = $4;
+    my $valid   = $5;
+
+    print STDERR "DEBUG: parse_pod: dt_str=$dt_str name=$name valid='$valid'\n";
+
+    my $dt = to_pod( $dt_str );
 
     my $valid_range = undef;
 
@@ -153,7 +250,9 @@ sub parse_int($$)
         $valid_range = to_ValidRange( $valid );
     }
 
-    $$parent_ref->add_member( new ElementExt( new Integer( $is_unsigned, $bits ), $name, $valid_range, 0 ) );
+    my $is_array = is_string( $dt_str );
+
+    $$parent_ref->add_member( new ElementExt( $dt, $name, $valid_range, $is_array ) );
 }
 
 ###############################################
@@ -182,10 +281,14 @@ sub parse_obj($$$$$)
             $$file_ref->add_obj( $obj );
             return;
         }
-        elsif ( is_int( $line ) )
+        elsif ( $line =~ /^${\REGEXP_POD} / )
         {
-            print STDERR "DEBUG: int\n";
-            parse_int( \$obj, $line );
+            print STDERR "DEBUG: pod\n";
+            parse_pod( \$obj, $line );
+        }
+        else
+        {
+            die( "parse_obj: cannot parse line '$line'" );
         }
     }
 
