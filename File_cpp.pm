@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12449 $ $Date:: 2019-12-09 #$ $Author: serge $
+# $Revision: 12501 $ $Date:: 2019-12-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require File;
@@ -85,11 +85,13 @@ sub to_cpp_decl
     # protocol object
     $body = $body . $self->{prot_object}->to_cpp_decl() . "\n";
 
+    my @consts    = @{ $self->{consts} };       # consts
     my @enums     = @{ $self->{enums} };        # enums
     my @objs      = @{ $self->{objs} };         # objects
     my @base_msgs = @{ $self->{base_msgs} };    # base messages
     my @msgs      = @{ $self->{msgs} };         # messages
 
+    $body = $body . gtcpp::array_to_decl( \@consts );
     $body = $body . gtcpp::array_to_decl( \@enums );
     $body = $body . gtcpp::array_to_decl( \@objs );
     $body = $body . gtcpp::array_to_decl( \@base_msgs );

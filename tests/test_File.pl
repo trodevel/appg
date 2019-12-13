@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Revision: 12436 $ $Date:: 2019-12-07 #$ $Author: serge $
+# $Revision: 12501 $ $Date:: 2019-12-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 my $VER="1.0";
@@ -18,6 +18,15 @@ $file->set_base_prot( "communication" );
 $file->add_include( "../generic" );
 $file->add_include( "communication" );
 
+
+{
+    my $obj = new ConstElement( new Integer( 1, 16 ), "HTTP_PORT", 80 );
+    $file->add_const( $obj );
+}
+{
+    my $obj = new ConstElement( new Float( 1 ), "PI", 3.141592 );
+    $file->add_const( $obj );
+}
 {
     my $obj = new Object( "SomeObject" );
     $obj->add_member( new ElementExt( new Integer( 0, 8 ), "pass_range", new ValidRange( 1, 1, 1, 1, 100, 1 ), 0 ) );

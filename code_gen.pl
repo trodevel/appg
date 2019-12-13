@@ -92,10 +92,12 @@ use constant REGEXP_DOUBLE => 'double';
 use constant REGEXP_STR    => 'string';
 use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}|${\REGEXP_STR}";
 use constant REGEXP_VR     => ':\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])';
-use constant REGEXP_DT_OBJ    => 'o';
-use constant REGEXP_DT_ENUM   => 'e';
+use constant REGEXP_DT_OBJ    => "o ${\REGEXP_ID_NAME}";
+use constant REGEXP_DT_ENUM   => "e ${\REGEXP_ID_NAME}";
 use constant REGEXP_DT_ARRAY  => 'a';
 use constant REGEXP_DT_MAP    => 'm';
+use constant REGEXP_DT_USER_DEF     => "${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}";
+use constant REGEXP_DT     => "${\REGEXP_POD}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}|${\REGEXP_DT_ARRAY}|${\REGEXP_DT_MAP}";
 
 ###############################################
 
@@ -191,9 +193,25 @@ sub to_String($)
     return $res;
 }
 
+sub to_user_defined_dt($)
+{
+    my ( $line ) = @_;
+
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_DT_USER_DEF}/ );
+
+    my @elem = split( ' ', $line );
+
+    my $pref = $elem[0];
+    my $name = $elem[1];
+
+    my $res = ( $pref eq 'o' ) ? new UserDefined( $name ) : new UserDefinedEnum( $name );
+
+    return $res;
+}
+
 ###############################################
 
-sub to_pod($)
+sub to_data_type($)
 {
     my ( $line ) = @_;
 
@@ -217,8 +235,12 @@ sub to_pod($)
     {
         return to_String( $line );
     }
+    elsif( $line =~ /^${\REGEXP_DT_USER_DEF}/ )
+    {
+        return to_user_defined_dt( $line );
+    }
 
-    die "to_pod: unknown data type '$line'\n";
+    die "to_data_type: unknown data type '$line'\n";
 }
 
 ###############################################
@@ -246,7 +268,7 @@ sub parse_pod($$)
 
     print STDERR "DEBUG: parse_pod: dt_str=$dt_str name=$name valid='$valid'\n";
 
-    my $dt = to_pod( $dt_str );
+    my $dt = to_data_type( $dt_str );
 
     my $valid_range = undef;
 
@@ -262,36 +284,18 @@ sub parse_pod($$)
 
 ###############################################
 
-sub parse_obj_obj($$)
+sub parse_user_defined($$)
 {
     my ( $parent_ref, $line ) = @_;
 
-    die "parse_obj_obj: malformed object $line" if( $line !~ /^${\REGEXP_DT_OBJ}\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_ID_NAME})/ );
+    die "parse_pod: malformed object $line" if( $line !~ /^(${\REGEXP_DT_USER_DEF})\s*(${\REGEXP_ID_NAME})/ );
 
     my $dt_str  = $1;
     my $name    = $2;
 
-    print STDERR "DEBUG: parse_obj_obj: dt_str=$dt_str name=$name\n";
+    print STDERR "DEBUG: parse_user_defined: dt_str=$dt_str name=$name\n";
 
-    my $dt = new UserDefined( $dt_str );
-
-    $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
-}
-
-###############################################
-
-sub parse_obj_enum($$)
-{
-    my ( $parent_ref, $line ) = @_;
-
-    die "parse_obj_enum: malformed object $line" if( $line !~ /^${\REGEXP_DT_ENUM}\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_ID_NAME})/ );
-
-    my $dt_str  = $1;
-    my $name    = $2;
-
-    print STDERR "DEBUG: parse_obj_enum: dt_str=$dt_str name=$name\n";
-
-    my $dt = new UserDefinedEnum( $dt_str );
+    my $dt = to_data_type( $dt_str );
 
     $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
 }
@@ -327,15 +331,10 @@ sub parse_obj($$$$$)
             print STDERR "DEBUG: pod\n";
             parse_pod( \$obj, $line );
         }
-        elsif ( $line =~ /^${\REGEXP_DT_OBJ} / )
+        elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
         {
-            print STDERR "DEBUG: obj\n";
-            parse_obj_obj( \$obj, $line );
-        }
-        elsif ( $line =~ /^${\REGEXP_DT_ENUM} / )
-        {
-            print STDERR "DEBUG: enum\n";
-            parse_obj_enum( \$obj, $line );
+            print STDERR "DEBUG: user_defined\n";
+            parse_user_defined( \$obj, $line );
         }
         else
         {

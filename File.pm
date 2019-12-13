@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12448 $ $Date:: 2019-12-09 #$ $Author: serge $
+# $Revision: 12501 $ $Date:: 2019-12-13 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -41,6 +41,7 @@ sub new
         base_prot   => undef, # base protocol
         prot_object => Object->new( "Object", "apg::Object" ), # protocol base object
         includes  => [],    # includes
+        consts    => [],    # constants
         enums     => [],    # enums
         objs      => [],    # objects
         base_msgs => [],    # base messages
@@ -74,6 +75,15 @@ sub add_include
     my ( $self, $elem ) = @_;
 
     push @{ $self->{includes} }, $elem;
+}
+
+sub add_const($)
+{
+    my ( $self, $elem ) = @_;
+
+    #$elem->set_protocol( $self->{name} );
+
+    push @{ $self->{consts} }, $elem;
 }
 
 sub add_enum
