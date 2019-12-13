@@ -84,13 +84,18 @@ sub read_config_file($$$)
 
 ###############################################
 
-use constant REGEXP_POD    => '(bool|([u]*)int(8|16|32|64)|float|double|string)';
+use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]*';
 use constant REGEXP_BOOL   => 'bool';
 use constant REGEXP_INT    => '([u]*)int(8|16|32|64)';
 use constant REGEXP_FLOAT  => 'float';
 use constant REGEXP_DOUBLE => 'double';
 use constant REGEXP_STR    => 'string';
-use constant REGEXP_VR => '(:\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])|)';
+use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}|${\REGEXP_STR}";
+use constant REGEXP_VR     => ':\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])';
+use constant REGEXP_DT_OBJ    => 'o';
+use constant REGEXP_DT_ENUM   => 'e';
+use constant REGEXP_DT_ARRAY  => 'a';
+use constant REGEXP_DT_MAP    => 'm';
 
 ###############################################
 
@@ -98,7 +103,7 @@ sub to_ValidRange($)
 {
     my ( $line ) = @_;
 
-    die "malformed valid range '$line'" if( $line !~ /${\REGEXP_VR}/ );
+    die "malformed valid range '$line'" if( $line !~ /(${\REGEXP_VR}|)/ );
 
     my $open_bracket  = $2;
     my $from          = $3;
@@ -233,7 +238,7 @@ sub parse_pod($$)
 {
     my ( $parent_ref, $line ) = @_;
 
-    die "parse_pod: malformed object $line" if( $line !~ /^${\REGEXP_POD}\s*([a-zA-Z0-9_]*)\s*${\REGEXP_VR}/ );
+    die "parse_pod: malformed object $line" if( $line !~ /^(${\REGEXP_POD})\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
 
     my $dt_str  = $1;
     my $name    = $4;
@@ -253,6 +258,42 @@ sub parse_pod($$)
     my $is_array = is_string( $dt_str );
 
     $$parent_ref->add_member( new ElementExt( $dt, $name, $valid_range, $is_array ) );
+}
+
+###############################################
+
+sub parse_obj_obj($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_obj_obj: malformed object $line" if( $line !~ /^${\REGEXP_DT_OBJ}\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_ID_NAME})/ );
+
+    my $dt_str  = $1;
+    my $name    = $2;
+
+    print STDERR "DEBUG: parse_obj_obj: dt_str=$dt_str name=$name\n";
+
+    my $dt = new UserDefined( $dt_str );
+
+    $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
+}
+
+###############################################
+
+sub parse_obj_enum($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_obj_enum: malformed object $line" if( $line !~ /^${\REGEXP_DT_ENUM}\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_ID_NAME})/ );
+
+    my $dt_str  = $1;
+    my $name    = $2;
+
+    print STDERR "DEBUG: parse_obj_enum: dt_str=$dt_str name=$name\n";
+
+    my $dt = new UserDefinedEnum( $dt_str );
+
+    $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
 }
 
 ###############################################
@@ -286,6 +327,16 @@ sub parse_obj($$$$$)
             print STDERR "DEBUG: pod\n";
             parse_pod( \$obj, $line );
         }
+        elsif ( $line =~ /^${\REGEXP_DT_OBJ} / )
+        {
+            print STDERR "DEBUG: obj\n";
+            parse_obj_obj( \$obj, $line );
+        }
+        elsif ( $line =~ /^${\REGEXP_DT_ENUM} / )
+        {
+            print STDERR "DEBUG: enum\n";
+            parse_obj_enum( \$obj, $line );
+        }
         else
         {
             die( "parse_obj: cannot parse line '$line'" );
@@ -309,12 +360,12 @@ sub parse($$)
 
         #print STDERR "DEBUG: i=$i, line=$line\n";
 
-        if ( $line =~ /protocol ([a-zA-Z0-9_]*)/ )
+        if ( $line =~ /protocol (${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: protocol $1\n";
             $$file_ref->set_name( $1 );
         }
-        elsif ( $line =~ /base ([a-zA-Z0-9_]*)/ )
+        elsif ( $line =~ /base (${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: base protocol $1\n";
             $$file_ref->set_base_prot( $1 );
@@ -324,7 +375,7 @@ sub parse($$)
             print STDERR "DEBUG: include '$1'\n";
             $$file_ref->add_include( $1 );
         }
-        elsif ( $line =~ /obj ([a-zA-Z0-9_]*)/ )
+        elsif ( $line =~ /obj (${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: obj $1\n";
 
