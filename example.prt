@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12488 $ $Date:: 2019-12-11 #$ $Author: serge $
+# $Revision: 12495 $ $Date:: 2019-12-12 #$ $Author: serge $
 
 ############################################################
 
@@ -59,6 +59,26 @@ obj SomeObject
     string id : (1,)
 
     string product_description : [0,256)
+
+obj_end
+
+############################################################
+
+obj EmptyObject
+
+obj_end
+
+############################################################
+
+obj AnotherObject
+
+    int16 id
+
+    o SomeObject dummy
+
+    o EmptyObject empty
+
+    e Color       color
 
 obj_end
 
