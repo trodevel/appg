@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5119 $ $Date:: 2016-12-01 #$ $Author: serge $
+# $Revision: 12506 $ $Date:: 2019-12-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -98,9 +98,12 @@ sub to_cpp_decl
 {
     my( $self ) = @_;
 
+    my $optional_dt = ( defined $self->{data_type} ) ?
+        " : " . $self->{data_type}->to_cpp_decl() : "";
+
     my $res =
 "// Enum\n" .
-"enum class " . $self->{name} ." : " . $self->{data_type}->to_cpp_decl() . "\n";
+"enum class " . $self->{name} . $optional_dt . "\n";
 
     my $body = gtcpp::array_to_decl( $self->{elements} );
 

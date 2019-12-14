@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12495 $ $Date:: 2019-12-12 #$ $Author: serge $
+# $Revision: 12511 $ $Date:: 2019-12-13 #$ $Author: serge $
 
 ############################################################
 
@@ -29,6 +29,43 @@ base generic_base
 include "../basic_stuff"
 
 include "communication"
+
+############################################################
+
+const uint32 HTTP_PORT = 80
+
+const double PI = 3.141592
+
+############################################################
+
+enum Color
+
+    RED
+    GREEN
+    BLUE
+
+enum_end
+
+############################################################
+
+enum ConnectionState
+
+    UNDEF        = 0
+    DISCONNECTED = 1
+    CONNECTING   = 2
+    CONNECTED    = 3
+
+enum_end
+
+############################################################
+
+enum Gender : uint8
+
+    UNDEF        = 0
+    MALE         = 1
+    FEMALE       = 2
+
+enum_end
 
 ############################################################
 

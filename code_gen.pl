@@ -84,7 +84,14 @@ sub read_config_file($$$)
 
 ###############################################
 
+use constant KW_CONST       => 'const';
+use constant KW_ENUM        => 'enum';
+use constant KW_ENUM_END    => 'enum_end';
+
 use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]*';
+use constant REGEXP_INT_NUM   => '[0-9]+';
+use constant REGEXP_FLOAT_NUM => '[0-9\.]+';
+use constant REGEXP_NUMBER => "${\REGEXP_INT_NUM}|${\REGEXP_FLOAT_NUM}";
 use constant REGEXP_BOOL   => 'bool';
 use constant REGEXP_INT    => '([u]*)int(8|16|32|64)';
 use constant REGEXP_FLOAT  => 'float';
@@ -302,6 +309,91 @@ sub parse_user_defined($$)
 
 ###############################################
 
+sub parse_const($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "parse_const: malformed $line" if( $line !~ /${\KW_CONST}\s*(${\REGEXP_POD})\s*(${\REGEXP_ID_NAME})\s*=\s*(${\REGEXP_NUMBER})/ );
+
+    my $dt_str = $1;
+    my $name   = $4;
+    my $val    = $5;
+
+    print STDERR "DEBUG: parse_const: dt_str=$dt_str name=$name val=$val\n";
+
+    my $dt = to_data_type( $dt_str );
+
+    my $obj = new ConstElement( $dt, $name, $val );
+
+    $$file_ref->add_const( $obj );
+}
+
+###############################################
+
+sub parse_enum_member($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_enum_member: malformed object $line" if( $line !~ /^(${\REGEXP_ID_NAME})\s*(=\s*(${\REGEXP_VR}|${\REGEXP_INT_NUM})|)/ );
+
+    my $name    = $1;
+    my $init    = $2;
+    my $val     = $3;
+
+    my $has_val = ( defined $val and $val ne '' ) ? 1 : 0;
+
+    print STDERR "DEBUG: parse_enum_member: name=$name has_val='$has_val'\n";
+
+    my $res = $has_val ? new EnumElement( $name, $val ) : new EnumElement( $name, undef );
+
+    $$parent_ref->add_element( $res );
+}
+
+###############################################
+
+sub parse_enum($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "parse_enum: malformed $line" if( $line !~ /${\KW_ENUM}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_INT})|)/ );
+
+    $$i_ref++;
+
+    my $name   = $1;
+    my $dt_str = $3;
+
+    my $dt = ( defined $dt_str and $dt_str ne '' ) ? to_data_type( $dt_str ) : undef;
+
+    my $obj = new Enum( $name, $dt );
+
+    for( ; $$i_ref < $size; $$i_ref++ )
+    {
+        #print STDERR "DEBUG: i=$$i_ref size=$size\n";
+
+        my $line = @$array_ref[$$i_ref];
+
+        if ( $line =~ /^${\KW_ENUM_END}/ )
+        {
+            print STDERR "DEBUG: enum_end\n";
+            $$file_ref->add_enum( $obj );
+            return;
+        }
+        elsif ( $line =~ /^${\REGEXP_ID_NAME}/ )
+        {
+            print STDERR "DEBUG: enum_member\n";
+            parse_enum_member( \$obj, $line );
+        }
+        else
+        {
+            die( "parse_enum: cannot parse line '$line'" );
+        }
+    }
+
+    die( "incomplete enum $name\n" );
+}
+
+###############################################
+
 sub parse_obj($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
@@ -374,6 +466,18 @@ sub parse($$)
             print STDERR "DEBUG: include '$1'\n";
             $$file_ref->add_include( $1 );
         }
+        elsif ( $line =~ /${\KW_CONST} / )
+        {
+            print STDERR "DEBUG: const\n";
+
+            parse_const( $array_ref, $file_ref, $size, \$i, $line );
+        }
+        elsif ( $line =~ /${\KW_ENUM} (${\REGEXP_ID_NAME})/ )
+        {
+            print STDERR "DEBUG: enum $1\n";
+
+            parse_enum( $array_ref, $file_ref, $size, \$i, $line );
+        }
         elsif ( $line =~ /obj (${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: obj $1\n";
@@ -382,8 +486,7 @@ sub parse($$)
         }
         else
         {
-            print STDERR "DEBUG: unknown line $line\n";
-            next;
+            die "FATAL: unknown line $line\n";
         }
     }
 
