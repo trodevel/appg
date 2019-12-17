@@ -87,8 +87,13 @@ sub read_config_file($$$)
 use constant KW_CONST       => 'const';
 use constant KW_ENUM        => 'enum';
 use constant KW_ENUM_END    => 'enum_end';
+use constant KW_BASE_MSG    => 'base_msg';
+use constant KW_BASE_MSG_END    => 'base_msg_end';
+use constant KW_MSG         => 'msg';
+use constant KW_MSG_END     => 'msg_end';
 
-use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]*';
+use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]+';
+use constant REGEXP_ID_NAME_W_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
 use constant REGEXP_INT_NUM   => '[0-9]+';
 use constant REGEXP_FLOAT_NUM => '[0-9\.]+';
 use constant REGEXP_NUMBER => "${\REGEXP_INT_NUM}|${\REGEXP_FLOAT_NUM}";
@@ -439,6 +444,100 @@ sub parse_obj($$$$$)
 
 ###############################################
 
+sub parse_base_msg($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "malformed object $line" if( $line !~ /${\KW_BASE_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_BASE_CLASS})|)/ );
+
+    $$i_ref++;
+
+    my $name            = $1;
+    my $opt_base_name   = $3;
+
+    my $obj = new BaseMessage( $name, $opt_base_name );
+
+    for( ; $$i_ref < $size; $$i_ref++ )
+    {
+        #print STDERR "DEBUG: i=$$i_ref size=$size\n";
+
+        my $line = @$array_ref[$$i_ref];
+
+        if ( $line =~ /^${\KW_BASE_MSG_END}/ )
+        {
+            print STDERR "DEBUG: base_msg_end\n";
+            $$file_ref->add_base_msg( $obj );
+            return;
+        }
+        elsif ( $line =~ /^${\REGEXP_POD} / )
+        {
+            print STDERR "DEBUG: pod\n";
+            parse_pod( \$obj, $line );
+        }
+        elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
+        {
+            print STDERR "DEBUG: user_defined\n";
+            parse_user_defined( \$obj, $line );
+        }
+        else
+        {
+            die( "parse_base_msg: cannot parse line '$line'" );
+        }
+    }
+
+    die( "incomplete object $name\n" );
+}
+
+###############################################
+
+sub parse_msg($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "malformed object $line" if( $line !~ /${\KW_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_BASE_CLASS})|)/ );
+
+    $$i_ref++;
+
+    my $name            = $1;
+    my $opt_base_name   = $3;
+
+    print STDERR "DEBUG: parse_msg: name=$name opt_base_name=" . ((defined $opt_base_name) ? $opt_base_name : "<undef>" )  ."\n";
+
+    my $obj = new Message( $name, $opt_base_name );
+
+    for( ; $$i_ref < $size; $$i_ref++ )
+    {
+        #print STDERR "DEBUG: i=$$i_ref size=$size\n";
+
+        my $line = @$array_ref[$$i_ref];
+
+        if ( $line =~ /^${\KW_MSG_END}/ )
+        {
+            print STDERR "DEBUG: msg_end\n";
+            $$file_ref->add_msg( $obj );
+            return;
+        }
+        elsif ( $line =~ /^${\REGEXP_POD} / )
+        {
+            print STDERR "DEBUG: pod\n";
+            parse_pod( \$obj, $line );
+        }
+        elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
+        {
+            print STDERR "DEBUG: user_defined\n";
+            parse_user_defined( \$obj, $line );
+        }
+        else
+        {
+            die( "parse_msg: cannot parse line '$line'" );
+        }
+    }
+
+    die( "incomplete object $name\n" );
+}
+
+###############################################
+
 sub parse($$)
 {
     my ( $array_ref, $file_ref ) = @_;
@@ -483,6 +582,18 @@ sub parse($$)
             print STDERR "DEBUG: obj $1\n";
 
             parse_obj( $array_ref, $file_ref, $size, \$i, $line );
+        }
+        elsif ( $line =~ /${\KW_BASE_MSG} (${\REGEXP_ID_NAME})/ )
+        {
+            print STDERR "DEBUG: base_msg $1\n";
+
+            parse_base_msg( $array_ref, $file_ref, $size, \$i, $line );
+        }
+        elsif ( $line =~ /${\KW_MSG} (${\REGEXP_ID_NAME})/ )
+        {
+            print STDERR "DEBUG: msg $1\n";
+
+            parse_msg( $array_ref, $file_ref, $size, \$i, $line );
         }
         else
         {
