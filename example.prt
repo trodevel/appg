@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12511 $ $Date:: 2019-12-13 #$ $Author: serge $
+# $Revision: 12524 $ $Date:: 2019-12-17 #$ $Author: serge $
 
 ############################################################
 
@@ -120,3 +120,40 @@ obj AnotherObject
 obj_end
 
 ############################################################
+
+base_msg GenericRequest
+
+    uint32      user_id : [1, 32768)
+
+base_msg_end
+
+############################################################
+
+base_msg DerivedRequest : base::GenericRequest
+
+    e Color     color
+
+base_msg_end
+
+############################################################
+
+msg DummyRequest
+
+msg_end
+
+############################################################
+
+msg Request1 : base::Request
+
+msg_end
+
+############################################################
+
+msg Request2 : base::Request
+
+    uint8 pass_range : [1, 100]
+
+msg_end
+
+############################################################
+
