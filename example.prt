@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12524 $ $Date:: 2019-12-17 #$ $Author: serge $
+# $Revision: 12527 $ $Date:: 2019-12-18 #$ $Author: serge $
 
 ############################################################
 
@@ -116,6 +116,8 @@ obj AnotherObject
     o EmptyObject empty
 
     e Color       color
+
+    #a uint8 missing_objects
 
 obj_end
 
