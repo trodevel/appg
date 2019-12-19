@@ -91,6 +91,7 @@ use constant KW_BASE_MSG    => 'base_msg';
 use constant KW_BASE_MSG_END    => 'base_msg_end';
 use constant KW_MSG         => 'msg';
 use constant KW_MSG_END     => 'msg_end';
+use constant KW_O           => 'o';
 
 use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]+';
 use constant REGEXP_ID_NAME_W_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
@@ -102,14 +103,16 @@ use constant REGEXP_INT    => '([u]*)int(8|16|32|64)';
 use constant REGEXP_FLOAT  => 'float';
 use constant REGEXP_DOUBLE => 'double';
 use constant REGEXP_STR    => 'string';
-use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}|${\REGEXP_STR}";
+use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}";
+use constant REGEXP_PODS   => "${\REGEXP_POD}|${\REGEXP_STR}";
 use constant REGEXP_VR     => ':\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])';
 use constant REGEXP_DT_OBJ    => "o ${\REGEXP_ID_NAME}";
 use constant REGEXP_DT_ENUM   => "e ${\REGEXP_ID_NAME}";
-use constant REGEXP_DT_ARRAY  => 'a';
-use constant REGEXP_DT_MAP    => 'm';
 use constant REGEXP_DT_USER_DEF     => "${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}";
-use constant REGEXP_DT     => "${\REGEXP_POD}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}|${\REGEXP_DT_ARRAY}|${\REGEXP_DT_MAP}";
+use constant REGEXP_DT_SCALARS => "${\REGEXP_PODS}|${\REGEXP_DT_ENUM}";
+use constant REGEXP_DT_ARRAY  => 'a (${\REGEXP_DT_SCALARS})';
+use constant REGEXP_DT_MAP    => 'm';
+use constant REGEXP_DT     => "${\REGEXP_PODS}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}|${\REGEXP_DT_ARRAY}|${\REGEXP_DT_MAP}";
 
 ###############################################
 
@@ -216,7 +219,7 @@ sub to_user_defined_dt($)
     my $pref = $elem[0];
     my $name = $elem[1];
 
-    my $res = ( $pref eq 'o' ) ? new UserDefined( $name ) : new UserDefinedEnum( $name );
+    my $res = ( $pref eq "${\KW_O}" ) ? new UserDefined( $name ) : new UserDefinedEnum( $name );
 
     return $res;
 }
@@ -268,17 +271,17 @@ sub is_string($)
 
 ###############################################
 
-sub parse_pod($$)
+sub parse_pods($$)
 {
     my ( $parent_ref, $line ) = @_;
 
-    die "parse_pod: malformed object $line" if( $line !~ /^(${\REGEXP_POD})\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
+    die "parse_pods: malformed object $line" if( $line !~ /^(${\REGEXP_PODS})\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
 
     my $dt_str  = $1;
     my $name    = $4;
     my $valid   = $5;
 
-    print STDERR "DEBUG: parse_pod: dt_str=$dt_str name=$name valid='$valid'\n";
+    print STDERR "DEBUG: parse_pods: dt_str=$dt_str name=$name valid='$valid'\n";
 
     my $dt = to_data_type( $dt_str );
 
@@ -300,7 +303,7 @@ sub parse_user_defined($$)
 {
     my ( $parent_ref, $line ) = @_;
 
-    die "parse_pod: malformed object $line" if( $line !~ /^(${\REGEXP_DT_USER_DEF})\s*(${\REGEXP_ID_NAME})/ );
+    die "parse_user_defined: malformed object $line" if( $line !~ /^(${\REGEXP_DT_USER_DEF})\s*(${\REGEXP_ID_NAME})/ );
 
     my $dt_str  = $1;
     my $name    = $2;
@@ -314,11 +317,29 @@ sub parse_user_defined($$)
 
 ###############################################
 
+sub parse_array($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_array: malformed object $line" if( $line !~ /^(${\REGEXP_DT_ARRAY})\s*(${\REGEXP_ID_NAME})/ );
+
+    my $dt_str  = $2;
+    my $name    = $3;
+
+    print STDERR "DEBUG: parse_array: dt_str=$dt_str name=$name\n";
+
+    my $dt = to_data_type( $dt_str );
+
+    $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
+}
+
+###############################################
+
 sub parse_const($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "parse_const: malformed $line" if( $line !~ /${\KW_CONST}\s*(${\REGEXP_POD})\s*(${\REGEXP_ID_NAME})\s*=\s*(${\REGEXP_NUMBER})/ );
+    die "parse_const: malformed $line" if( $line !~ /${\KW_CONST}\s*(${\REGEXP_PODS})\s*(${\REGEXP_ID_NAME})\s*=\s*(${\REGEXP_NUMBER})/ );
 
     my $dt_str = $1;
     my $name   = $4;
@@ -423,10 +444,10 @@ sub parse_obj($$$$$)
             $$file_ref->add_obj( $obj );
             return;
         }
-        elsif ( $line =~ /^${\REGEXP_POD} / )
+        elsif ( $line =~ /^${\REGEXP_PODS} / )
         {
             print STDERR "DEBUG: pod\n";
-            parse_pod( \$obj, $line );
+            parse_pods( \$obj, $line );
         }
         elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
         {
@@ -469,10 +490,10 @@ sub parse_base_msg($$$$$)
             $$file_ref->add_base_msg( $obj );
             return;
         }
-        elsif ( $line =~ /^${\REGEXP_POD} / )
+        elsif ( $line =~ /^${\REGEXP_PODS} / )
         {
             print STDERR "DEBUG: pod\n";
-            parse_pod( \$obj, $line );
+            parse_pods( \$obj, $line );
         }
         elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
         {
@@ -517,10 +538,10 @@ sub parse_msg($$$$$)
             $$file_ref->add_msg( $obj );
             return;
         }
-        elsif ( $line =~ /^${\REGEXP_POD} / )
+        elsif ( $line =~ /^${\REGEXP_PODS} / )
         {
             print STDERR "DEBUG: pod\n";
-            parse_pod( \$obj, $line );
+            parse_pods( \$obj, $line );
         }
         elsif ( $line =~ /^${\REGEXP_DT_USER_DEF} / )
         {
