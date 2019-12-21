@@ -42,6 +42,7 @@ use constant KW_BASE_MSG_END    => 'base_msg_end';
 use constant KW_MSG         => 'msg';
 use constant KW_MSG_END     => 'msg_end';
 use constant KW_O           => 'o';
+use constant KW_ARRAY       => 'array';
 
 use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]+';
 use constant REGEXP_ID_NAME_W_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
@@ -49,20 +50,20 @@ use constant REGEXP_INT_NUM   => '[0-9]+';
 use constant REGEXP_FLOAT_NUM => '[0-9\.]+';
 use constant REGEXP_NUMBER => "${\REGEXP_INT_NUM}|${\REGEXP_FLOAT_NUM}";
 use constant REGEXP_BOOL   => 'bool';
-use constant REGEXP_INT    => '([u]*)int(8|16|32|64)';
+use constant REGEXP_DT_INT => 'int8|int16|int32|int64|uint8|uint16|uint32|uint64';
+use constant REGEXP_DT_INT_GROUPED       => '([u]*)int(8|16|32|64)';
 use constant REGEXP_FLOAT  => 'float';
 use constant REGEXP_DOUBLE => 'double';
 use constant REGEXP_STR    => 'string';
-use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}";
+use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_DT_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}";
 use constant REGEXP_VR     => ':\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])';
 use constant REGEXP_DT_OBJ    => "o ${\REGEXP_ID_NAME}";
 use constant REGEXP_DT_ENUM   => "e ${\REGEXP_ID_NAME}";
 use constant REGEXP_DT_USER_DEF     => "${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}";
-#use constant REGEXP_DT_SCALARS => "${\REGEXP_PODS}|${\REGEXP_DT_ENUM}";
-use constant REGEXP_DT_ARRAY  => 'a (${\REGEXP_DT_SCALARS})';
 use constant REGEXP_DT_MAP    => 'm';
 #use constant REGEXP_DT     => "${\REGEXP_PODS}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}|${\REGEXP_DT_ARRAY}|${\REGEXP_DT_MAP}";
 use constant REGEXP_DT     => "${\REGEXP_POD}|${\REGEXP_STR}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}";
+use constant REGEXP_DT_ARRAY  => 'a (${\REGEXP_DT})';
 
 ###############################################
 
@@ -110,7 +111,7 @@ sub to_Integer($)
 {
     my ( $line ) = @_;
 
-    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_INT}/ );
+    die "malformed data type '$line'" if( $line !~ /^${\REGEXP_DT_INT_GROUPED}/ );
 
     my $u = $1;
     my $bits = $2;
@@ -184,7 +185,7 @@ sub to_data_type($)
     {
         return to_Boolean( $line );
     }
-    elsif( $line =~ /^${\REGEXP_INT}/ )
+    elsif( $line =~ /^${\REGEXP_DT_INT}/ )
     {
         return to_Integer( $line );
     }
@@ -210,17 +211,6 @@ sub to_data_type($)
 
 ###############################################
 
-sub is_string($)
-{
-    my ( $line ) = @_;
-
-    return 1 if ( $line =~ /^${\REGEXP_STR}/ );
-
-    return 0;
-}
-
-###############################################
-
 sub parse_pod($$)
 {
     my ( $parent_ref, $line ) = @_;
@@ -228,10 +218,10 @@ sub parse_pod($$)
     die "parse_pod: malformed object $line" if( $line !~ /^(${\REGEXP_POD})\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
 
     my $dt_str  = $1;
-    my $name    = $4;
-    my $valid   = $5;
+    my $name    = $2;
+    my $valid   = $3;
 
-    print STDERR "DEBUG: parse_pod: dt_str=$dt_str name=$name valid='$valid'\n";
+    print STDERR "DEBUG: parse_pod: dt_str=$dt_str name=$name valid='" . ( defined $valid ? $valid : "<undef>" ) . "'\n";
 
     my $dt = to_data_type( $dt_str );
 
@@ -317,16 +307,26 @@ sub parse_array($$)
 {
     my ( $parent_ref, $line ) = @_;
 
-    die "parse_array: malformed object $line" if( $line !~ /^(${\REGEXP_DT_ARRAY})\s*(${\REGEXP_ID_NAME})/ );
+    die "parse_array: malformed object $line" if( $line !~ /^array\s*\<\s*(${\REGEXP_DT})\s*\>\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
 
-    my $dt_str  = $2;
-    my $name    = $3;
+    my $dt_str  = $1;
+    my $name    = $2;
+    my $valid   = $3;
 
-    print STDERR "DEBUG: parse_array: dt_str=$dt_str name=$name\n";
+    print STDERR "DEBUG: parse_array: dt_str=$dt_str name=$name valid='" . ( defined $valid ? $valid : "<undef>" ) . "'\n";
 
     my $dt = to_data_type( $dt_str );
 
-    $$parent_ref->add_member( new ElementExt( $dt, $name, undef, 0 ) );
+    my $dt_container = new Vector( $dt );
+
+    my $valid_range = undef;
+
+    if( defined $valid and $valid ne '' )
+    {
+        $valid_range = to_ValidRange( $valid );
+    }
+
+    $$parent_ref->add_member( new ElementExt( $dt_container, $name, $valid_range, 1 ) );
 }
 
 ###############################################
@@ -338,8 +338,8 @@ sub parse_const($$$$$)
     die "parse_const: malformed $line" if( $line !~ /${\KW_CONST}\s*(${\REGEXP_POD}|${\REGEXP_STR})\s*(${\REGEXP_ID_NAME})\s*=\s*(${\REGEXP_NUMBER})/ );
 
     my $dt_str = $1;
-    my $name   = $4;
-    my $val    = $5;
+    my $name   = $2;
+    my $val    = $3;
 
     print STDERR "DEBUG: parse_const: dt_str=$dt_str name=$name val=$val\n";
 
@@ -377,7 +377,7 @@ sub parse_enum($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "parse_enum: malformed $line" if( $line !~ /${\KW_ENUM}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_INT})|)/ );
+    die "parse_enum: malformed $line" if( $line !~ /${\KW_ENUM}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_DT_INT})|)/ );
 
     $$i_ref++;
 
@@ -434,16 +434,23 @@ sub parse_obj($$$$$)
 
         my $line = @$array_ref[$$i_ref];
 
+        #print STDERR "DEBUG: parse_obj: line=$line\n";
+
         if ( $line =~ /^obj_end/ )
         {
             print STDERR "DEBUG: obj_end\n";
             $$file_ref->add_obj( $obj );
             return;
         }
-        elsif ( $line =~ /^${\REGEXP_DT} / )
+        elsif ( $line =~ /^(${\REGEXP_DT}) / )
         {
             print STDERR "DEBUG: dt\n";
             parse_data_type( \$obj, $line );
+        }
+        elsif ( $line =~ /^(${\KW_ARRAY}) / )
+        {
+            print STDERR "DEBUG: array\n";
+            parse_array( \$obj, $line );
         }
         else
         {
