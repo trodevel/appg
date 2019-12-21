@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12527 $ $Date:: 2019-12-18 #$ $Author: serge $
+# $Revision: 12542 $ $Date:: 2019-12-21 #$ $Author: serge $
 
 ############################################################
 
@@ -117,8 +117,6 @@ obj AnotherObject
 
     e Color       color
 
-    #a uint8 missing_objects
-
 obj_end
 
 ############################################################
@@ -156,6 +154,24 @@ msg Request2 : base::Request
     uint8 pass_range : [1, 100]
 
 msg_end
+
+############################################################
+
+obj ContainerTest
+
+    array < uint16 > user_ids
+
+    array < string >    user_names
+
+    array < float >     coeffs
+
+    array < e Color >   color_codes
+
+    array < o AnotherObject >   collection
+
+    array < int16 >     mandatory_ids : [1,256)
+
+obj_end
 
 ############################################################
 
