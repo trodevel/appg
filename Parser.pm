@@ -43,6 +43,7 @@ use constant KW_MSG         => 'msg';
 use constant KW_MSG_END     => 'msg_end';
 use constant KW_O           => 'o';
 use constant KW_ARRAY       => 'array';
+use constant KW_MAP         => 'map';
 
 use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]+';
 use constant REGEXP_ID_NAME_W_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
@@ -331,6 +332,37 @@ sub parse_array($$)
 
 ###############################################
 
+sub parse_map($$)
+{
+    my ( $parent_ref, $line ) = @_;
+
+    die "parse_map: malformed object $line" if( $line !~ /^${\KW_MAP}\s*\<\s*(${\REGEXP_DT})\s*,\s*(${\REGEXP_DT})\s*\>\s*(${\REGEXP_ID_NAME})\s*(${\REGEXP_VR}|)/ );
+
+    my $dt_key_str      = $1;
+    my $dt_val_str      = $2;
+    my $name            = $3;
+    my $valid           = $4;
+
+    print STDERR "DEBUG: parse_map: dt_key_str=$dt_key_str dt_val_str=$dt_val_str name=$name valid='" . ( defined $valid ? $valid : "<undef>" ) . "'\n";
+
+    my $dt_key = to_data_type( $dt_key_str );
+
+    my $dt_val = to_data_type( $dt_val_str );
+
+    my $dt_container = new Map( $dt_key, $dt_val );
+
+    my $valid_range = undef;
+
+    if( defined $valid and $valid ne '' )
+    {
+        $valid_range = to_ValidRange( $valid );
+    }
+
+    $$parent_ref->add_member( new ElementExt( $dt_container, $name, $valid_range, 1 ) );
+}
+
+###############################################
+
 sub parse_const($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
@@ -451,6 +483,11 @@ sub parse_obj($$$$$)
         {
             print STDERR "DEBUG: array\n";
             parse_array( \$obj, $line );
+        }
+        elsif ( $line =~ /^(${\KW_MAP}) / )
+        {
+            print STDERR "DEBUG: map\n";
+            parse_map( \$obj, $line );
         }
         else
         {
