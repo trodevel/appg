@@ -38,6 +38,7 @@ use File_cpp;
 #use File_cpp_json;
 
 require 'Parser.pm';
+require 'CodeGen_cpp.pm';
 
 ###############################################
 
@@ -124,9 +125,7 @@ Parser::parse( \@input, \$file );
 
 $file->set_use_ns( 0 );
 
-open FO, ">", $output_file;
-
-print FO $file->to_cpp_decl() . "\n";
+CodeGen_cpp::generate( \$file, $output_file );
 
 ###############################################
 1;
