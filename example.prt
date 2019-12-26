@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12542 $ $Date:: 2019-12-21 #$ $Author: serge $
+# $Revision: 12545 $ $Date:: 2019-12-26 #$ $Author: serge $
 
 ############################################################
 
@@ -170,6 +170,24 @@ obj ContainerTest
     array < o AnotherObject >   collection
 
     array < int16 >     mandatory_ids : [1,256)
+
+obj_end
+
+############################################################
+
+obj AnotherContainerTest
+
+    map < uint16, uint16 >      map_id_to_id
+
+    map < string, uint32 >      map_str_to_id
+
+    map < uint32, string >      map_id_to_str
+
+    map < e Color, string >     map_color_to_name
+
+    map < uint16, o AnotherObject >   map_id_to_object
+
+    map < uint32, int16 >       map_mandatory_ids : [1,256)
 
 obj_end
 
