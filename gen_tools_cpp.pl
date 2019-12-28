@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5118 $ $Date:: 2016-12-01 #$ $Author: serge $
+# $Revision: 12561 $ $Date:: 2019-12-28 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -122,11 +122,11 @@ sub array_to_cpp_to_json_impl
     return $res;
 }
 ############################################################
-sub to_include
+sub to_include($$)
 {
-    my( $name ) = @_;
+    my( $name, $is_system ) = @_;
 
-    return '#include "'.  $name . '.h"';
+    return ( $is_system == 0 ) ? '#include "'.  $name . '.h"' : '#include <'.  $name . '>';
 }
 ############################################################
 sub to_include_to_json
@@ -136,16 +136,16 @@ sub to_include_to_json
     return '#include "'.  $name . '_to_json.h"';
 }
 ############################################################
-sub array_to_include
+sub array_to_include($$)
 {
-    my( $array_ref ) = @_;
+    my( $array_ref, $is_system ) = @_;
 
     my @array = @{ $array_ref };
 
     my $res = "";
     foreach( @array )
     {
-        $res = $res . to_include(  $_ ) . "\n";
+        $res = $res . to_include(  $_, $is_system ) . "\n";
     }
 
     return $res;

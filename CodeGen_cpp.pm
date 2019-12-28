@@ -44,6 +44,16 @@ use 5.010;
 use constant PROTOCOL_FILE      => 'protocol.h';
 use constant ENUMS_FILE         => 'enums.h';
 use constant PARSER_H_FILE      => 'parser.h';
+use constant PARSER_CPP_FILE    => 'parser.cpp';
+
+###############################################
+
+sub get_namespace_name($)
+{
+    my( $file ) = @_;
+
+    return $file->{name} . "_protocol";
+}
 
 ###############################################
 
@@ -51,7 +61,7 @@ sub namespacize($$)
 {
     my( $file, $body ) = @_;
 
-    my $res = gtcpp::namespacize( $file->{name}, $body );
+    my $res = gtcpp::namespacize( get_namespace_name( $file ), $body );
 
     if( $file->{must_use_ns} )
     {
@@ -63,35 +73,58 @@ sub namespacize($$)
 
 ############################################################
 
-sub to_include_guards
+sub to_include_guards($$$$$$)
 {
-    my( $file, $body, $prefix, $must_include_myself, $must_include_helper ) = @_;
+    my( $file, $body, $prefix, $must_include_myself, $must_include_userdef, $other_incl_ref ) = @_;
 
-    my @includes  = @{ $file->{includes} };     # includes
-
-    if( defined $must_include_helper && $must_include_helper == 1 )
-    {
-        $body = gtcpp::namespacize( 'json_helper', $body );
-    }
-    else
-    {
-        $body = namespacize( $file, $body );
-    }
+    $body = namespacize( $file, $body );
 
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
         $body =
             gtcpp::to_include( $file->{name} ) . "    // self\n\n" . $body;
     }
-    else
+
+    if( defined $must_include_userdef && $must_include_userdef == 1 )
+    {
+        my @includes  = @{ $file->{includes} };     # includes
+
+        $body = "// includes\n" .
+            gtcpp::array_to_include( \@includes, 0 ) . "\n" . $body;
+    }
+
+    if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
     {
         $body = "// includes\n" .
-            gtcpp::array_to_include( \@includes ) . "\n" . $body;
+            gtcpp::array_to_include( $other_incl_ref, 0 ) . "\n" . $body;
     }
 
     my $res = gtcpp::ifndef_define_prot( $file->{name}, $prefix, $body );
 
     return $res;
+}
+
+############################################################
+
+sub to_body($$$$)
+{
+    my( $file, $body, $other_incl_ref, $system_incl_ref ) = @_;
+
+    $body = namespacize( $file, $body );
+
+    if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
+    {
+        $body = "// includes\n" .
+            gtcpp::array_to_include( $other_incl_ref, 0 ) . "\n" . $body;
+    }
+
+    if( defined $system_incl_ref && scalar @$system_incl_ref > 0 )
+    {
+        $body = "// system includes\n" .
+            gtcpp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
+    }
+
+    return $body;
 }
 
 ############################################################
@@ -117,7 +150,7 @@ sub to_cpp_decl
     $body = $body . gtcpp::array_to_decl( \@base_msgs );
     $body = $body . gtcpp::array_to_decl( \@msgs );
 
-    my $res = to_include_guards( $file, $body, "decl" );
+    my $res = to_include_guards( $file, $body, "decl", 0, 1, [] );
 
     return $res;
 }
@@ -213,7 +246,7 @@ sub generate_enums($)
 
     $body = $body . main::bracketize( $msgs, 1 ) . "\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "enums" );
+    my $res = to_include_guards( $$file_ref, $body, "enums", 0, 0, [] );
 
     write_to_file( $res, ${\ENUMS_FILE} );
 }
@@ -234,9 +267,66 @@ sub generate_parser_h($)
 "    static request_type_e   to_request_type( const std::string & s );\n" .
 "};\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "parser" );
+    my $res = to_include_guards( $$file_ref, $body, "parser", 0, 0, [ "enums" ] );
 
     write_to_file( $res, ${\PARSER_H_FILE} );
+}
+
+###############################################
+
+sub generate_parser_cpp_body($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{msgs} } )
+    {
+        $res = $res . 'make_inverse_pair( Type:: TUPLE_VAL_STR( ' . $_->{name} . " ) ),\n";
+    }
+
+    return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_parser_cpp($)
+{
+    my ( $file_ref ) = @_;
+
+    my $body;
+
+    $body =
+
+'#define TUPLE_VAL_STR(_x_)  _x_,"' . $$file_ref->{name} . '/"' . "+std::string(#_x_)\n" .
+"\n" .
+"template< typename _U, typename _V >\n" .
+"std::pair<_V,_U> make_inverse_pair( _U first, _V second )\n" .
+"{\n" .
+"    return std::make_pair( second, first );\n" .
+"}\n" .
+"\n" .
+"request_type_e Parser::to_request_type( const std::string & s )\n" .
+"{\n" .
+"    typedef std::string KeyType;\n" .
+"    typedef request_type_e Type;\n" .
+"\n" .
+"    typedef std::map< KeyType, Type > Map;\n" .
+"    static const Map m =\n" .
+"    {\n" .
+    generate_parser_cpp_body( $file_ref ) .
+
+"    };\n" .
+"\n" .
+"    auto it = m.find( s );\n" .
+"\n" .
+"    if( it == m.end() )\n" .
+"        return request_type_e::UNDEF;\n" .
+"\n" .
+"    return it->second;\n" .
+"}\n";
+
+    my $res = to_body( $$file_ref, $body, [ "parser" ], [ "map" ] );
+
+    write_to_file( $res, ${\PARSER_CPP_FILE} );
 }
 
 ###############################################
@@ -250,6 +340,8 @@ sub generate($$)
     generate_enums( $file_ref );
 
     generate_parser_h( $file_ref );
+
+    generate_parser_cpp( $file_ref );
 }
 
 ###############################################
