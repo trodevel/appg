@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12561 $ $Date:: 2019-12-28 #$ $Author: serge $
+# $Revision: 12571 $ $Date:: 2019-12-30 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -57,7 +57,7 @@ sub ifndef_define_prot
 {
     my ( $protocol_name, $file_name, $body ) = @_;
 
-    my $guard = uc "APG_${protocol_name}_${file_name}";
+    my $guard = uc "APG_${protocol_name}__${file_name}";
 
     return ifndef_define( $guard, $body );
 }
