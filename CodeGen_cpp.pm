@@ -45,6 +45,8 @@ use constant PROTOCOL_FILE      => 'protocol.h';
 use constant ENUMS_FILE         => 'enums.h';
 use constant PARSER_H_FILE      => 'parser.h';
 use constant PARSER_CPP_FILE    => 'parser.cpp';
+use constant REQUEST_PARSER_H_FILE      => 'request_parser.h';
+use constant REQUEST_PARSER_CPP_FILE    => 'request_parser.cpp';
 
 ###############################################
 
@@ -82,7 +84,7 @@ sub to_include_guards($$$$$$)
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
         $body =
-            gtcpp::to_include( $file->{name} ) . "    // self\n\n" . $body;
+            gtcpp::to_include( $file->{name}, 0 ) . "    // self\n\n" . $body;
     }
 
     if( defined $must_include_userdef && $must_include_userdef == 1 )
@@ -131,7 +133,9 @@ sub to_body($$$$)
 
 sub to_cpp_decl
 {
-    my( $file ) = @_;
+    my( $file_ref ) = @_;
+
+    my $file = $$file_ref;
 
     my $body = "";
 
@@ -151,6 +155,8 @@ sub to_cpp_decl
     $body = $body . gtcpp::array_to_decl( \@msgs );
 
     my $res = to_include_guards( $file, $body, "decl", 0, 1, [] );
+
+    $res = $res . "\n";
 
     return $res;
 }
@@ -209,26 +215,6 @@ sub get_all_enums
 
 ############################################################
 
-sub write_to_file($$)
-{
-    my ( $s, $filename ) = @_;
-
-    open my $FO, ">", $filename;
-
-    print $FO $s;
-}
-
-###############################################
-
-sub generate_decl($)
-{
-    my ( $file_ref ) = @_;
-
-    write_to_file( to_cpp_decl( $$file_ref ) . "\n", ${\PROTOCOL_FILE} );
-}
-
-###############################################
-
 sub generate_enums($)
 {
     my ( $file_ref ) = @_;
@@ -248,7 +234,7 @@ sub generate_enums($)
 
     my $res = to_include_guards( $$file_ref, $body, "enums", 0, 0, [] );
 
-    write_to_file( $res, ${\ENUMS_FILE} );
+    return $res;
 }
 
 ###############################################
@@ -269,7 +255,7 @@ sub generate_parser_h($)
 
     my $res = to_include_guards( $$file_ref, $body, "parser", 0, 0, [ "enums" ] );
 
-    write_to_file( $res, ${\PARSER_H_FILE} );
+    return $res;
 }
 
 ###############################################
@@ -326,7 +312,108 @@ sub generate_parser_cpp($)
 
     my $res = to_body( $$file_ref, $body, [ "parser" ], [ "map" ] );
 
-    write_to_file( $res, ${\PARSER_CPP_FILE} );
+    return $res;
+}
+
+###############################################
+
+sub generate_request_parser_h__to_obj_name($)
+{
+    my $name = shift;
+    return "static void                         to_" . $name . "( $name * res, const std::string & key, const generic_request::Request & r )";
+}
+
+sub generate_request_parser_h_body_1_core($)
+{
+    my ( $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_request_parser_h__to_obj_name( $_->{name} ) . "\n";
+    }
+
+    return main::tabulate( $res );
+}
+
+sub generate_request_parser_h_body_1($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_request_parser_h_body_1_core( $$file_ref->{objs} );
+}
+
+sub generate_request_parser_h_body_2($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_request_parser_h_body_1_core( $$file_ref->{enums} );
+}
+
+sub generate_request_parser_h__to_msg_name($)
+{
+    my $name = shift;
+    return "static ForwardMessage *             to_" . $name . "( const generic_request::Request & r );";
+}
+
+sub generate_request_parser_h_body_3($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{msgs} } )
+    {
+        $res = $res . generate_request_parser_h__to_msg_name( $_->{name} ) . "\n";
+    }
+
+    return main::tabulate( $res );
+}
+
+sub generate_request_parser_h($)
+{
+    my ( $file_ref ) = @_;
+
+    my $body;
+
+    $body =
+
+"class RequestParser\n" .
+"{\n" .
+"public:\n" .
+"    typedef basic_parser::MalformedRequest      MalformedRequest;\n" .
+"    typedef generic_protocol::ForwardMessage    ForwardMessage;\n" .
+"\n" .
+"public:\n" .
+"\n" .
+"    static generic_protocol::ForwardMessage*    to_forward_message( const generic_request::Request & r );\n" .
+"\n" .
+generate_request_parser_h_body_1( $file_ref ) .
+"\n" .
+generate_request_parser_h_body_2( $file_ref ) .
+"\n" .
+"private:\n" .
+"\n" .
+"    static request_type_e   detect_request_type( const generic_request::Request & r );\n" .
+"\n" .
+generate_request_parser_h_body_3( $file_ref ) .
+"\n" .
+"};\n";
+
+    my $res = to_include_guards( $$file_ref, $body, "request_parser", 0, 0, [ "generic_request/request", "basic_parser/malformed_request", "enums", "protocol" ] );
+
+    return $res;
+}
+
+###############################################
+sub write_to_file($$)
+{
+    my ( $s, $filename ) = @_;
+
+    open my $FO, ">", $filename;
+
+    print $FO $s;
 }
 
 ###############################################
@@ -335,13 +422,16 @@ sub generate($$)
 {
     my ( $file_ref, $output_name ) = @_;
 
-    generate_decl( $file_ref );
+    write_to_file( to_cpp_decl( $file_ref ), ${\PROTOCOL_FILE} );
 
-    generate_enums( $file_ref );
+    write_to_file( generate_enums( $file_ref ), ${\ENUMS_FILE} );
 
-    generate_parser_h( $file_ref );
+    write_to_file( generate_parser_h( $file_ref ), ${\PARSER_H_FILE} );
 
-    generate_parser_cpp( $file_ref );
+    write_to_file( generate_parser_cpp( $file_ref ), ${\PARSER_CPP_FILE} );
+
+    write_to_file( generate_request_parser_h( $file_ref ), ${\REQUEST_PARSER_H_FILE} );
+
 }
 
 ###############################################
