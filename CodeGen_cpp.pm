@@ -260,6 +260,13 @@ sub generate_parser_h($)
 
 ###############################################
 
+sub generate_parser_cpp_body__to_make_pair($)
+{
+    my $name = shift;
+
+    return "make_inverse_pair( Type:: TUPLE_VAL_STR( $name ) )";
+}
+
 sub generate_parser_cpp_body($)
 {
     my ( $file_ref ) = @_;
@@ -268,7 +275,7 @@ sub generate_parser_cpp_body($)
 
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . 'make_inverse_pair( Type:: TUPLE_VAL_STR( ' . $_->{name} . " ) ),\n";
+        $res = $res . generate_parser_cpp_body__to_make_pair( $_->{name} ) . ",\n";
     }
 
     return main::tabulate( main::tabulate( $res ) );
@@ -323,6 +330,12 @@ sub generate_request_parser_h__to_obj_name($)
     return "static void                         to_" . $name . "( $name * res, const std::string & key, const generic_request::Request & r )";
 }
 
+sub generate_request_parser_h__to_base_msg_name($)
+{
+    my $name = shift;
+    return "static void                         to_" . $name . "( $name * res, const generic_request::Request & r )";
+}
+
 sub generate_request_parser_h_body_1_core($)
 {
     my ( $objs_ref ) = @_;
@@ -351,13 +364,27 @@ sub generate_request_parser_h_body_2($)
     return generate_request_parser_h_body_1_core( $$file_ref->{enums} );
 }
 
+sub generate_request_parser_h_body_3($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{base_msgs} } )
+    {
+        $res = $res . generate_request_parser_h__to_base_msg_name( $_->{name} ) . "\n";
+    }
+
+    return main::tabulate( $res );
+}
+
 sub generate_request_parser_h__to_msg_name($)
 {
     my $name = shift;
     return "static ForwardMessage *             to_" . $name . "( const generic_request::Request & r );";
 }
 
-sub generate_request_parser_h_body_3($)
+sub generate_request_parser_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
@@ -393,11 +420,13 @@ generate_request_parser_h_body_1( $file_ref ) .
 "\n" .
 generate_request_parser_h_body_2( $file_ref ) .
 "\n" .
+generate_request_parser_h_body_3( $file_ref ) .
+"\n" .
 "private:\n" .
 "\n" .
 "    static request_type_e   detect_request_type( const generic_request::Request & r );\n" .
 "\n" .
-generate_request_parser_h_body_3( $file_ref ) .
+generate_request_parser_h_body_4( $file_ref ) .
 "\n" .
 "};\n";
 
@@ -407,6 +436,121 @@ generate_request_parser_h_body_3( $file_ref ) .
 }
 
 ###############################################
+
+sub generate_request_parser_cpp__to_forward_message__body($)
+{
+    my $name = shift;
+
+    return "HANDLER_MAP_ENTRY( $name )";
+}
+
+sub generate_request_parser_cpp__to_forward_message($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{msgs} } )
+    {
+        $res = $res . generate_request_parser_cpp__to_forward_message__body( $_->{name} ) . ",\n";
+    }
+
+    return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_request_parser_cpp__to_enum__body($)
+{
+    my ( $name ) = @_;
+
+    my $res =
+
+"void RequestParser::to_${name}( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
+"{\n" .
+"    uint32_t res_i;\n" .
+"\n" .
+"    get_value_or_throw_uint32( res_i, key, r );\n" .
+"\n" .
+"    * res = static_cast<$name>( res_i );\n" .
+"}\n";
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_enum($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{enums} } )
+    {
+        $res = $res . generate_request_parser_cpp__to_enum__body( $_->{name} ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_request_parser_cpp($)
+{
+    my ( $file_ref ) = @_;
+
+    my $body;
+
+    $body =
+
+"using basic_parser::get_value_or_throw;\n" .
+"using basic_parser::get_value_or_throw_uint32;\n" .
+"using basic_parser::get_value_or_throw_double;\n" .
+"\n" .
+"generic_protocol::ForwardMessage* RequestParser::to_forward_message( const generic_request::Request & r )\n" .
+"{\n" .
+"    auto type = RequestParser::detect_request_type( r );\n" .
+"\n" .
+"    typedef request_type_e KeyType;\n" .
+"    typedef RequestParser Type;\n" .
+"\n" .
+"    typedef ForwardMessage* (*PPMF)( const generic_request::Request & r );\n" .
+"\n" .
+"#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & Type::to_##_v }\n" .
+"\n" .
+"    static const std::map<KeyType, PPMF> funcs =\n" .
+"    {\n" .
+
+    generate_request_parser_cpp__to_forward_message( $file_ref ) .
+
+"    };\n" .
+"\n" .
+"#undef HANDLER_MAP_ENTRY\n" .
+"\n" .
+"    auto it = funcs.find( type );\n" .
+"\n" .
+"    if( it != funcs.end() )\n" .
+"        return it->second( r );\n" .
+"\n" .
+"    return nullptr;\n" .
+"}\n" .
+"\n" .
+"request_type_e  RequestParser::detect_request_type( const generic_request::Request & r )\n" .
+"{\n" .
+"    std::string cmd;\n" .
+"\n" .
+"    if( r.get_value( \"CMD\", cmd ) == false )\n" .
+"        throw MalformedRequest( \"CMD is not defined\" );\n" .
+"\n" .
+"    return Parser::to_request_type( cmd );\n" .
+"}\n" .
+"\n" .
+    generate_request_parser_cpp__to_enum( $file_ref ) .
+"\n"
+;
+
+    my $res = to_body( $$file_ref, $body, [ "parser" ], [ "map" ] );
+
+    return $res;
+}
+
+###############################################
+
 sub write_to_file($$)
 {
     my ( $s, $filename ) = @_;
@@ -432,6 +576,7 @@ sub generate($$)
 
     write_to_file( generate_request_parser_h( $file_ref ), ${\REQUEST_PARSER_H_FILE} );
 
+    write_to_file( generate_request_parser_cpp( $file_ref ), ${\REQUEST_PARSER_CPP_FILE} );
 }
 
 ###############################################
