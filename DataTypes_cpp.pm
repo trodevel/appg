@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12580 $ $Date:: 2020-01-02 #$ $Author: serge $
+# $Revision: 12587 $ $Date:: 2020-01-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -46,7 +46,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw_bool";
+    return "get_value_or_throw";
 }
 
 ############################################################
@@ -69,14 +69,7 @@ sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
 
-    my $prefix = "";
-
-    if( $self->{is_unsigned} == 1 )
-    {
-        $prefix = "u";
-    }
-
-    return "get_value_or_throw_${prefix}int" . $self->{bit_width};
+    return "get_value_or_throw";
 }
 
 ############################################################
@@ -95,7 +88,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw_" . ( $self->{is_double} == 1 ) ? "double" : "float";
+    return "get_value_or_throw";
 }
 
 ############################################################
@@ -125,7 +118,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "to_" . $self->{name};
+    return "get_value_or_throw";	# TODO: add support of namespace, 20102
 }
 
 ############################################################
@@ -140,7 +133,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "to_" . $self->{name};
+    return "get_value_or_throw";
 }
 
 ############################################################
@@ -149,13 +142,13 @@ package Vector;
 sub to_cpp_decl()
 {
     my( $self ) = @_;
-    return "std::vector<" . $self->{value_type}->to_cpp_decl() . ">";
+    return "get_value_or_throw";
 }
 
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "to_vector_" . $self->{value_type}->to_cpp_decl();
+    return "get_value_or_throw";
 }
 
 ############################################################
@@ -170,7 +163,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "to_map_" . $self->{key_type}->to_cpp_decl() . "_" . $self->{mapped_type}->to_cpp_decl();
+    return "get_value_or_throw";
 }
 
 ############################################################

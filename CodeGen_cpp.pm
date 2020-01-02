@@ -327,13 +327,13 @@ sub generate_parser_cpp($)
 sub generate_request_parser_h__to_obj_name($)
 {
     my $name = shift;
-    return "static void                         to_" . $name . "( $name * res, const std::string & key, const generic_request::Request & r )";
+    return "static void                 get_value_or_throw( $name * res, const std::string & key, const generic_request::Request & r )";
 }
 
 sub generate_request_parser_h__to_base_msg_name($)
 {
     my $name = shift;
-    return "static void                         to_" . $name . "( $name * res, const generic_request::Request & r )";
+    return "static void                 get_value_or_throw( $name * res, const generic_request::Request & r )";
 }
 
 sub generate_request_parser_h_body_1_core($)
@@ -381,7 +381,7 @@ sub generate_request_parser_h_body_3($)
 sub generate_request_parser_h__to_msg_name($)
 {
     my $name = shift;
-    return "static ForwardMessage *             to_" . $name . "( const generic_request::Request & r );";
+    return "static ForwardMessage *     to_" . $name . "( const generic_request::Request & r );";
 }
 
 sub generate_request_parser_h_body_4($)
@@ -464,11 +464,11 @@ sub generate_request_parser_cpp__to_enum__body($)
 
     my $res =
 
-"void RequestParser::to_${name}( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
+"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
 "{\n" .
 "    uint32_t res_i;\n" .
 "\n" .
-"    get_value_or_throw_uint32( res_i, key, r );\n" .
+"    get_value_or_throw( & res_i, key, r );\n" .
 "\n" .
 "    * res = static_cast<$name>( res_i );\n" .
 "}\n";
@@ -490,30 +490,34 @@ sub generate_request_parser_cpp__to_enum($)
     return $res;
 }
 
-sub generate_request_parser_cpp__to_message__body__init_members__body($)
+sub generate_request_parser_cpp__to_message__body__init_members__body($$)
 {
-    my ( $obj ) = @_;
+    my ( $obj, $is_request ) = @_;
 
     my $res;
 
-    my $name = $obj->{name};
+    my $name        = $obj->{name};
+
+    my $key_name    = uc( $name );
+
+    my $key_expr    = ( $is_request == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
 
     my $func = $obj->{data_type}->to_cpp__to_parse_function_name();
 
-    $res = "    ${func}( & res->${name}, r );";
+    $res = "    ${func}( & res->${name}, ${key_expr}, r );";
 
     return $res;
 }
 
-sub generate_request_parser_cpp__to_message__body__init_members($)
+sub generate_request_parser_cpp__to_message__body__init_members($$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $is_request ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_request_parser_cpp__to_message__body__init_members__body( $_ ) . "\n";
+        $res = $res . generate_request_parser_cpp__to_message__body__init_members__body( $_, $is_request ) . "\n";
     }
 
     return $res;
@@ -533,7 +537,7 @@ sub generate_request_parser_cpp__to_message__body($)
 "\n" .
 "    generic_protocol::RequestParser::to_request( res, r );\n" .
 "\n" .
-    generate_request_parser_cpp__to_message__body__init_members( $msg ) .
+    generate_request_parser_cpp__to_message__body__init_members( $msg, 1 ) .
 "\n" .
 "    RequestValidator::validate( * res );\n" .
 "\n" .
@@ -552,6 +556,36 @@ sub generate_request_parser_cpp__to_message($)
     foreach( @{ $$file_ref->{msgs} } )
     {
         $res = $res . generate_request_parser_cpp__to_message__body( $_ ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_object__body($)
+{
+    my ( $msg ) = @_;
+
+    my $name = $msg->{name};
+
+    my $res =
+
+"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
+"{\n" .
+    generate_request_parser_cpp__to_message__body__init_members( $msg, 0 ) .
+"}\n";
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_object($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{objs} } )
+    {
+        $res = $res . generate_request_parser_cpp__to_object__body( $_ ) . "\n";
     }
 
     return $res;
@@ -610,6 +644,8 @@ sub generate_request_parser_cpp($)
     generate_request_parser_cpp__to_enum( $file_ref ) .
 "\n" .
     generate_request_parser_cpp__to_message( $file_ref ) .
+"\n" .
+    generate_request_parser_cpp__to_object( $file_ref ) .
 "\n"
 ;
 
