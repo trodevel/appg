@@ -490,6 +490,73 @@ sub generate_request_parser_cpp__to_enum($)
     return $res;
 }
 
+sub generate_request_parser_cpp__to_message__body__init_members__body($)
+{
+    my ( $obj ) = @_;
+
+    my $res;
+
+    my $name = $obj->{name};
+
+    my $func = $obj->{data_type}->to_cpp__to_parse_function_name();
+
+    $res = "    ${func}( & res->${name}, r );";
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_message__body__init_members($)
+{
+    my ( $msg ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $msg->{members} } )
+    {
+        $res = $res . generate_request_parser_cpp__to_message__body__init_members__body( $_ ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_message__body($)
+{
+    my ( $msg ) = @_;
+
+    my $name = $msg->{name};
+
+    my $res =
+
+"RequestParser::ForwardMessage * RequestParser::to_${name}( const generic_request::Request & r )\n" .
+"{\n" .
+"    auto * res = new $name;\n" .
+"\n" .
+"    generic_protocol::RequestParser::to_request( res, r );\n" .
+"\n" .
+    generate_request_parser_cpp__to_message__body__init_members( $msg ) .
+"\n" .
+"    RequestValidator::validate( * res );\n" .
+"\n" .
+"    return res;\n" .
+"}\n";
+
+    return $res;
+}
+
+sub generate_request_parser_cpp__to_message($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{msgs} } )
+    {
+        $res = $res . generate_request_parser_cpp__to_message__body( $_ ) . "\n";
+    }
+
+    return $res;
+}
+
 sub generate_request_parser_cpp($)
 {
     my ( $file_ref ) = @_;
@@ -541,6 +608,8 @@ sub generate_request_parser_cpp($)
 "}\n" .
 "\n" .
     generate_request_parser_cpp__to_enum( $file_ref ) .
+"\n" .
+    generate_request_parser_cpp__to_message( $file_ref ) .
 "\n"
 ;
 
