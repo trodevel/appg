@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12587 $ $Date:: 2020-01-02 #$ $Author: serge $
+# $Revision: 12598 $ $Date:: 2020-01-09 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -112,7 +112,10 @@ package UserDefined;
 sub to_cpp_decl()
 {
     my( $self ) = @_;
-    return $self->{name};
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+
+    return $pref . $self->{name};
 }
 
 sub to_cpp__to_parse_function_name()
@@ -127,7 +130,10 @@ package UserDefinedEnum;
 sub to_cpp_decl()
 {
     my( $self ) = @_;
-    return $self->{name};
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+
+    return $pref . $self->{name};
 }
 
 sub to_cpp__to_parse_function_name()
@@ -142,7 +148,7 @@ package Vector;
 sub to_cpp_decl()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "std::vector<" . $self->{value_type}->to_cpp_decl() . ">";
 }
 
 sub to_cpp__to_parse_function_name()

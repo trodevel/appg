@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 12591 $ $Date:: 2020-01-09 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -106,12 +106,13 @@ package UserDefined;
 use strict;
 our @ISA = qw( Generic );
 
-sub new
+sub new($$)
 {
     my ($class) = @_;
 
     my $self = $class->SUPER::new();
     $self->{name}  = $_[1];
+    $self->{namespace}  = $_[2];
     bless $self, $class;
     return $self;
 }
@@ -122,12 +123,13 @@ package UserDefinedEnum;
 use strict;
 our @ISA = qw( Generic );
 
-sub new
+sub new($$)
 {
     my ($class) = @_;
 
     my $self = $class->SUPER::new();
     $self->{name}  = $_[1];
+    $self->{namespace}  = $_[2];
     bless $self, $class;
     return $self;
 }

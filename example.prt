@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12564 $ $Date:: 2019-12-28 #$ $Author: serge $
+# $Revision: 12599 $ $Date:: 2020-01-09 #$ $Author: serge $
 
 ############################################################
 
@@ -117,6 +117,10 @@ obj AnotherObject
 
     e Color       color
 
+    o basic_objects::LocalTimeRange time_range
+
+    e basic_objects::Weekday delivery_day
+
 obj_end
 
 ############################################################
@@ -171,6 +175,8 @@ obj ContainerTest
 
     array < int16 >     mandatory_ids : [1,256)
 
+    array < o basic_objects::TimePoint24 >   time_points
+
 obj_end
 
 ############################################################
@@ -188,6 +194,8 @@ obj AnotherContainerTest
     map < uint16, o AnotherObject >   map_id_to_object
 
     map < uint32, int16 >       map_mandatory_ids : [1,256)
+
+    map < uint16, o basic_objects::TimePoint24 >   id_to_time_point
 
 obj_end
 

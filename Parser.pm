@@ -46,7 +46,9 @@ use constant KW_ARRAY       => 'array';
 use constant KW_MAP         => 'map';
 
 use constant REGEXP_ID_NAME => '[a-zA-Z0-9_]+';
-use constant REGEXP_ID_NAME_W_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
+use constant REGEXP_ID_NAME_W_NAMESPACE => "${\REGEXP_ID_NAME}::${\REGEXP_ID_NAME}";
+use constant REGEXP_ID_NAME_W_NAMESPACE_GROUPPED => "(${\REGEXP_ID_NAME})::(${\REGEXP_ID_NAME})";
+use constant REGEXP_ID_NAME_W_OPT_BASE_CLASS => "(${\REGEXP_ID_NAME}::|)${\REGEXP_ID_NAME}";
 use constant REGEXP_INT_NUM   => '[0-9]+';
 use constant REGEXP_FLOAT_NUM => '[0-9\.]+';
 use constant REGEXP_NUMBER => "${\REGEXP_INT_NUM}|${\REGEXP_FLOAT_NUM}";
@@ -58,8 +60,8 @@ use constant REGEXP_DOUBLE => 'double';
 use constant REGEXP_STR    => 'string';
 use constant REGEXP_POD    => "${\REGEXP_BOOL}|${\REGEXP_DT_INT}|${\REGEXP_FLOAT}|${\REGEXP_DOUBLE}";
 use constant REGEXP_VR     => ':\s*([\(\[])\s*([0-9\.]*)\s*,\s*([0-9\.]*)\s*([\)\]])';
-use constant REGEXP_DT_OBJ    => "o ${\REGEXP_ID_NAME}";
-use constant REGEXP_DT_ENUM   => "e ${\REGEXP_ID_NAME}";
+use constant REGEXP_DT_OBJ    => "o ${\REGEXP_ID_NAME_W_NAMESPACE}|o ${\REGEXP_ID_NAME}";
+use constant REGEXP_DT_ENUM   => "e ${\REGEXP_ID_NAME_W_NAMESPACE}|e ${\REGEXP_ID_NAME}";
 use constant REGEXP_DT_USER_DEF     => "${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}";
 use constant REGEXP_DT_MAP    => 'm';
 #use constant REGEXP_DT     => "${\REGEXP_PODS}|${\REGEXP_DT_OBJ}|${\REGEXP_DT_ENUM}|${\REGEXP_DT_ARRAY}|${\REGEXP_DT_MAP}";
@@ -169,9 +171,20 @@ sub to_user_defined_dt($)
     my @elem = split( ' ', $line );
 
     my $pref = $elem[0];
-    my $name = $elem[1];
+    my $name_w_opt_namespace = $elem[1];
 
-    my $res = ( $pref eq "${\KW_O}" ) ? new UserDefined( $name ) : new UserDefinedEnum( $name );
+    my $name        = $name_w_opt_namespace;
+    my $namespace   = "";
+
+    if( $name =~ /^${\REGEXP_ID_NAME_W_NAMESPACE_GROUPPED}/ )
+    {
+        $namespace = $1;
+        $name      = $2;
+
+        print STDERR "DEBUG: to_user_defined_dt: namespace=$namespace name=$name\n";
+    }
+
+    my $res = ( $pref eq "${\KW_O}" ) ? new UserDefined( $name, $namespace ) : new UserDefinedEnum( $name, $namespace );
 
     return $res;
 }
@@ -504,7 +517,7 @@ sub parse_base_msg($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "malformed object $line" if( $line !~ /${\KW_BASE_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_BASE_CLASS})|)/ );
+    die "malformed object $line" if( $line !~ /${\KW_BASE_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_OPT_BASE_CLASS})|)/ );
 
     $$i_ref++;
 
@@ -545,7 +558,7 @@ sub parse_msg($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "malformed object $line" if( $line !~ /${\KW_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_BASE_CLASS})|)/ );
+    die "malformed object $line" if( $line !~ /${\KW_MSG}\s*(${\REGEXP_ID_NAME})\s*(:\s*(${\REGEXP_ID_NAME_W_OPT_BASE_CLASS})|)/ );
 
     $$i_ref++;
 
