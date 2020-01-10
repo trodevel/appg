@@ -47,6 +47,8 @@ use constant PARSER_H_FILE      => 'parser.h';
 use constant PARSER_CPP_FILE    => 'parser.cpp';
 use constant REQUEST_PARSER_H_FILE      => 'request_parser.h';
 use constant REQUEST_PARSER_CPP_FILE    => 'request_parser.cpp';
+use constant EXPORTED_PARSER_H_FILE     => 'exported_parser.h';
+use constant EXPORTED_PARSER_CPP_FILE   => 'exported_parser.cpp';
 
 ###############################################
 
@@ -656,6 +658,65 @@ sub generate_request_parser_cpp($)
 
 ###############################################
 
+sub generate_exported_parser_h__to_obj_name($$)
+{
+    my ( $namespace, $name ) = @_;
+
+    return "void get_value_or_throw( $namespace::$name * res, const std::string & key, const generic_request::Request & r );";
+}
+
+sub generate_exported_parser_h_body_1_core($$)
+{
+    my ( $namespace, $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_exported_parser_h__to_obj_name( $namespace, $_->{name} ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_exported_parser_h_body_1($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
+}
+
+sub generate_exported_parser_h_body_2($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
+}
+
+sub generate_exported_parser_h($)
+{
+    my ( $file_ref ) = @_;
+
+    my $body;
+
+    $body =
+
+generate_exported_parser_h_body_1( $file_ref ) .
+"\n" .
+generate_exported_parser_h_body_2( $file_ref ) .
+"\n";
+
+    $body = gtcpp::namespacize( "basic_parser", $body );
+
+    $body = gtcpp::to_include( "protocol", 0 ) . "\n\n" . $body;
+
+    my $res = gtcpp::ifndef_define_prot( $$file_ref->{name}, "exported_parser", $body );
+
+    return $res;
+}
+
+###############################################
+
 sub write_to_file($$)
 {
     my ( $s, $filename ) = @_;
@@ -682,6 +743,8 @@ sub generate($$)
     write_to_file( generate_request_parser_h( $file_ref ), ${\REQUEST_PARSER_H_FILE} );
 
     write_to_file( generate_request_parser_cpp( $file_ref ), ${\REQUEST_PARSER_CPP_FILE} );
+
+    write_to_file( generate_exported_parser_h( $file_ref ), ${\EXPORTED_PARSER_H_FILE} );
 }
 
 ###############################################
