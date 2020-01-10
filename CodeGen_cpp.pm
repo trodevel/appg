@@ -683,14 +683,14 @@ sub generate_exported_parser_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
 }
 
 sub generate_exported_parser_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
 }
 
 sub generate_exported_parser_h($)
@@ -720,41 +720,30 @@ generate_exported_parser_h_body_2( $file_ref ) .
 
 ###############################################
 
-sub generate_exported_parser_cpp__to_forward_message__body($)
+sub generate_exported_parser_cpp__to_body($$)
 {
-    my $name = shift;
-
-    return "HANDLER_MAP_ENTRY( $name )";
-}
-
-sub generate_exported_parser_cpp__to_forward_message($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{msgs} } )
-    {
-        $res = $res . generate_exported_parser_cpp__to_forward_message__body( $_->{name} ) . ",\n";
-    }
-
-    return main::tabulate( main::tabulate( $res ) );
-}
-
-sub generate_exported_parser_cpp__to_enum__body($)
-{
-    my ( $name ) = @_;
+    my ( $namespace, $name ) = @_;
 
     my $res =
 
-"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
+"void get_value_or_throw( ${namespace}::${name} * res, const std::string & key, const generic_request::Request & r )\n" .
 "{\n" .
-"    uint32_t res_i;\n" .
-"\n" .
-"    get_value_or_throw( & res_i, key, r );\n" .
-"\n" .
-"    * res = static_cast<$name>( res_i );\n" .
+"    ${namespace}::RequestParser::get_value_or_throw( res, key, r );\n" .
 "}\n";
+
+    return $res;
+}
+
+sub generate_exported_parser_cpp__to_enum__core($$)
+{
+    my ( $namespace, $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_exported_parser_cpp__to_body( $namespace, $_->{name} ) . "\n";
+    }
 
     return $res;
 }
@@ -763,115 +752,14 @@ sub generate_exported_parser_cpp__to_enum($)
 {
     my ( $file_ref ) = @_;
 
-    my $res = "";
-
-    foreach( @{ $$file_ref->{enums} } )
-    {
-        $res = $res . generate_exported_parser_cpp__to_enum__body( $_->{name} ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_exported_parser_cpp__to_message__body__init_members__body($$)
-{
-    my ( $obj, $is_request ) = @_;
-
-    my $res;
-
-    my $name        = $obj->{name};
-
-    my $key_name    = uc( $name );
-
-    my $key_expr    = ( $is_request == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
-
-    my $func = $obj->{data_type}->to_cpp__to_parse_function_name();
-
-    $res = "    ${func}( & res->${name}, ${key_expr}, r );";
-
-    return $res;
-}
-
-sub generate_exported_parser_cpp__to_message__body__init_members($$)
-{
-    my ( $msg, $is_request ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $msg->{members} } )
-    {
-        $res = $res . generate_exported_parser_cpp__to_message__body__init_members__body( $_, $is_request ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_exported_parser_cpp__to_message__body($)
-{
-    my ( $msg ) = @_;
-
-    my $name = $msg->{name};
-
-    my $res =
-
-"RequestParser::ForwardMessage * RequestParser::to_${name}( const generic_request::Request & r )\n" .
-"{\n" .
-"    auto * res = new $name;\n" .
-"\n" .
-"    generic_protocol::RequestParser::to_request( res, r );\n" .
-"\n" .
-    generate_exported_parser_cpp__to_message__body__init_members( $msg, 1 ) .
-"\n" .
-"    RequestValidator::validate( * res );\n" .
-"\n" .
-"    return res;\n" .
-"}\n";
-
-    return $res;
-}
-
-sub generate_exported_parser_cpp__to_message($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{msgs} } )
-    {
-        $res = $res . generate_exported_parser_cpp__to_message__body( $_ ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_exported_parser_cpp__to_object__body($)
-{
-    my ( $msg ) = @_;
-
-    my $name = $msg->{name};
-
-    my $res =
-
-"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
-"{\n" .
-    generate_exported_parser_cpp__to_message__body__init_members( $msg, 0 ) .
-"}\n";
-
-    return $res;
+    return generate_exported_parser_cpp__to_enum__core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
 }
 
 sub generate_exported_parser_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    my $res = "";
-
-    foreach( @{ $$file_ref->{objs} } )
-    {
-        $res = $res . generate_exported_parser_cpp__to_object__body( $_ ) . "\n";
-    }
-
-    return $res;
+    return generate_exported_parser_cpp__to_enum__core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
 }
 
 sub generate_exported_parser_cpp($)
@@ -882,15 +770,15 @@ sub generate_exported_parser_cpp($)
 
     $body =
 
+"// enums\n" .
+"\n" .
     generate_exported_parser_cpp__to_enum( $file_ref ) .
+"// objects\n" .
 "\n" .
-    generate_exported_parser_cpp__to_message( $file_ref ) .
-"\n" .
-    generate_exported_parser_cpp__to_object( $file_ref ) .
-"\n"
+    generate_exported_parser_cpp__to_object( $file_ref )
 ;
 
-    my $res = to_body( $$file_ref, $body, "basic_parser", [ "request_parser" ], [ ] );
+    my $res = to_body( $$file_ref, $body, "basic_parser", [ "exported_parser", "request_parser" ], [ ] );
 
     return $res;
 }
