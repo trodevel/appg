@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12598 $ $Date:: 2020-01-09 #$ $Author: serge $
+# $Revision: 12611 $ $Date:: 2020-01-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -46,7 +46,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################
@@ -69,7 +69,7 @@ sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
 
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################
@@ -88,7 +88,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################
@@ -103,7 +103,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################
@@ -121,7 +121,10 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";	# TODO: add support of namespace, 20102
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+
+    return "${pref}get_value_or_throw";
 }
 
 ############################################################
@@ -139,10 +142,14 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+
+    return "${pref}get_value_or_throw";
 }
 
 ############################################################
+
 package Vector;
 
 sub to_cpp_decl()
@@ -154,7 +161,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################
@@ -169,7 +176,7 @@ sub to_cpp_decl()
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
-    return "get_value_or_throw";
+    return "basic_parser::get_value_or_throw";
 }
 
 ############################################################

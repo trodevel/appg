@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12599 $ $Date:: 2020-01-09 #$ $Author: serge $
+# $Revision: 12616 $ $Date:: 2020-01-10 #$ $Author: serge $
 
 ############################################################
 
@@ -29,6 +29,8 @@ base generic_base
 include "../basic_stuff"
 
 include "communication"
+
+include "basic_objects"
 
 ############################################################
 
