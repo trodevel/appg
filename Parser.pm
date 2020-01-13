@@ -619,7 +619,7 @@ sub parse($$)
             print STDERR "DEBUG: base protocol $1\n";
             $$file_ref->set_base_prot( $1 );
         }
-        elsif ( $line =~ /include "([a-zA-Z0-9_\/\.\-]*)"/ )
+        elsif ( $line =~ /use ([a-zA-Z0-9_]+)/ )
         {
             print STDERR "DEBUG: include '$1'\n";
             $$file_ref->add_include( $1 );

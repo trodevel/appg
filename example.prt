@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12616 $ $Date:: 2020-01-10 #$ $Author: serge $
+# $Revision: 12617 $ $Date:: 2020-01-13 #$ $Author: serge $
 
 ############################################################
 
@@ -26,11 +26,11 @@ protocol example
 
 base generic_base
 
-include "../basic_stuff"
+use basic_stuff
 
-include "communication"
+use communication
 
-include "basic_objects"
+use basic_objects
 
 ############################################################
 
