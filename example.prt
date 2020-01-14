@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12617 $ $Date:: 2020-01-13 #$ $Author: serge $
+# $Revision: 12618 $ $Date:: 2020-01-13 #$ $Author: serge $
 
 ############################################################
 
@@ -113,7 +113,7 @@ obj AnotherObject
 
     int16 id
 
-    o SomeObject dummy
+    o SomeObject some_object
 
     o EmptyObject empty
 
