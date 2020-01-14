@@ -88,7 +88,7 @@ generate_exported_request_parser_h_body_1( $file_ref ) .
 generate_exported_request_parser_h_body_2( $file_ref ) .
 "\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_request_parser", 0, 0, [ "protocol", "generic_request/request" ] );
+    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_request_parser", 0, 0, [ "protocol", "generic_request/request" ], [] );
 
     return $res;
 }

@@ -65,9 +65,9 @@ sub namespacize($$)
 
 ############################################################
 
-sub to_include_guards($$$$$$$)
+sub to_include_guards($$$$$$$$)
 {
-    my( $file, $body, $alternative_namespace, $prefix, $must_include_myself, $must_include_userdef, $other_incl_ref ) = @_;
+    my( $file, $body, $alternative_namespace, $prefix, $must_include_myself, $must_include_userdef, $other_incl_ref, $system_incl_ref ) = @_;
 
     $body = ( $alternative_namespace ne '' ) ? gtcpp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
 
@@ -89,6 +89,12 @@ sub to_include_guards($$$$$$$)
     {
         $body = "// includes\n" .
             gtcpp::array_to_include( $other_incl_ref, 0 ) . "\n" . $body;
+    }
+
+    if( defined $system_incl_ref && scalar @$system_incl_ref > 0 )
+    {
+        $body = "// system includes\n" .
+            gtcpp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
     }
 
     my $res = gtcpp::ifndef_define_prot( $file->{name}, $prefix, $body );

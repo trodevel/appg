@@ -31,6 +31,7 @@ require CodeGen_cpp_enums;
 require CodeGen_cpp_parser;
 require CodeGen_cpp_request_parser;
 require CodeGen_cpp_exported_request_parser;
+require CodeGen_cpp_exported_csv_response_encoder;
 
 ###############################################
 
@@ -50,6 +51,8 @@ use constant REQUEST_PARSER_H_FILE      => 'request_parser.h';
 use constant REQUEST_PARSER_CPP_FILE    => 'request_parser.cpp';
 use constant EXPORTED_REQUEST_PARSER_H_FILE     => 'exported_request_parser.h';
 use constant EXPORTED_REQUEST_PARSER_CPP_FILE   => 'exported_request_parser.cpp';
+use constant exported_csv_response_encoder_H_FILE        => 'exported_csv_response_encoder.h';
+use constant exported_csv_response_encoder_CPP_FILE      => 'exported_csv_response_encoder.cpp';
 
 ###############################################
 
@@ -83,6 +86,11 @@ sub generate($$)
     write_to_file( generate_exported_request_parser_h( $file_ref ), ${\EXPORTED_REQUEST_PARSER_H_FILE} );
 
     write_to_file( generate_exported_request_parser_cpp( $file_ref ), ${\EXPORTED_REQUEST_PARSER_CPP_FILE} );
+
+    write_to_file( generate_exported_csv_response_encoder_h( $file_ref ), ${\exported_csv_response_encoder_H_FILE} );
+
+    write_to_file( generate_exported_csv_response_encoder_cpp( $file_ref ), ${\exported_csv_response_encoder_CPP_FILE} );
+
 }
 
 ###############################################

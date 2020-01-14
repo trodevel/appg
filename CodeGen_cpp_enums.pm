@@ -57,7 +57,7 @@ sub generate_enums($)
 
     $body = $body . main::bracketize( $msgs, 1 ) . "\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "", "enums", 0, 0, [] );
+    my $res = to_include_guards( $$file_ref, $body, "", "enums", 0, 0, [], [] );
 
     return $res;
 }

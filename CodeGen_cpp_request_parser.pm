@@ -146,7 +146,7 @@ generate_request_parser_h_body_4( $file_ref ) .
 "\n" .
 "};\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "", "request_parser", 0, 0, [ "generic_request/request", "basic_parser/malformed_request", "enums", "protocol" ] );
+    my $res = to_include_guards( $$file_ref, $body, "", "request_parser", 0, 0, [ "generic_request/request", "basic_parser/malformed_request", "enums", "protocol" ], [] );
 
     return $res;
 }
