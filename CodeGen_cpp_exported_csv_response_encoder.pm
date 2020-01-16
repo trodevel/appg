@@ -110,7 +110,9 @@ generate_exported_csv_response_encoder_h_body_3( $file_ref ) .
 generate_exported_csv_response_encoder_h_body_4( $file_ref ) .
 "\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "basic_csv_response_encoder", "exported_csv_response_encoder", 0, 0, [ "protocol" ], [ "sstream" ] );
+    $body = gtcpp::namespacize( 'csv_encoder', $body );
+
+    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_csv_response_encoder", 0, 0, [ "protocol" ], [ "sstream" ] );
 
     return $res;
 }
@@ -272,13 +274,16 @@ sub generate_exported_csv_response_encoder_cpp($)
 "\n" .
     generate_exported_csv_response_encoder_cpp__to_message( $file_ref )
 ;
+
+    $body = gtcpp::namespacize( 'csv_encoder', $body );
+
     my @includes = ( "exported_csv_response_encoder", "utils/nonascii_hex_codec" );
 
     push( @includes, generate_request_parser_cpp__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/basic_csv_response_encoder" );
 
-    my $res = to_body( $$file_ref, $body, "basic_csv_response_encoder",  \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ ] );
 
     return $res;
 }
