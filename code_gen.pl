@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #
-# Automatic Protocol Generator - Code Gen.
+# Automatic Protocol Parser Generator - Code Gen.
 #
 # Copyright (C) 2019 Sergey Kolevatov
 #

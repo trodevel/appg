@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #
-# Automatic Protocol Generator - CodeGen_cpp.
+# Automatic Protocol Parser Generator - CodeGen_cpp.
 #
 # Copyright (C) 2019 Sergey Kolevatov
 #
