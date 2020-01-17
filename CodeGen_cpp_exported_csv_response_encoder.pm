@@ -247,7 +247,7 @@ sub generate_exported_csv_response_encoder_cpp__to_includes($)
 
     foreach( @{ $$file_ref->{includes} } )
     {
-        push( @res, $_ . "/exported_exported_csv_response_encoder" );
+        push( @res, $_ . "/exported_csv_response_encoder" );
     }
 
     return @res;
@@ -279,7 +279,7 @@ sub generate_exported_csv_response_encoder_cpp($)
 
     my @includes = ( "exported_csv_response_encoder", "utils/nonascii_hex_codec" );
 
-    push( @includes, generate_request_parser_cpp__to_includes( $file_ref ) );
+    push( @includes, generate_exported_csv_response_encoder_cpp__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/basic_csv_response_encoder" );
 
