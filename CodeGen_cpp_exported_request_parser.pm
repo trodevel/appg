@@ -42,22 +42,22 @@ use 5.010;
 
 sub generate_exported_request_parser_h__to_obj_name($$$)
 {
-    my ( $namespace, $name, $is_request ) = @_;
+    my ( $namespace, $name, $is_message ) = @_;
 
-    my $extra_param = ( $is_request == 0 ) ? "const std::string & key, " : "";
+    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
 
     return "void get_value_or_throw( $namespace::$name * res, ${extra_param}const generic_request::Request & r );";
 }
 
 sub generate_exported_request_parser_h_body_1_core($$$)
 {
-    my ( $namespace, $objs_ref, $is_request ) = @_;
+    my ( $namespace, $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_request_parser_h__to_obj_name( $namespace, $_->{name}, $is_request ) . "\n";
+        $res = $res . generate_exported_request_parser_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
     }
 
     return $res;
@@ -143,7 +143,7 @@ sub generate_exported_request_parser_cpp__to_enum__body($$)
 
 sub generate_exported_request_parser_cpp__to_message__body__init_members__body($$)
 {
-    my ( $obj, $is_request ) = @_;
+    my ( $obj, $is_message ) = @_;
 
     my $res;
 
@@ -151,7 +151,7 @@ sub generate_exported_request_parser_cpp__to_message__body__init_members__body($
 
     my $key_name    = uc( $name );
 
-    my $key_expr    = ( $is_request == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
+    my $key_expr    = ( $is_message == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
 
     $res = "    get_value_or_throw( & res->${name}, ${key_expr}, r );";
 
@@ -160,13 +160,13 @@ sub generate_exported_request_parser_cpp__to_message__body__init_members__body($
 
 sub generate_exported_request_parser_cpp__to_message__body__init_members($$)
 {
-    my ( $msg, $is_request ) = @_;
+    my ( $msg, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_exported_request_parser_cpp__to_message__body__init_members__body( $_, $is_request ) . "\n";
+        $res = $res . generate_exported_request_parser_cpp__to_message__body__init_members__body( $_, $is_message ) . "\n";
     }
 
     return $res;
@@ -174,18 +174,18 @@ sub generate_exported_request_parser_cpp__to_message__body__init_members($$)
 
 sub generate_exported_request_parser_cpp__to_body($$$)
 {
-    my ( $namespace, $msg, $is_request ) = @_;
+    my ( $namespace, $msg, $is_message ) = @_;
 
     my $name = $msg->{name};
 
-    my $extra_param = ( $is_request == 0 ) ? "const std::string & key, " : "";
+    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
 
     my $res =
 
 "void get_value_or_throw( ${namespace}::${name} * res, ${extra_param}const generic_request::Request & r )\n" .
 "{\n";
 
-    if( $is_request )
+    if( $is_message )
     {
         $res = $res .
 "    get_value_or_throw( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
@@ -193,7 +193,7 @@ sub generate_exported_request_parser_cpp__to_body($$$)
     }
 
     $res = $res .
-    generate_exported_request_parser_cpp__to_message__body__init_members( $msg, $is_request ) .
+    generate_exported_request_parser_cpp__to_message__body__init_members( $msg, $is_message ) .
 "}\n";
 
     return $res;
@@ -201,13 +201,13 @@ sub generate_exported_request_parser_cpp__to_body($$$)
 
 sub generate_exported_request_parser_cpp__to_object__core($$$)
 {
-    my ( $namespace, $objs_ref, $is_request ) = @_;
+    my ( $namespace, $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_request_parser_cpp__to_body( $namespace, $_, $is_request ) . "\n";
+        $res = $res . generate_exported_request_parser_cpp__to_body( $namespace, $_, $is_message ) . "\n";
     }
 
     return $res;
