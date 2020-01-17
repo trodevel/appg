@@ -183,7 +183,16 @@ sub generate_exported_request_parser_cpp__to_body($$$)
     my $res =
 
 "void get_value_or_throw( ${namespace}::${name} * res, ${extra_param}const generic_request::Request & r )\n" .
-"{\n" .
+"{\n";
+
+    if( $is_request )
+    {
+        $res = $res .
+"    get_value_or_throw( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
+"\n";
+    }
+
+    $res = $res .
     generate_exported_request_parser_cpp__to_message__body__init_members( $msg, $is_request ) .
 "}\n";
 
