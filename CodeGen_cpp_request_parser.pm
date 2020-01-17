@@ -40,60 +40,6 @@ use 5.010;
 
 ###############################################
 
-sub generate_request_parser_h__to_obj_name($)
-{
-    my $name = shift;
-    return "static void                 get_value_or_throw( $name * res, const std::string & key, const generic_request::Request & r );";
-}
-
-sub generate_request_parser_h__to_base_msg_name($)
-{
-    my $name = shift;
-    return "static void                 get_value_or_throw( $name * res, const generic_request::Request & r );";
-}
-
-sub generate_request_parser_h_body_1_core($)
-{
-    my ( $objs_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $objs_ref } )
-    {
-        $res = $res . generate_request_parser_h__to_obj_name( $_->{name} ) . "\n";
-    }
-
-    return main::tabulate( $res );
-}
-
-sub generate_request_parser_h_body_1($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_request_parser_h_body_1_core( $$file_ref->{objs} );
-}
-
-sub generate_request_parser_h_body_2($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_request_parser_h_body_1_core( $$file_ref->{enums} );
-}
-
-sub generate_request_parser_h_body_3($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{base_msgs} } )
-    {
-        $res = $res . generate_request_parser_h__to_base_msg_name( $_->{name} ) . "\n";
-    }
-
-    return main::tabulate( $res );
-}
-
 sub generate_request_parser_h__to_msg_name($)
 {
     my $name = shift;
@@ -125,18 +71,11 @@ sub generate_request_parser_h($)
 "class RequestParser\n" .
 "{\n" .
 "public:\n" .
-"    typedef basic_parser::MalformedRequest      MalformedRequest;\n" .
 "    typedef generic_protocol::ForwardMessage    ForwardMessage;\n" .
 "\n" .
 "public:\n" .
 "\n" .
 "    static generic_protocol::ForwardMessage*    to_forward_message( const generic_request::Request & r );\n" .
-"\n" .
-generate_request_parser_h_body_1( $file_ref ) .
-"\n" .
-generate_request_parser_h_body_2( $file_ref ) .
-"\n" .
-generate_request_parser_h_body_3( $file_ref ) .
 "\n" .
 "private:\n" .
 "\n" .
@@ -144,9 +83,10 @@ generate_request_parser_h_body_3( $file_ref ) .
 "\n" .
 generate_request_parser_h_body_4( $file_ref ) .
 "\n" .
-"};\n";
+"};\n" .
+"\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "", "request_parser", 0, 0, [ "generic_request/request", "basic_parser/malformed_request", "enums", "protocol" ], [] );
+    my $res = to_include_guards( $$file_ref, $body, "", "request_parser", 0, 0, [ "generic_request/request", "enums", "protocol" ], [] );
 
     return $res;
 }
@@ -174,71 +114,6 @@ sub generate_request_parser_cpp__to_forward_message($)
     return main::tabulate( main::tabulate( $res ) );
 }
 
-sub generate_request_parser_cpp__to_enum__body($)
-{
-    my ( $name ) = @_;
-
-    my $res =
-
-"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
-"{\n" .
-"    uint32_t res_i;\n" .
-"\n" .
-"    basic_parser::get_value_or_throw( & res_i, key, r );\n" .
-"\n" .
-"    * res = static_cast<$name>( res_i );\n" .
-"}\n";
-
-    return $res;
-}
-
-sub generate_request_parser_cpp__to_enum($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{enums} } )
-    {
-        $res = $res . generate_request_parser_cpp__to_enum__body( $_->{name} ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_request_parser_cpp__to_message__body__init_members__body($$)
-{
-    my ( $obj, $is_request ) = @_;
-
-    my $res;
-
-    my $name        = $obj->{name};
-
-    my $key_name    = uc( $name );
-
-    my $key_expr    = ( $is_request == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
-
-    my $func = $obj->{data_type}->to_cpp__to_parse_function_name();
-
-    $res = "    ${func}( & res->${name}, ${key_expr}, r );";
-
-    return $res;
-}
-
-sub generate_request_parser_cpp__to_message__body__init_members($$)
-{
-    my ( $msg, $is_request ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $msg->{members} } )
-    {
-        $res = $res . generate_request_parser_cpp__to_message__body__init_members__body( $_, $is_request ) . "\n";
-    }
-
-    return $res;
-}
-
 sub generate_request_parser_cpp__to_message__body($)
 {
     my ( $msg ) = @_;
@@ -253,7 +128,7 @@ sub generate_request_parser_cpp__to_message__body($)
 "\n" .
 "    generic_protocol::RequestParser::to_request( res, r );\n" .
 "\n" .
-    generate_request_parser_cpp__to_message__body__init_members( $msg, 1 ) .
+"    ::basic_parser::get_value_or_throw( res, r );\n" .
 "\n" .
 "    RequestValidator::validate( * res );\n" .
 "\n" .
@@ -275,50 +150,6 @@ sub generate_request_parser_cpp__to_message($)
     }
 
     return $res;
-}
-
-sub generate_request_parser_cpp__to_object__body($)
-{
-    my ( $msg ) = @_;
-
-    my $name = $msg->{name};
-
-    my $res =
-
-"void RequestParser::get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
-"{\n" .
-    generate_request_parser_cpp__to_message__body__init_members( $msg, 0 ) .
-"}\n";
-
-    return $res;
-}
-
-sub generate_request_parser_cpp__to_object($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{objs} } )
-    {
-        $res = $res . generate_request_parser_cpp__to_object__body( $_ ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_request_parser_cpp__to_includes($)
-{
-    my ( $file_ref ) = @_;
-
-    my @res;
-
-    foreach( @{ $$file_ref->{includes} } )
-    {
-        push( @res, "../" . $_ . "/exported_request_parser" );
-    }
-
-    return @res;
 }
 
 sub generate_request_parser_cpp($)
@@ -367,21 +198,10 @@ sub generate_request_parser_cpp($)
 "    return Parser::to_request_type( cmd );\n" .
 "}\n" .
 "\n" .
-    generate_request_parser_cpp__to_enum( $file_ref ) .
-"\n" .
-    generate_request_parser_cpp__to_message( $file_ref ) .
-"\n" .
-    generate_request_parser_cpp__to_object( $file_ref ) .
-"\n"
+    generate_request_parser_cpp__to_message( $file_ref )
 ;
 
-    my @includes = ( "parser", "exported_request_parser"  );
-
-    push( @includes, generate_request_parser_cpp__to_includes( $file_ref ) );
-
-    push( @includes, "../basic_parser/get_value" );
-
-    my $res = to_body( $$file_ref, $body, "", \@includes, [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_request_parser" ], [ "map" ] );
 
     return $res;
 }
