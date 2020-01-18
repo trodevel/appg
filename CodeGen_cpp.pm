@@ -32,6 +32,7 @@ require CodeGen_cpp_parser;
 require CodeGen_cpp_request_parser;
 require CodeGen_cpp_exported_request_parser;
 require CodeGen_cpp_exported_csv_response_encoder;
+require CodeGen_cpp_exported_str_helper;
 require CodeGen_cpp_csv_response_encoder;
 
 ###############################################
@@ -56,6 +57,8 @@ use constant exported_csv_response_encoder_H_FILE        => 'exported_csv_respon
 use constant exported_csv_response_encoder_CPP_FILE      => 'exported_csv_response_encoder.cpp';
 use constant CSV_RESPONSE_ENCODER_H_FILE        => 'csv_response_encoder.h';
 use constant CSV_RESPONSE_ENCODER_CPP_FILE      => 'csv_response_encoder.cpp';
+use constant EXPORTED_STR_HELPER_H_FILE         => 'exported_str_helper.h';
+use constant EXPORTED_STR_HELPER_CPP_FILE       => 'exported_str_helper.cpp';
 
 ###############################################
 
@@ -97,6 +100,10 @@ sub generate($$)
     write_to_file( generate_csv_response_encoder_h( $file_ref ), ${\CSV_RESPONSE_ENCODER_H_FILE} );
 
     write_to_file( generate_csv_response_encoder_cpp( $file_ref ), ${\CSV_RESPONSE_ENCODER_CPP_FILE} );
+
+    write_to_file( generate_exported_str_helper_h( $file_ref ), ${\EXPORTED_STR_HELPER_H_FILE} );
+
+    write_to_file( generate_exported_str_helper_cpp( $file_ref ), ${\EXPORTED_STR_HELPER_CPP_FILE} );
 }
 
 ###############################################
