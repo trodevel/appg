@@ -150,13 +150,24 @@ sub generate_exported_str_helper_cpp__to_enum__body($$)
     my $res =
 
 "std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
-"{\n";
+"{\n" .
+"    typedef $namespace::$name Type;\n" .
+"    static const std::map< Type, std::string > m =\n" .
+"    {\n";
 
     $res .= generate_exported_str_helper_cpp__to_enum__body__init_members( $enum );
 
     $res .=
+"    };\n" .
 "\n" .
-"    return os;\n" .
+"    auto it = m.find( r );\n" .
+"\n" .
+"    static const std::string undef( \"undef\" );\n" .
+"\n" .
+"    if( it != m.end() )\n" .
+"        return write( os, it->second );\n" .
+"\n" .
+"    return write( os, undef );\n" .
 "}\n";
 
     return $res;
@@ -213,6 +224,14 @@ sub generate_exported_str_helper_cpp__to_object__body($$$$)
 
 "std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
 "{\n";
+
+    if( $is_message )
+    {
+        $res .=
+"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"\n";
+    }
+
 
     if( $is_message == 0 )
     {
@@ -295,6 +314,8 @@ sub generate_exported_str_helper_cpp($)
 
 "// enums\n" .
 "\n" .
+"#define TUPLE_VAL_STR(_x_)  _x_,#_x_\n" .
+"\n" .
     generate_exported_str_helper_cpp__to_enum( $file_ref ) .
 "// objects\n" .
 "\n" .
@@ -315,7 +336,7 @@ sub generate_exported_str_helper_cpp($)
 
     push( @includes, "basic_parser/basic_str_helper" );
 
-    my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ "map" ] );
 
     return $res;
 }
