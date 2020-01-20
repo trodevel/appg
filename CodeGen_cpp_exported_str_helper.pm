@@ -119,15 +119,42 @@ generate_exported_str_helper_h_body_4( $file_ref ) .
 
 ###############################################
 
+sub generate_exported_str_helper_cpp__to_enum__body__init_members__body($)
+{
+    my ( $name ) = @_;
+
+    return "{ Type:: TUPLE_VAL_STR( $name ) },";
+}
+
+sub generate_exported_str_helper_cpp__to_enum__body__init_members($)
+{
+    my ( $enum ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $enum->{elements} } )
+    {
+        $res .= generate_exported_str_helper_cpp__to_enum__body__init_members__body( $_->{name} ) . "\n";
+    }
+
+    return main::tabulate( main::tabulate( $res ) );
+}
+
+
 sub generate_exported_str_helper_cpp__to_enum__body($$)
 {
-    my ( $namespace, $name ) = @_;
+    my ( $namespace, $enum ) = @_;
+
+    my $name = $enum->{name};
 
     my $res =
 
 "std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
-"{\n" .
-"    write( os, static_cast<unsigned>( r ) );\n" .
+"{\n";
+
+    $res .= generate_exported_str_helper_cpp__to_enum__body__init_members( $enum );
+
+    $res .=
 "\n" .
 "    return os;\n" .
 "}\n";
@@ -143,7 +170,7 @@ sub generate_exported_str_helper_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_exported_str_helper_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res = $res . generate_exported_str_helper_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
     }
 
     return $res;
@@ -157,7 +184,7 @@ sub generate_exported_str_helper_cpp__to_object__body__init_members__body($)
 
     my $name        = $obj->{name};
 
-    $res = "    os << \".${name}=\";    write( os, r.${name} );";
+    $res = "    os << \" ${name}=\";    write( os, r.${name} );";
 
     return $res;
 }
@@ -187,9 +214,22 @@ sub generate_exported_str_helper_cpp__to_object__body($$$$)
 "std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
 "{\n";
 
-    $res = $res .
+    if( $is_message == 0 )
+    {
+        $res .= "    os << \"(\";\n\n";
+    }
+
+    $res .=
     generate_exported_str_helper_cpp__to_object__body__init_members( $msg ) .
-"\n" .
+"\n";
+
+    if( $is_message == 0 )
+    {
+        $res .= "    os << \")\";\n\n";
+    }
+
+    $res .=
+
 "    return os;\n" .
 "}\n";
 
@@ -269,7 +309,7 @@ sub generate_exported_str_helper_cpp($)
 
     $body = gtcpp::namespacize( 'str_helper', $body );
 
-    my @includes = ( "exported_str_helper", "utils/nonascii_hex_codec" );
+    my @includes = ( "exported_str_helper" );
 
     push( @includes, generate_exported_str_helper_cpp__to_includes( $file_ref ) );
 
