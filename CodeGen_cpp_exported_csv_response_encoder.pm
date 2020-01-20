@@ -277,7 +277,7 @@ sub generate_exported_csv_response_encoder_cpp($)
 
     $body = gtcpp::namespacize( 'csv_encoder', $body );
 
-    my @includes = ( "exported_csv_response_encoder", "utils/nonascii_hex_codec" );
+    my @includes = ( "exported_csv_response_encoder" );
 
     push( @includes, generate_exported_csv_response_encoder_cpp__to_includes( $file_ref ) );
 
