@@ -126,8 +126,6 @@ sub generate_request_parser_cpp__to_message__body($)
 "{\n" .
 "    auto * res = new $name;\n" .
 "\n" .
-"    generic_protocol::RequestParser::to_request( res, r );\n" .
-"\n" .
 "    ::basic_parser::get_value_or_throw( res, r );\n" .
 "\n" .
 "    RequestValidator::validate( * res );\n" .
