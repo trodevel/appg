@@ -189,10 +189,14 @@ sub generate_exported_csv_response_encoder_cpp__to_object__body($$$$)
 
     if( $is_message )
     {
-        $res = $res .
+        $res .=
 "    write( os, \"$protocol/$name\" );\n".
 "\n";
 
+        $res .=
+"    // base class\n" .
+"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"\n";
     }
 
     $res = $res .
