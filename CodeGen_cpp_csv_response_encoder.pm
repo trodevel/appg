@@ -155,7 +155,7 @@ sub generate_csv_response_encoder_cpp($)
 "\n" .
 "std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r )\n" .
 "{\n" .
-"    typedef std::ostream & (Type::*PPMF)( std::ostream & os,  ); \n" .
+"    typedef std::ostream & (Type::*PPMF)( std::ostream & os, const generic_protocol::MessageBase & );\n" .
 "\n" .
 "#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::csv_response_encoder::write_##_v }\n" .
 "\n" .
