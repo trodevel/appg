@@ -40,6 +40,54 @@ use 5.010;
 
 ###############################################
 
+sub generate_str_helper_h__to_obj_name($)
+{
+    my ( $name ) = @_;
+
+    return "static std::ostream & write( std::ostream & os, const $name & r );";
+}
+
+sub generate_str_helper_h_body_1_core($)
+{
+    my ( $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_str_helper_h__to_obj_name( $_->{name} ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_str_helper_h_body_1($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_h_body_1_core( $$file_ref->{enums} );
+}
+
+sub generate_str_helper_h_body_2($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_h_body_1_core( $$file_ref->{objs} );
+}
+
+sub generate_str_helper_h_body_3($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_h_body_1_core( $$file_ref->{base_msgs} );
+}
+
+sub generate_str_helper_h_body_4($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_h_body_1_core( $$file_ref->{msgs} );
+}
 
 sub generate_str_helper_h($)
 {
@@ -49,8 +97,27 @@ sub generate_str_helper_h($)
 
     $body =
 
-"std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r );\n" .
-"std::string to_csv( const generic_protocol::MessageBase & r );\n" .
+"// enums\n" .
+generate_str_helper_h_body_1( $file_ref ) .
+"\n" .
+"// objects\n" .
+generate_str_helper_h_body_2( $file_ref ) .
+"\n" .
+"// base messages\n" .
+generate_str_helper_h_body_3( $file_ref ) .
+"\n" .
+"// messages\n" .
+generate_str_helper_h_body_4( $file_ref ) .
+"\n" .
+"template<class T>\n" .
+"static std::string to_string( const T & l )\n" .
+"{\n" .
+"    std::ostringstream os;\n" .
+"\n" .
+"    write( os, l );\n" .
+"\n" .
+"    return os.str();\n" .
+"}\n" .
 "\n";
 
     $body = gtcpp::namespacize( 'str_helper', $body );
@@ -62,85 +129,63 @@ sub generate_str_helper_h($)
 
 ###############################################
 
-sub generate_str_helper_cpp__write__body($)
+
+sub generate_str_helper_cpp__to_object__body($)
 {
-    my $name = shift;
-
-    return "HANDLER_MAP_ENTRY( $name )";
-}
-
-sub generate_str_helper_cpp__write($)
-{
-    my ( $file_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $$file_ref->{msgs} } )
-    {
-        $res = $res . generate_str_helper_cpp__write__body( $_->{name} ) . ",\n";
-    }
-
-    return main::tabulate( main::tabulate( $res ) );
-}
-
-sub generate_str_helper_cpp__write_message__body($$)
-{
-    my ( $namespace, $msg ) = @_;
+    my ( $msg ) = @_;
 
     my $name = $msg->{name};
 
     my $res =
 
-"std::ostream & write_${name}( std::ostream & os, const generic_protocol::MessageBase & rr )\n" .
+"std::ostream & write( std::ostream & os, const $name & r )\n" .
 "{\n" .
-"    auto & r = dynamic_cast< const $namespace::$name &>( rr );\n".
-"\n" .
-"    return ::basic_parser::str_helper::write( os, r );\n" .
+"    return ::basic_parser::str_helper::write( os, r );\n".
 "}\n";
 
     return $res;
 }
 
-sub generate_str_helper_cpp__write_message($)
+sub generate_str_helper_cpp__to_object__core($)
 {
-    my ( $file_ref ) = @_;
+    my ( $objs_ref ) = @_;
 
     my $res = "";
 
-    foreach( @{ $$file_ref->{msgs} } )
+    foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_str_helper_cpp__write_message__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
+        $res .= generate_str_helper_cpp__to_object__body( $_ ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_str_helper_cpp__to_includes($)
+sub generate_str_helper_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    my @res;
-
-    foreach( @{ $$file_ref->{includes} } )
-    {
-        push( @res, "../" . $_ . "/exported_str_helper" );
-    }
-
-    return @res;
+    return generate_str_helper_cpp__to_object__core( $$file_ref->{objs} );
 }
 
-sub generate_str_helper_cpp__to_csv()
+sub generate_str_helper_cpp__to_enum($)
 {
-    my $res =
-"std::string to_csv( const generic_protocol::MessageBase & r )\n" .
-"{\n" .
-"    std::ostringstream os;\n" .
-"\n" .
-"    write( os, l );\n" .
-"\n" .
-"    return os.str();\n" .
-"}\n";
+    my ( $file_ref ) = @_;
 
+    return generate_str_helper_cpp__to_object__core( $$file_ref->{enums} );
+}
+
+sub generate_str_helper_cpp__to_base_message($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_cpp__to_object__core( $$file_ref->{base_msgs} );
+}
+
+sub generate_str_helper_cpp__to_message($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_str_helper_cpp__to_object__core( $$file_ref->{msgs} );
 }
 
 sub generate_str_helper_cpp($)
@@ -151,38 +196,23 @@ sub generate_str_helper_cpp($)
 
     $body =
 
-    generate_str_helper_cpp__write_message( $file_ref ) .
+"// enums\n" .
 "\n" .
-"std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r )\n" .
-"{\n" .
-"    typedef std::ostream & (Type::*PPMF)( std::ostream & os, const generic_protocol::MessageBase & );\n" .
+    generate_str_helper_cpp__to_enum( $file_ref ) .
+"// objects\n" .
 "\n" .
-"#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::str_helper::write_##_v }\n" .
+    generate_str_helper_cpp__to_object( $file_ref ) .
+"// base messages\n" .
 "\n" .
-"    static const std::map<std::type_index, PPMF> funcs =\n" .
-"    {\n" .
-
-    generate_str_helper_cpp__write( $file_ref ) .
-
-"    };\n" .
+    generate_str_helper_cpp__to_base_message( $file_ref ) .
+"// messages\n" .
 "\n" .
-"#undef HANDLER_MAP_ENTRY\n" .
-"\n" .
-"    auto it = funcs.find( type );\n" .
-"\n" .
-"    if( it != funcs.end() )\n" .
-"        return it->second( os, r );\n" .
-"\n" .
-"    return ::generic_protocol::str_helper::write( os, r );\n" .
-"}\n" .
-"\n" .
-    generate_str_helper_cpp__to_csv() .
-"\n"
+    generate_str_helper_cpp__to_message( $file_ref )
 ;
 
     $body = gtcpp::namespacize( 'str_helper', $body );
 
-    my $res = to_body( $$file_ref, $body, "", [ "exported_str_helper", "generic_protocol/str_helper" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "",  [ "str_helper", "exported_str_helper" ], [ ] );
 
     return $res;
 }
