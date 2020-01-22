@@ -64,6 +64,8 @@ use constant EXPORTED_STR_HELPER_CPP_FILE       => 'exported_str_helper.cpp';
 use constant STR_HELPER_H_FILE                  => 'str_helper.h';
 use constant STR_HELPER_CPP_FILE                => 'str_helper.cpp';
 use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
+use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
+use constant MAKEFILE_FILE                      => 'Makefile';
 
 ###############################################
 
@@ -115,6 +117,10 @@ sub generate($$)
     write_to_file( generate_str_helper_cpp( $file_ref ), ${\STR_HELPER_CPP_FILE} );
 
     write_to_file( generate_makefile_lib( $file_ref ), ${\MAKEFILE_LIB_FILE} );
+
+    write_to_file( generate_makefile_app( $file_ref ), ${\MAKEFILE_APP_FILE} );
+
+    write_to_file( generate_makefile( $file_ref ), ${\MAKEFILE_FILE} );
 }
 
 ###############################################

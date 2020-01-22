@@ -77,9 +77,11 @@ sub generate_makefile_lib($)
 "\n" .
 "LIB_SRCC = \\\n" .
 "\tcsv_response_encoder.cpp \\\n" .
+"\texported_csv_response_encoder.cpp \\\n" .
+"\texported_request_parser.cpp \\\n" .
+"\texported_str_helper.cpp \\\n" .
 "\tparser.cpp \\\n" .
-"\trequest_parser.cpp  \\\n" .
-"\trequest_validator.cpp \\\n" .
+"\trequest_parser.cpp \\\n" .
 "\tstr_helper.cpp \\\n" .
 "\n" .
 "LIB_EXT_LIB_NAMES = \\\n" .
@@ -94,5 +96,60 @@ sub generate_makefile_lib($)
 }
 
 ###############################################
+
+sub generate_makefile_app($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res;
+
+    my $name = get_namespace_name( $$file_ref );
+
+    $res =
+
+"# Makefile for lib${name}\n" .
+"# automatically generated file\n" .
+"\n" .
+"###################################################################\n" .
+"\n" .
+"VER = 0\n" .
+"\n" .
+"APP_PROJECT := example\n" .
+"\n" .
+"APP_BOOST_LIB_NAMES := system regex\n" .
+"\n" .
+"APP_THIRDPARTY_LIBS = -lm\n" .
+"\n" .
+"APP_SRCC = example.cpp\n" .
+"\n" .
+"APP_EXT_LIB_NAMES = \\\n" .
+"\tbasic_parser \\\n" .
+"\tgeneric_protocol \\\n" .
+"\tgeneric_request \\\n" .
+"\tutils \\\n" .
+    generate_makefile_lib__to_includes( $file_ref ) .
+"\n";
+
+    return $res;
+}
+
+###############################################
+
+sub generate_makefile($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res =
+
+"export MAKETOOLS_PATH := \$(CURDIR)/../make_tools\n" .
+"\n" .
+"include \$(MAKETOOLS_PATH)/Makefile.common.mak\n" .
+"\n";
+
+    return $res;
+}
+
+###############################################
+
 
 1;
