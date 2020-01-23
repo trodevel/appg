@@ -492,12 +492,12 @@ sub parse_obj($$$$$)
             print STDERR "DEBUG: dt\n";
             parse_data_type( \$obj, $line );
         }
-        elsif ( $line =~ /^(${\KW_ARRAY}) / )
+        elsif ( $line =~ /^(${\KW_ARRAY})\s*/ )
         {
             print STDERR "DEBUG: array\n";
             parse_array( \$obj, $line );
         }
-        elsif ( $line =~ /^(${\KW_MAP}) / )
+        elsif ( $line =~ /^(${\KW_MAP})\s*/ )
         {
             print STDERR "DEBUG: map\n";
             parse_map( \$obj, $line );
@@ -580,6 +580,16 @@ sub parse_msg($$$$$)
             print STDERR "DEBUG: msg_end\n";
             $$file_ref->add_msg( $obj );
             return;
+        }
+        elsif ( $line =~ /^(${\KW_ARRAY})\s*/ )
+        {
+            print STDERR "DEBUG: array\n";
+            parse_array( \$obj, $line );
+        }
+        elsif ( $line =~ /^(${\KW_MAP})\s*/ )
+        {
+            print STDERR "DEBUG: map\n";
+            parse_map( \$obj, $line );
         }
         elsif ( $line =~ /^${\REGEXP_DT} / )
         {
