@@ -76,8 +76,8 @@ sub generate_makefile_lib($)
 "LIB_BOOST_LIB_NAMES :=\n" .
 "\n" .
 "LIB_SRCC = \\\n" .
-"\tcsv_response_encoder.cpp \\\n" .
-"\texported_csv_response_encoder.cpp \\\n" .
+"\tcsv_helper.cpp \\\n" .
+"\texported_csv_helper.cpp \\\n" .
 "\texported_request_parser.cpp \\\n" .
 "\texported_str_helper.cpp \\\n" .
 "\tparser.cpp \\\n" .

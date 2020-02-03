@@ -41,7 +41,7 @@ use 5.010;
 ###############################################
 
 
-sub generate_csv_response_encoder_h($)
+sub generate_csv_helper_h($)
 {
     my ( $file_ref ) = @_;
 
@@ -53,23 +53,23 @@ sub generate_csv_response_encoder_h($)
 "std::string to_csv( const generic_protocol::MessageBase & r );\n" .
 "\n";
 
-    $body = gtcpp::namespacize( 'csv_response_encoder', $body );
+    $body = gtcpp::namespacize( 'csv_helper', $body );
 
-    my $res = to_include_guards( $$file_ref, $body, "", "csv_response_encoder", 0, 0, [ "protocol" ], [ "sstream" ] );
+    my $res = to_include_guards( $$file_ref, $body, "", "csv_helper", 0, 0, [ "protocol" ], [ "sstream" ] );
 
     return $res;
 }
 
 ###############################################
 
-sub generate_csv_response_encoder_cpp__write__body($)
+sub generate_csv_helper_cpp__write__body($)
 {
     my $name = shift;
 
     return "HANDLER_MAP_ENTRY( $name )";
 }
 
-sub generate_csv_response_encoder_cpp__write($)
+sub generate_csv_helper_cpp__write($)
 {
     my ( $file_ref ) = @_;
 
@@ -77,13 +77,13 @@ sub generate_csv_response_encoder_cpp__write($)
 
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . generate_csv_response_encoder_cpp__write__body( $_->{name} ) . ",\n";
+        $res = $res . generate_csv_helper_cpp__write__body( $_->{name} ) . ",\n";
     }
 
     return main::tabulate( main::tabulate( $res ) );
 }
 
-sub generate_csv_response_encoder_cpp__write_message__body($$)
+sub generate_csv_helper_cpp__write_message__body($$)
 {
     my ( $namespace, $msg ) = @_;
 
@@ -101,7 +101,7 @@ sub generate_csv_response_encoder_cpp__write_message__body($$)
     return $res;
 }
 
-sub generate_csv_response_encoder_cpp__write_message($)
+sub generate_csv_helper_cpp__write_message($)
 {
     my ( $file_ref ) = @_;
 
@@ -109,13 +109,13 @@ sub generate_csv_response_encoder_cpp__write_message($)
 
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . generate_csv_response_encoder_cpp__write_message__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
+        $res = $res . generate_csv_helper_cpp__write_message__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_csv_response_encoder_cpp__to_includes($)
+sub generate_csv_helper_cpp__to_includes($)
 {
     my ( $file_ref ) = @_;
 
@@ -123,13 +123,13 @@ sub generate_csv_response_encoder_cpp__to_includes($)
 
     foreach( @{ $$file_ref->{includes} } )
     {
-        push( @res, "../" . $_ . "/exported_csv_response_encoder" );
+        push( @res, "../" . $_ . "/exported_csv_helper" );
     }
 
     return @res;
 }
 
-sub generate_csv_response_encoder_cpp__to_csv()
+sub generate_csv_helper_cpp__to_csv()
 {
     my $res =
 "std::string to_csv( const generic_protocol::MessageBase & r )\n" .
@@ -143,7 +143,7 @@ sub generate_csv_response_encoder_cpp__to_csv()
 
 }
 
-sub generate_csv_response_encoder_cpp($)
+sub generate_csv_helper_cpp($)
 {
     my ( $file_ref ) = @_;
 
@@ -151,18 +151,18 @@ sub generate_csv_response_encoder_cpp($)
 
     $body =
 
-    generate_csv_response_encoder_cpp__write_message( $file_ref ) .
+    generate_csv_helper_cpp__write_message( $file_ref ) .
 "\n" .
 "std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r )\n" .
 "{\n" .
 "    typedef std::ostream & (Type::*PPMF)( std::ostream & os, const generic_protocol::MessageBase & );\n" .
 "\n" .
-"#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::csv_response_encoder::write_##_v }\n" .
+"#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::csv_helper::write_##_v }\n" .
 "\n" .
 "    static const std::map<std::type_index, PPMF> funcs =\n" .
 "    {\n" .
 
-    generate_csv_response_encoder_cpp__write( $file_ref ) .
+    generate_csv_helper_cpp__write( $file_ref ) .
 
 "    };\n" .
 "\n" .
@@ -173,16 +173,16 @@ sub generate_csv_response_encoder_cpp($)
 "    if( it != funcs.end() )\n" .
 "        return it->second( os, r );\n" .
 "\n" .
-"    return ::generic_protocol::csv_response_encoder::write( os, r );\n" .
+"    return ::generic_protocol::csv_helper::write( os, r );\n" .
 "}\n" .
 "\n" .
-    generate_csv_response_encoder_cpp__to_csv() .
+    generate_csv_helper_cpp__to_csv() .
 "\n"
 ;
 
-    $body = gtcpp::namespacize( 'csv_response_encoder', $body );
+    $body = gtcpp::namespacize( 'csv_helper', $body );
 
-    my $res = to_body( $$file_ref, $body, "", [ "exported_csv_response_encoder", "generic_protocol/csv_response_encoder" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "exported_csv_helper", "generic_protocol/csv_helper" ], [ "map" ] );
 
     return $res;
 }

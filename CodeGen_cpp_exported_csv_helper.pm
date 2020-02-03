@@ -40,14 +40,14 @@ use 5.010;
 
 ###############################################
 
-sub generate_exported_csv_response_encoder_h__to_obj_name($$)
+sub generate_exported_csv_helper_h__to_obj_name($$)
 {
     my ( $namespace, $name ) = @_;
 
     return "static std::ostream & write( std::ostream & os, const $namespace::$name & r );";
 }
 
-sub generate_exported_csv_response_encoder_h_body_1_core($$)
+sub generate_exported_csv_helper_h_body_1_core($$)
 {
     my ( $namespace, $objs_ref ) = @_;
 
@@ -55,41 +55,41 @@ sub generate_exported_csv_response_encoder_h_body_1_core($$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_csv_response_encoder_h__to_obj_name( $namespace, $_->{name} ) . "\n";
+        $res = $res . generate_exported_csv_helper_h__to_obj_name( $namespace, $_->{name} ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_h_body_1($)
+sub generate_exported_csv_helper_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
+    return generate_exported_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
 }
 
-sub generate_exported_csv_response_encoder_h_body_2($)
+sub generate_exported_csv_helper_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
+    return generate_exported_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
 }
 
-sub generate_exported_csv_response_encoder_h_body_3($)
+sub generate_exported_csv_helper_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs} );
+    return generate_exported_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs} );
 }
 
-sub generate_exported_csv_response_encoder_h_body_4($)
+sub generate_exported_csv_helper_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs} );
+    return generate_exported_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs} );
 }
 
-sub generate_exported_csv_response_encoder_h($)
+sub generate_exported_csv_helper_h($)
 {
     my ( $file_ref ) = @_;
 
@@ -98,28 +98,28 @@ sub generate_exported_csv_response_encoder_h($)
     $body =
 
 "// enums\n" .
-generate_exported_csv_response_encoder_h_body_1( $file_ref ) .
+generate_exported_csv_helper_h_body_1( $file_ref ) .
 "\n" .
 "// objects\n" .
-generate_exported_csv_response_encoder_h_body_2( $file_ref ) .
+generate_exported_csv_helper_h_body_2( $file_ref ) .
 "\n" .
 "// base messages\n" .
-generate_exported_csv_response_encoder_h_body_3( $file_ref ) .
+generate_exported_csv_helper_h_body_3( $file_ref ) .
 "\n" .
 "// messages\n" .
-generate_exported_csv_response_encoder_h_body_4( $file_ref ) .
+generate_exported_csv_helper_h_body_4( $file_ref ) .
 "\n";
 
     $body = gtcpp::namespacize( 'csv_encoder', $body );
 
-    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_csv_response_encoder", 0, 0, [ "protocol" ], [ "sstream" ] );
+    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_csv_helper", 0, 0, [ "protocol" ], [ "sstream" ] );
 
     return $res;
 }
 
 ###############################################
 
-sub generate_exported_csv_response_encoder_cpp__to_enum__body($$)
+sub generate_exported_csv_helper_cpp__to_enum__body($$)
 {
     my ( $namespace, $name ) = @_;
 
@@ -135,7 +135,7 @@ sub generate_exported_csv_response_encoder_cpp__to_enum__body($$)
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_enum($)
+sub generate_exported_csv_helper_cpp__to_enum($)
 {
     my ( $file_ref ) = @_;
 
@@ -143,13 +143,13 @@ sub generate_exported_csv_response_encoder_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_exported_csv_response_encoder_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res = $res . generate_exported_csv_helper_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_object__body__init_members__body($)
+sub generate_exported_csv_helper_cpp__to_object__body__init_members__body($)
 {
     my ( $obj ) = @_;
 
@@ -162,7 +162,7 @@ sub generate_exported_csv_response_encoder_cpp__to_object__body__init_members__b
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_object__body__init_members($)
+sub generate_exported_csv_helper_cpp__to_object__body__init_members($)
 {
     my ( $msg ) = @_;
 
@@ -170,13 +170,13 @@ sub generate_exported_csv_response_encoder_cpp__to_object__body__init_members($)
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_exported_csv_response_encoder_cpp__to_object__body__init_members__body( $_ ) . "\n";
+        $res = $res . generate_exported_csv_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_object__body($$$$)
+sub generate_exported_csv_helper_cpp__to_object__body($$$$)
 {
     my ( $namespace, $msg, $is_message, $protocol ) = @_;
 
@@ -200,7 +200,7 @@ sub generate_exported_csv_response_encoder_cpp__to_object__body($$$$)
     }
 
     $res = $res .
-    generate_exported_csv_response_encoder_cpp__to_object__body__init_members( $msg ) .
+    generate_exported_csv_helper_cpp__to_object__body__init_members( $msg ) .
 "\n" .
 "    return os;\n" .
 "}\n";
@@ -208,7 +208,7 @@ sub generate_exported_csv_response_encoder_cpp__to_object__body($$$$)
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_object__core($$$)
+sub generate_exported_csv_helper_cpp__to_object__core($$$)
 {
     my ( $file_ref, $objs_ref, $is_message ) = @_;
 
@@ -216,34 +216,34 @@ sub generate_exported_csv_response_encoder_cpp__to_object__core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_csv_response_encoder_cpp__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res = $res . generate_exported_csv_helper_cpp__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_object($)
+sub generate_exported_csv_helper_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_base_message($)
+sub generate_exported_csv_helper_cpp__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_message($)
+sub generate_exported_csv_helper_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_csv_response_encoder_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
 }
 
-sub generate_exported_csv_response_encoder_cpp__to_includes($)
+sub generate_exported_csv_helper_cpp__to_includes($)
 {
     my ( $file_ref ) = @_;
 
@@ -251,13 +251,13 @@ sub generate_exported_csv_response_encoder_cpp__to_includes($)
 
     foreach( @{ $$file_ref->{includes} } )
     {
-        push( @res, $_ . "/exported_csv_response_encoder" );
+        push( @res, $_ . "/exported_csv_helper" );
     }
 
     return @res;
 }
 
-sub generate_exported_csv_response_encoder_cpp($)
+sub generate_exported_csv_helper_cpp($)
 {
     my ( $file_ref ) = @_;
 
@@ -267,25 +267,25 @@ sub generate_exported_csv_response_encoder_cpp($)
 
 "// enums\n" .
 "\n" .
-    generate_exported_csv_response_encoder_cpp__to_enum( $file_ref ) .
+    generate_exported_csv_helper_cpp__to_enum( $file_ref ) .
 "// objects\n" .
 "\n" .
-    generate_exported_csv_response_encoder_cpp__to_object( $file_ref ) .
+    generate_exported_csv_helper_cpp__to_object( $file_ref ) .
 "// base messages\n" .
 "\n" .
-    generate_exported_csv_response_encoder_cpp__to_base_message( $file_ref ) .
+    generate_exported_csv_helper_cpp__to_base_message( $file_ref ) .
 "// messages\n" .
 "\n" .
-    generate_exported_csv_response_encoder_cpp__to_message( $file_ref )
+    generate_exported_csv_helper_cpp__to_message( $file_ref )
 ;
 
     $body = gtcpp::namespacize( 'csv_encoder', $body );
 
-    my @includes = ( "exported_csv_response_encoder" );
+    my @includes = ( "exported_csv_helper" );
 
-    push( @includes, generate_exported_csv_response_encoder_cpp__to_includes( $file_ref ) );
+    push( @includes, generate_exported_csv_helper_cpp__to_includes( $file_ref ) );
 
-    push( @includes, "basic_parser/basic_csv_response_encoder" );
+    push( @includes, "basic_parser/basic_csv_helper" );
 
     my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ ] );
 
