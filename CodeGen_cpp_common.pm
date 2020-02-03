@@ -82,7 +82,7 @@ sub to_include_guards($$$$$$$$)
         my @includes  = @{ $file->{includes} };     # includes
 
         $body = "// includes\n" .
-            gtcpp::array_to_include( \@includes, 0 ) . "\n" . $body;
+            gtcpp::array_to_include_ext( \@includes ) . "\n" . $body;
     }
 
     if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )

@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12571 $ $Date:: 2019-12-30 #$ $Author: serge $
+# $Revision: 12693 $ $Date:: 2020-02-03 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -146,6 +146,21 @@ sub array_to_include($$)
     foreach( @array )
     {
         $res = $res . to_include(  $_, $is_system ) . "\n";
+    }
+
+    return $res;
+}
+############################################################
+sub array_to_include_ext($)
+{
+    my( $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res = $res . to_include(  $_ . '/protocol', 0 ) . "\n";
     }
 
     return $res;
