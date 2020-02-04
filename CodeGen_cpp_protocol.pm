@@ -68,10 +68,10 @@ sub to_cpp_decl
 
     if( defined $file->{base_prot} && $file->{base_prot} ne '' )
     {
-        push( @includes, $file->{base_prot} . "/protocol.h" );
+        push( @includes, $file->{base_prot} . "/protocol" );
     }
 
-    my $res = to_include_guards( $file, $body, "", "decl", 0, 1, \@includes );
+    my $res = to_include_guards( $file, $body, "", "decl", 0, 1, \@includes, [ "vector", "map" ] );
 
     $res = $res . "\n";
 
