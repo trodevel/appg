@@ -64,7 +64,14 @@ sub to_cpp_decl
     $body = $body . gtcpp::array_to_decl( \@base_msgs );
     $body = $body . gtcpp::array_to_decl( \@msgs );
 
-    my $res = to_include_guards( $file, $body, "", "decl", 0, 1, [] );
+    my @includes;
+
+    if( defined $file->{base_prot} && $file->{base_prot} ne '' )
+    {
+        push( @includes, $file->{base_prot} . "/protocol.h" );
+    }
+
+    my $res = to_include_guards( $file, $body, "", "decl", 0, 1, \@includes );
 
     $res = $res . "\n";
 
