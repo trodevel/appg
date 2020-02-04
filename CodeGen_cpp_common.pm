@@ -81,7 +81,7 @@ sub to_include_guards($$$$$$$$)
     {
         my @includes  = @{ $file->{includes} };     # includes
 
-        $body = "// includes\n" .
+        $body = "// includes for used modules\n" .
             gtcpp::array_to_include_ext( \@includes ) . "\n" . $body;
     }
 
