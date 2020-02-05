@@ -49,8 +49,8 @@ sub generate_csv_helper_h($)
 
     $body =
 
-"std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r );\n" .
-"std::string to_csv( const generic_protocol::MessageBase & r );\n" .
+"std::ostream & write( std::ostream & os, const generic_protocol::Object & r );\n" .
+"std::string to_csv( const generic_protocol::Object & r );\n" .
 "\n";
 
     $body = gtcpp::namespacize( 'csv_helper', $body );
@@ -91,7 +91,7 @@ sub generate_csv_helper_cpp__write_message__body($$)
 
     my $res =
 
-"std::ostream & write_${name}( std::ostream & os, const generic_protocol::MessageBase & rr )\n" .
+"std::ostream & write_${name}( std::ostream & os, const generic_protocol::Object & rr )\n" .
 "{\n" .
 "    auto & r = dynamic_cast< const $namespace::$name &>( rr );\n".
 "\n" .
@@ -132,11 +132,11 @@ sub generate_csv_helper_cpp__to_includes($)
 sub generate_csv_helper_cpp__to_csv()
 {
     my $res =
-"std::string to_csv( const generic_protocol::MessageBase & r )\n" .
+"std::string to_csv( const generic_protocol::Object & r )\n" .
 "{\n" .
 "    std::ostringstream os;\n" .
 "\n" .
-"    write( os, l );\n" .
+"    write( os, r );\n" .
 "\n" .
 "    return os.str();\n" .
 "}\n";
@@ -153,9 +153,9 @@ sub generate_csv_helper_cpp($)
 
     generate_csv_helper_cpp__write_message( $file_ref ) .
 "\n" .
-"std::ostream & write( std::ostream & os, const generic_protocol::MessageBase & r )\n" .
+"std::ostream & write( std::ostream & os, const generic_protocol::Object & r )\n" .
 "{\n" .
-"    typedef std::ostream & (Type::*PPMF)( std::ostream & os, const generic_protocol::MessageBase & );\n" .
+"    typedef std::ostream & (*PPMF)( std::ostream & os, const generic_protocol::Object & );\n" .
 "\n" .
 "#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::csv_helper::write_##_v }\n" .
 "\n" .
@@ -168,7 +168,7 @@ sub generate_csv_helper_cpp($)
 "\n" .
 "#undef HANDLER_MAP_ENTRY\n" .
 "\n" .
-"    auto it = funcs.find( type );\n" .
+"    auto it = funcs.find( typeid( r ) );\n" .
 "\n" .
 "    if( it != funcs.end() )\n" .
 "        return it->second( os, r );\n" .
@@ -182,7 +182,7 @@ sub generate_csv_helper_cpp($)
 
     $body = gtcpp::namespacize( 'csv_helper', $body );
 
-    my $res = to_body( $$file_ref, $body, "", [ "exported_csv_helper", "generic_protocol/csv_helper" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "exported_csv_helper", "generic_protocol/csv_helper" ], [ "map", "typeindex" ] );
 
     return $res;
 }
