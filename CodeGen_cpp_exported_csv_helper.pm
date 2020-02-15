@@ -265,6 +265,8 @@ sub generate_exported_csv_helper_cpp($)
 
     $body =
 
+"using namespace " . get_namespace_name( $$file_ref ) . ";\n".
+"\n" .
 "// enums\n" .
 "\n" .
     generate_exported_csv_helper_cpp__to_enum( $file_ref ) .
@@ -283,9 +285,11 @@ sub generate_exported_csv_helper_cpp($)
 
     my @includes = ( "exported_csv_helper" );
 
+    push( @includes, $$file_ref->{base_prot} . "/exported_csv_helper" );
+
     push( @includes, generate_exported_csv_helper_cpp__to_includes( $file_ref ) );
 
-    push( @includes, "basic_parser/basic_csv_helper" );
+    push( @includes, "basic_parser/exported_csv_helper" );
 
     my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ ] );
 
