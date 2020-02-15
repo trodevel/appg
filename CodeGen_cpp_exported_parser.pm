@@ -40,7 +40,7 @@ use 5.010;
 
 ###############################################
 
-sub generate_exported_request_parser_h__to_obj_name($$$)
+sub generate_exported_parser_h__to_obj_name($$$)
 {
     my ( $namespace, $name, $is_message ) = @_;
 
@@ -49,7 +49,7 @@ sub generate_exported_request_parser_h__to_obj_name($$$)
     return "void get_value_or_throw( $namespace::$name * res, ${extra_param}const generic_request::Request & r );";
 }
 
-sub generate_exported_request_parser_h_body_1_core($$$)
+sub generate_exported_parser_h_body_1_core($$$)
 {
     my ( $namespace, $objs_ref, $is_message ) = @_;
 
@@ -57,41 +57,41 @@ sub generate_exported_request_parser_h_body_1_core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_request_parser_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
+        $res = $res . generate_exported_parser_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_request_parser_h_body_1($)
+sub generate_exported_parser_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums}, 0 );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums}, 0 );
 }
 
-sub generate_exported_request_parser_h_body_2($)
+sub generate_exported_parser_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
 }
 
-sub generate_exported_request_parser_h_body_3($)
+sub generate_exported_parser_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
 }
 
-sub generate_exported_request_parser_h_body_4($)
+sub generate_exported_parser_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+    return generate_exported_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
 }
 
-sub generate_exported_request_parser_h($)
+sub generate_exported_parser_h($)
 {
     my ( $file_ref ) = @_;
 
@@ -101,29 +101,29 @@ sub generate_exported_request_parser_h($)
 
 "// enums\n".
 "\n" .
-generate_exported_request_parser_h_body_1( $file_ref ) .
+generate_exported_parser_h_body_1( $file_ref ) .
 "\n" .
 "// objects\n".
 "\n" .
-generate_exported_request_parser_h_body_2( $file_ref ) .
+generate_exported_parser_h_body_2( $file_ref ) .
 "\n" .
 "// base messages\n".
 "\n" .
-generate_exported_request_parser_h_body_3( $file_ref ) .
+generate_exported_parser_h_body_3( $file_ref ) .
 "\n" .
 "// messages\n".
 "\n" .
-generate_exported_request_parser_h_body_4( $file_ref ) .
+generate_exported_parser_h_body_4( $file_ref ) .
 "\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_request_parser", 0, 0, [ "protocol", "generic_request/request" ], [] );
+    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_parser", 0, 0, [ "protocol", "generic_request/request" ], [] );
 
     return $res;
 }
 
 ###############################################
 
-sub generate_exported_request_parser_cpp__to_enum__body($$)
+sub generate_exported_parser_cpp__to_enum__body($$)
 {
     my ( $namespace, $name ) = @_;
 
@@ -141,7 +141,7 @@ sub generate_exported_request_parser_cpp__to_enum__body($$)
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_message__body__init_members__body($$)
+sub generate_exported_parser_cpp__to_message__body__init_members__body($$)
 {
     my ( $obj, $is_message ) = @_;
 
@@ -158,7 +158,7 @@ sub generate_exported_request_parser_cpp__to_message__body__init_members__body($
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_message__body__init_members($$)
+sub generate_exported_parser_cpp__to_message__body__init_members($$)
 {
     my ( $msg, $is_message ) = @_;
 
@@ -166,13 +166,13 @@ sub generate_exported_request_parser_cpp__to_message__body__init_members($$)
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_exported_request_parser_cpp__to_message__body__init_members__body( $_, $is_message ) . "\n";
+        $res = $res . generate_exported_parser_cpp__to_message__body__init_members__body( $_, $is_message ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_body($$$)
+sub generate_exported_parser_cpp__to_body($$$)
 {
     my ( $namespace, $msg, $is_message ) = @_;
 
@@ -193,13 +193,13 @@ sub generate_exported_request_parser_cpp__to_body($$$)
     }
 
     $res = $res .
-    generate_exported_request_parser_cpp__to_message__body__init_members( $msg, $is_message ) .
+    generate_exported_parser_cpp__to_message__body__init_members( $msg, $is_message ) .
 "}\n";
 
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_object__core($$$)
+sub generate_exported_parser_cpp__to_object__core($$$)
 {
     my ( $namespace, $objs_ref, $is_message ) = @_;
 
@@ -207,13 +207,13 @@ sub generate_exported_request_parser_cpp__to_object__core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_exported_request_parser_cpp__to_body( $namespace, $_, $is_message ) . "\n";
+        $res = $res . generate_exported_parser_cpp__to_body( $namespace, $_, $is_message ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_enum($)
+sub generate_exported_parser_cpp__to_enum($)
 {
     my ( $file_ref ) = @_;
 
@@ -221,34 +221,34 @@ sub generate_exported_request_parser_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_exported_request_parser_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res = $res . generate_exported_parser_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_exported_request_parser_cpp__to_object($)
+sub generate_exported_parser_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_exported_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
 }
 
-sub generate_exported_request_parser_cpp__to_base_msg($)
+sub generate_exported_parser_cpp__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_exported_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
 }
 
-sub generate_exported_request_parser_cpp__to_message($)
+sub generate_exported_parser_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_exported_request_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+    return generate_exported_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
 }
 
-sub generate_exported_request_parser_cpp__to_includes($)
+sub generate_exported_parser_cpp__to_includes($)
 {
     my ( $file_ref ) = @_;
 
@@ -256,13 +256,13 @@ sub generate_exported_request_parser_cpp__to_includes($)
 
     foreach( @{ $$file_ref->{includes} } )
     {
-        push( @res, $_ . "/exported_request_parser" );
+        push( @res, $_ . "/exported_parser" );
     }
 
     return @res;
 }
 
-sub generate_exported_request_parser_cpp($)
+sub generate_exported_parser_cpp($)
 {
     my ( $file_ref ) = @_;
 
@@ -272,23 +272,23 @@ sub generate_exported_request_parser_cpp($)
 
 "// enums\n" .
 "\n" .
-    generate_exported_request_parser_cpp__to_enum( $file_ref ) .
+    generate_exported_parser_cpp__to_enum( $file_ref ) .
 "// objects\n" .
 "\n" .
-    generate_exported_request_parser_cpp__to_object( $file_ref ) .
+    generate_exported_parser_cpp__to_object( $file_ref ) .
 "// base messages\n" .
 "\n" .
-    generate_exported_request_parser_cpp__to_base_msg( $file_ref ) .
+    generate_exported_parser_cpp__to_base_msg( $file_ref ) .
 "// messages\n" .
 "\n" .
-    generate_exported_request_parser_cpp__to_message( $file_ref )
+    generate_exported_parser_cpp__to_message( $file_ref )
 ;
 
-    my @includes = ( "exported_request_parser" );
+    my @includes = ( "exported_parser" );
 
-    push( @includes, generate_exported_request_parser_cpp__to_includes( $file_ref ) );
+    push( @includes, generate_exported_parser_cpp__to_includes( $file_ref ) );
 
-    push( @includes, "basic_parser/exported_request_parser" );
+    push( @includes, "basic_parser/exported_parser" );
 
     my $res = to_body( $$file_ref, $body, "basic_parser", \@includes, [ ] );
 

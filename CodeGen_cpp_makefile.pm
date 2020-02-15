@@ -78,10 +78,10 @@ sub generate_makefile_lib($)
 "LIB_SRCC = \\\n" .
 "\tcsv_helper.cpp \\\n" .
 "\texported_csv_helper.cpp \\\n" .
-"\texported_request_parser.cpp \\\n" .
+"\texported_parser.cpp \\\n" .
 "\texported_str_helper.cpp \\\n" .
+"\trequest_type_parser.cpp \\\n" .
 "\tparser.cpp \\\n" .
-"\trequest_parser.cpp \\\n" .
 "\tstr_helper.cpp \\\n" .
 "\n" .
 "LIB_EXT_LIB_NAMES = \\\n" .

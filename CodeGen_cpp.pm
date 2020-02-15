@@ -28,9 +28,9 @@
 
 require CodeGen_cpp_protocol;
 require CodeGen_cpp_enums;
+require CodeGen_cpp_request_type_parser;
 require CodeGen_cpp_parser;
-require CodeGen_cpp_request_parser;
-require CodeGen_cpp_exported_request_parser;
+require CodeGen_cpp_exported_parser;
 require CodeGen_cpp_exported_csv_helper;
 require CodeGen_cpp_exported_str_helper;
 require CodeGen_cpp_csv_helper;
@@ -50,12 +50,12 @@ use 5.010;
 
 use constant PROTOCOL_FILE      => 'protocol.h';
 use constant ENUMS_FILE         => 'enums.h';
+use constant REQUEST_TYPE_PARSER_H_FILE      => 'request_type_parser.h';
+use constant REQUEST_TYPE_PARSER_CPP_FILE    => 'request_type_parser.cpp';
 use constant PARSER_H_FILE      => 'parser.h';
 use constant PARSER_CPP_FILE    => 'parser.cpp';
-use constant REQUEST_PARSER_H_FILE      => 'request_parser.h';
-use constant REQUEST_PARSER_CPP_FILE    => 'request_parser.cpp';
-use constant EXPORTED_REQUEST_PARSER_H_FILE     => 'exported_request_parser.h';
-use constant EXPORTED_REQUEST_PARSER_CPP_FILE   => 'exported_request_parser.cpp';
+use constant EXPORTED_PARSER_H_FILE     => 'exported_parser.h';
+use constant EXPORTED_PARSER_CPP_FILE   => 'exported_parser.cpp';
 use constant exported_csv_helper_H_FILE        => 'exported_csv_helper.h';
 use constant exported_csv_helper_CPP_FILE      => 'exported_csv_helper.cpp';
 use constant CSV_RESPONSE_ENCODER_H_FILE        => 'csv_helper.h';
@@ -90,17 +90,17 @@ sub generate($$)
 
     write_to_file( generate_enums( $file_ref ), ${\ENUMS_FILE} );
 
+    write_to_file( generate_request_type_parser_h( $file_ref ), ${\REQUEST_TYPE_PARSER_H_FILE} );
+
+    write_to_file( generate_request_type_parser_cpp( $file_ref ), ${\REQUEST_TYPE_PARSER_CPP_FILE} );
+
     write_to_file( generate_parser_h( $file_ref ), ${\PARSER_H_FILE} );
 
     write_to_file( generate_parser_cpp( $file_ref ), ${\PARSER_CPP_FILE} );
 
-    write_to_file( generate_request_parser_h( $file_ref ), ${\REQUEST_PARSER_H_FILE} );
+    write_to_file( generate_exported_parser_h( $file_ref ), ${\EXPORTED_PARSER_H_FILE} );
 
-    write_to_file( generate_request_parser_cpp( $file_ref ), ${\REQUEST_PARSER_CPP_FILE} );
-
-    write_to_file( generate_exported_request_parser_h( $file_ref ), ${\EXPORTED_REQUEST_PARSER_H_FILE} );
-
-    write_to_file( generate_exported_request_parser_cpp( $file_ref ), ${\EXPORTED_REQUEST_PARSER_CPP_FILE} );
+    write_to_file( generate_exported_parser_cpp( $file_ref ), ${\EXPORTED_PARSER_CPP_FILE} );
 
     write_to_file( generate_exported_csv_helper_h( $file_ref ), ${\exported_csv_helper_H_FILE} );
 
