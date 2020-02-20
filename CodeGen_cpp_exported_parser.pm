@@ -270,6 +270,8 @@ sub generate_exported_parser_cpp($)
 
     $body =
 
+"using namespace " . get_namespace_name( $$file_ref ) . ";\n".
+"\n" .
 "// enums\n" .
 "\n" .
     generate_exported_parser_cpp__to_enum( $file_ref ) .
@@ -285,6 +287,8 @@ sub generate_exported_parser_cpp($)
 ;
 
     my @includes = ( "exported_parser" );
+
+    push( @includes, $$file_ref->{base_prot} . "/exported_parser" );
 
     push( @includes, generate_exported_parser_cpp__to_includes( $file_ref ) );
 

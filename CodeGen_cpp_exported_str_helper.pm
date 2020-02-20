@@ -312,6 +312,8 @@ sub generate_exported_str_helper_cpp($)
 
     $body =
 
+"using namespace " . get_namespace_name( $$file_ref ) . ";\n".
+"\n" .
 "// enums\n" .
 "\n" .
 "#define TUPLE_VAL_STR(_x_)  _x_,#_x_\n" .
@@ -334,7 +336,7 @@ sub generate_exported_str_helper_cpp($)
 
     push( @includes, generate_exported_str_helper_cpp__to_includes( $file_ref ) );
 
-    push( @includes, "basic_parser/basic_str_helper" );
+    push( @includes, "basic_parser/exported_str_helper" );
 
     my $res = to_body( $$file_ref, $body, "basic_parser",  \@includes, [ "map" ] );
 
