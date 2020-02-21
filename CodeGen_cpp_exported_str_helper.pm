@@ -334,6 +334,8 @@ sub generate_exported_str_helper_cpp($)
 
     my @includes = ( "exported_str_helper" );
 
+    push( @includes, $$file_ref->{base_prot} . "/exported_str_helper" );
+
     push( @includes, generate_exported_str_helper_cpp__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/exported_str_helper" );
