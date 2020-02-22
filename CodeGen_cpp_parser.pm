@@ -157,7 +157,8 @@ sub generate_parser_cpp($)
     my $body;
 
     $body =
-
+"using basic_parser::MalformedRequest;\n" .
+"\n" .
 "generic_protocol::ForwardMessage* Parser::to_forward_message( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto type = Parser::detect_request_type( r );\n" .
@@ -199,7 +200,7 @@ sub generate_parser_cpp($)
     generate_parser_cpp__to_message( $file_ref )
 ;
 
-    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_parser" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_parser", "basic_parser/malformed_request" ], [ "map" ] );
 
     return $res;
 }
