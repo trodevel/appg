@@ -43,7 +43,7 @@ use 5.010;
 sub generate_parser_h__to_msg_name($)
 {
     my $name = shift;
-    return "static ForwardMessage *     to_" . $name . "( const generic_request::Request & r );";
+    return "static Object *     to_" . $name . "( const generic_request::Request & r );";
 }
 
 sub generate_parser_h_body_4($)
@@ -71,11 +71,11 @@ sub generate_parser_h($)
 "class Parser\n" .
 "{\n" .
 "public:\n" .
-"    typedef generic_protocol::ForwardMessage    ForwardMessage;\n" .
+"    typedef generic_protocol::Object    Object;\n" .
 "\n" .
 "public:\n" .
 "\n" .
-"    static generic_protocol::ForwardMessage*    to_forward_message( const generic_request::Request & r );\n" .
+"    static generic_protocol::Object*    to_forward_message( const generic_request::Request & r );\n" .
 "\n" .
 "private:\n" .
 "\n" .
@@ -122,7 +122,7 @@ sub generate_parser_cpp__to_message__body($)
 
     my $res =
 
-"Parser::ForwardMessage * Parser::to_${name}( const generic_request::Request & r )\n" .
+"Parser::Object * Parser::to_${name}( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto * res = new $name;\n" .
 "\n" .
@@ -159,14 +159,14 @@ sub generate_parser_cpp($)
     $body =
 "using basic_parser::MalformedRequest;\n" .
 "\n" .
-"generic_protocol::ForwardMessage* Parser::to_forward_message( const generic_request::Request & r )\n" .
+"generic_protocol::Object* Parser::to_forward_message( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto type = Parser::detect_request_type( r );\n" .
 "\n" .
 "    typedef request_type_e KeyType;\n" .
 "    typedef Parser Type;\n" .
 "\n" .
-"    typedef ForwardMessage* (*PPMF)( const generic_request::Request & r );\n" .
+"    typedef Object* (*PPMF)( const generic_request::Request & r );\n" .
 "\n" .
 "#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & Type::to_##_v }\n" .
 "\n" .
