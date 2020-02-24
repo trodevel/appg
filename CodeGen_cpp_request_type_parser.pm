@@ -54,7 +54,7 @@ sub generate_request_type_parser_h($)
 "    static request_type_e   to_request_type( const std::string & s );\n" .
 "};\n";
 
-    my $res = to_include_guards( $$file_ref, $body, "", "parser", 0, 0, [ "enums" ], [] );
+    my $res = to_include_guards( $$file_ref, $body, "", "request_type_parser", 0, 0, [ "enums" ], [] );
 
     return $res;
 }
