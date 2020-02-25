@@ -80,6 +80,7 @@ sub generate_makefile_lib($)
 "\texported_csv_helper.cpp \\\n" .
 "\texported_parser.cpp \\\n" .
 "\texported_str_helper.cpp \\\n" .
+"\texported_validator.cpp \\\n" .
 "\trequest_type_parser.cpp \\\n" .
 "\tparser.cpp \\\n" .
 "\tstr_helper.cpp \\\n" .

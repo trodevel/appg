@@ -33,6 +33,7 @@ require CodeGen_cpp_parser;
 require CodeGen_cpp_exported_parser;
 require CodeGen_cpp_exported_csv_helper;
 require CodeGen_cpp_exported_str_helper;
+require CodeGen_cpp_exported_validator;
 require CodeGen_cpp_csv_helper;
 require CodeGen_cpp_str_helper;
 require CodeGen_cpp_makefile;
@@ -56,8 +57,10 @@ use constant PARSER_H_FILE      => 'parser.h';
 use constant PARSER_CPP_FILE    => 'parser.cpp';
 use constant EXPORTED_PARSER_H_FILE     => 'exported_parser.h';
 use constant EXPORTED_PARSER_CPP_FILE   => 'exported_parser.cpp';
-use constant exported_csv_helper_H_FILE        => 'exported_csv_helper.h';
-use constant exported_csv_helper_CPP_FILE      => 'exported_csv_helper.cpp';
+use constant EXPORTED_CSV_HELPER_H_FILE        => 'exported_csv_helper.h';
+use constant EXPORTED_CSV_HELPER_CPP_FILE      => 'exported_csv_helper.cpp';
+use constant EXPORTED_VALIDATOR_H_FILE          => 'exported_validator.h';
+use constant EXPORTED_VALIDATOR_CPP_FILE        => 'exported_validator.cpp';
 use constant CSV_RESPONSE_ENCODER_H_FILE        => 'csv_helper.h';
 use constant CSV_RESPONSE_ENCODER_CPP_FILE      => 'csv_helper.cpp';
 use constant EXPORTED_STR_HELPER_H_FILE         => 'exported_str_helper.h';
@@ -102,9 +105,13 @@ sub generate($$)
 
     write_to_file( generate_exported_parser_cpp( $file_ref ), ${\EXPORTED_PARSER_CPP_FILE} );
 
-    write_to_file( generate_exported_csv_helper_h( $file_ref ), ${\exported_csv_helper_H_FILE} );
+    write_to_file( generate_exported_csv_helper_h( $file_ref ), ${\EXPORTED_CSV_HELPER_H_FILE} );
 
-    write_to_file( generate_exported_csv_helper_cpp( $file_ref ), ${\exported_csv_helper_CPP_FILE} );
+    write_to_file( generate_exported_csv_helper_cpp( $file_ref ), ${\EXPORTED_CSV_HELPER_CPP_FILE} );
+
+    write_to_file( generate_exported_validator_h( $file_ref ), ${\EXPORTED_VALIDATOR_H_FILE} );
+
+    write_to_file( generate_exported_validator_cpp( $file_ref ), ${\EXPORTED_VALIDATOR_CPP_FILE} );
 
     write_to_file( generate_csv_helper_h( $file_ref ), ${\CSV_RESPONSE_ENCODER_H_FILE} );
 
