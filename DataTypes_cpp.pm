@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12611 $ $Date:: 2020-01-10 #$ $Author: serge $
+# $Revision: 12808 $ $Date:: 2020-02-28 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -32,6 +32,11 @@ sub to_cpp_decl()
     return "#error 'not implemented yet'";
 }
 
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+    return "#error 'not implemented yet'";
+}
 
 ############################################################
 package Boolean;
@@ -41,6 +46,13 @@ sub to_cpp_decl()
     my( $self ) = @_;
 
     return "bool";
+}
+
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_decl();
 }
 
 sub to_cpp__to_parse_function_name()
@@ -65,6 +77,13 @@ sub to_cpp_decl()
     return "${prefix}int" . $self->{bit_width} . "_t";
 }
 
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_decl();
+}
+
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
@@ -85,6 +104,13 @@ sub to_cpp_decl()
     return "float";
 }
 
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_decl();
+}
+
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
@@ -98,6 +124,13 @@ sub to_cpp_decl()
 {
     my( $self ) = @_;
     return "std::string";
+}
+
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return "const " . $self->to_cpp_decl() . " & ";
 }
 
 sub to_cpp__to_parse_function_name()
@@ -116,6 +149,13 @@ sub to_cpp_decl()
     my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
 
     return $pref . $self->{name};
+}
+
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return "const " . $self->to_cpp_decl() . " & ";
 }
 
 sub to_cpp__to_parse_function_name()
@@ -139,6 +179,13 @@ sub to_cpp_decl()
     return $pref . $self->{name};
 }
 
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return $self->to_cpp_decl();
+}
+
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
@@ -158,6 +205,13 @@ sub to_cpp_decl()
     return "std::vector<" . $self->{value_type}->to_cpp_decl() . ">";
 }
 
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return "const " . $self->to_cpp_decl() . " & ";
+}
+
 sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
@@ -171,6 +225,13 @@ sub to_cpp_decl()
 {
     my( $self ) = @_;
     return "std::map<" . $self->{key_type}->to_cpp_decl() . ", " . $self->{mapped_type}->to_cpp_decl() . ">";
+}
+
+sub to_cpp_func_param()
+{
+    my( $self ) = @_;
+
+    return "const " . $self->to_cpp_decl() . " & ";
 }
 
 sub to_cpp__to_parse_function_name()
