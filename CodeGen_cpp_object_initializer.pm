@@ -172,7 +172,7 @@ sub generate_object_initializer_cpp__to_name_members($)
 
     foreach( @{ $obj->{members} } )
     {
-        $res .= "\n, " . $_->{data_type}->to_cpp_func_param() . " " . $_->{name};
+        $res .= ", " . $_->{data_type}->to_cpp_func_param() . " " . $_->{name} . "\n";
     }
 
     return $res;
@@ -187,7 +187,12 @@ sub generate_object_initializer_cpp__to_name($)
 
 "void initialize( ${name} * res";
 
-    $res .= main::tabulate( generate_object_initializer_cpp__to_name_members( $obj ) );
+    my $params = generate_object_initializer_cpp__to_name_members( $obj );
+
+    if( $params ne "" )
+    {
+        $res .= "\n" . main::tabulate( $params );
+    }
 
     $res .= " )";
 
