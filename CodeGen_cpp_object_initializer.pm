@@ -40,55 +40,74 @@ use 5.010;
 
 ###############################################
 
-sub generate_object_initializer_h__to_obj_name($$$)
+sub generate_object_initializer_h__to_name_members($)
 {
-    my ( $namespace, $name, $is_message ) = @_;
-
-    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
-
-    return "void initialize( $namespace::$name * res, ${extra_param}const generic_request::Request & r );";
-}
-
-sub generate_object_initializer_h_body_1_core($$$)
-{
-    my ( $namespace, $objs_ref, $is_message ) = @_;
+    my ( $obj ) = @_;
 
     my $res = "";
 
-    foreach( @{ $objs_ref } )
+    foreach( @{ $obj->{members} } )
     {
-        $res = $res . generate_object_initializer_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
+        $res .= ", " . $_->{data_type}->to_cpp_func_param() . " " . $_->{name} . "\n";
     }
 
     return $res;
 }
 
-sub generate_object_initializer_h_body_1($)
+sub generate_object_initializer_h__to_name($)
 {
-    my ( $file_ref ) = @_;
+    my ( $obj ) = @_;
 
-    return generate_object_initializer_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums}, 0 );
+    my $name = $obj->{name};
+
+    my $res =
+
+"void initialize( ${name} * res";
+
+    my $params = generate_object_initializer_h__to_name_members( $obj );
+
+    if( $params ne "" )
+    {
+        $res .= "\n" . main::tabulate( $params );
+    }
+
+    $res .= " )";
+
+    return $res;
 }
 
+sub generate_object_initializer_h_body_1_core($)
+{
+    my ( $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_object_initializer_h__to_name( $_ ) . ";\n";
+    }
+
+    return $res;
+}
 sub generate_object_initializer_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{objs} );
 }
 
 sub generate_object_initializer_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{base_msgs} );
 }
 
 sub generate_object_initializer_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs} );
 }
 
 sub generate_object_initializer_h($)
@@ -119,27 +138,9 @@ generate_object_initializer_h_body_4( $file_ref ) .
 
 ###############################################
 
-sub generate_object_initializer_cpp__to_enum__body($$)
+sub generate_object_initializer_cpp__to_message__body__init_members__body($)
 {
-    my ( $namespace, $name ) = @_;
-
-    my $res =
-
-"void initialize( $namespace::${name} * res, const std::string & key, const generic_request::Request & r )\n" .
-"{\n" .
-"    uint32_t res_i;\n" .
-"\n" .
-"    initialize( & res_i, key, r );\n" .
-"\n" .
-"    * res = static_cast<$name>( res_i );\n" .
-"}\n";
-
-    return $res;
-}
-
-sub generate_object_initializer_cpp__to_message__body__init_members__body($$)
-{
-    my ( $obj, $is_message ) = @_;
+    my ( $obj ) = @_;
 
     my $res;
 
@@ -150,93 +151,49 @@ sub generate_object_initializer_cpp__to_message__body__init_members__body($$)
     return $res;
 }
 
-sub generate_object_initializer_cpp__to_message__body__init_members($$)
+sub generate_object_initializer_cpp__to_message__body__init_members($)
 {
-    my ( $msg, $is_message ) = @_;
+    my ( $msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_object_initializer_cpp__to_message__body__init_members__body( $_, $is_message ) . "\n";
+        $res = $res . generate_object_initializer_cpp__to_message__body__init_members__body( $_ ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_object_initializer_cpp__to_name_members($)
+sub generate_object_initializer_cpp__to_body($)
 {
-    my ( $obj ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $obj->{members} } )
-    {
-        $res .= ", " . $_->{data_type}->to_cpp_func_param() . " " . $_->{name} . "\n";
-    }
-
-    return $res;
-}
-sub generate_object_initializer_cpp__to_name($)
-{
-    my ( $obj ) = @_;
-
-    my $name = $obj->{name};
-
-    my $res =
-
-"void initialize( ${name} * res";
-
-    my $params = generate_object_initializer_cpp__to_name_members( $obj );
-
-    if( $params ne "" )
-    {
-        $res .= "\n" . main::tabulate( $params );
-    }
-
-    $res .= " )";
-
-    return $res;
-}
-
-sub generate_object_initializer_cpp__to_body($$$)
-{
-    my ( $namespace, $msg, $is_message ) = @_;
+    my ( $msg ) = @_;
 
     my $name = $msg->{name};
 
-    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
-
-    my $func_name = generate_object_initializer_cpp__to_name( $msg );
+    my $func_name = generate_object_initializer_h__to_name( $msg );
 
     my $res =
 
 "$func_name\n" .
 "{\n";
 
-    if( $is_message )
-    {
-        $res = $res .
-"    //initialize( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
-"\n";
-    }
-
     $res = $res .
-    generate_object_initializer_cpp__to_message__body__init_members( $msg, $is_message ) .
+    generate_object_initializer_cpp__to_message__body__init_members( $msg ) .
 "}\n";
 
     return $res;
 }
 
-sub generate_object_initializer_cpp__to_object__core($$$)
+sub generate_object_initializer_cpp__to_object__core($)
 {
-    my ( $namespace, $objs_ref, $is_message ) = @_;
+    my ( $objs_ref ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_cpp__to_body( $namespace, $_, $is_message ) . "\n";
+        $res = $res . generate_object_initializer_cpp__to_body( $_ ) . "\n";
     }
 
     return $res;
@@ -250,7 +207,7 @@ sub generate_object_initializer_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_object_initializer_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res = $res . generate_object_initializer_cpp__to_enum__body( $_->{name} ) . "\n";
     }
 
     return $res;
@@ -260,35 +217,21 @@ sub generate_object_initializer_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_object_initializer_cpp__to_object__core( $$file_ref->{objs} );
 }
 
 sub generate_object_initializer_cpp__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_object_initializer_cpp__to_object__core( $$file_ref->{base_msgs} );
 }
 
 sub generate_object_initializer_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
-}
-
-sub generate_object_initializer_cpp__to_includes($)
-{
-    my ( $file_ref ) = @_;
-
-    my @res;
-
-    foreach( @{ $$file_ref->{includes} } )
-    {
-        push( @res, $_ . "/object_initializer" );
-    }
-
-    return @res;
+    return generate_object_initializer_cpp__to_object__core( $$file_ref->{msgs}  );
 }
 
 sub generate_object_initializer_cpp($)
@@ -311,10 +254,6 @@ sub generate_object_initializer_cpp($)
 ;
 
     my @includes = ( "object_initializer" );
-
-    push( @includes, $$file_ref->{base_prot} . "/object_initializer" );
-
-    push( @includes, generate_object_initializer_cpp__to_includes( $file_ref ) );
 
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 

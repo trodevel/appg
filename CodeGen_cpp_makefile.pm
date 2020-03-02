@@ -82,6 +82,7 @@ sub generate_makefile_lib($)
 "\texported_str_helper.cpp \\\n" .
 "\texported_validator.cpp \\\n" .
 "\trequest_type_parser.cpp \\\n" .
+"\tobject_initializer.cpp \\\n" .
 "\tparser.cpp \\\n" .
 "\tstr_helper.cpp \\\n" .
 "\n" .
