@@ -71,7 +71,7 @@ sub to_cpp_decl
         push( @includes, $file->{base_prot} . "/protocol" );
     }
 
-    my $res = to_include_guards( $file, $body, "", "decl", 0, 1, \@includes, [ "vector", "map" ] );
+    my $res = to_include_guards( $file, $body, "", "protocol", 0, 1, \@includes, [ "vector", "map" ] );
 
     $res = $res . "\n";
 
