@@ -38,6 +38,7 @@ use Getopt::Long;
 
 require 'Parser.pm';
 require 'CodeGen_cpp.pm';
+require 'CodeGen_php.pm';
 
 ###############################################
 
@@ -125,6 +126,8 @@ Parser::parse( \@input, \$file );
 $file->set_use_ns( 0 );
 
 CodeGen_cpp::generate( \$file, $output_file );
+
+CodeGen_php::generate( \$file );
 
 ###############################################
 1;
