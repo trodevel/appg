@@ -92,7 +92,7 @@ sub generate($)
 {
     my ( $file_ref ) = @_;
 
-#    write_to_file( to_cpp_decl( $file_ref ), ${\PROTOCOL_FILE} );
+    write_to_file( to_php_decl( $file_ref ), ${\PROTOCOL_FILE} );
 
 #    write_to_file( generate_enums( $file_ref ), ${\ENUMS_FILE} );
 

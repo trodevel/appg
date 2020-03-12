@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12693 $ $Date:: 2020-02-03 #$ $Author: serge $
+# $Revision: 12838 $ $Date:: 2020-03-12 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtphp;
@@ -45,10 +45,10 @@ sub namespacize
     my ( $name, $body ) = @_;
 
     my $res =
-"namespace $name\n" .
-"{\n\n" .
+"namespace $name;\n" .
+"\n\n" .
 $body .
-"} // namespace $name\n\n" ;
+"# namespace_end $name\n\n";
 
     return $res;
 }
@@ -107,33 +107,11 @@ sub array_to_string_decl
     return $res;
 }
 ############################################################
-sub array_to_php_to_json_impl
-{
-    my( $array_ref ) = @_;
-
-    my @array = @{ $array_ref };
-
-    my $res = "";
-    foreach( @array )
-    {
-        $res = $res . $_->to_php_to_json_impl() . "\n";
-    }
-
-    return $res;
-}
-############################################################
 sub to_include($$)
 {
     my( $name, $is_system ) = @_;
 
-    return ( $is_system == 0 ) ? '#include "'.  $name . '.h"' : '#include <'.  $name . '>';
-}
-############################################################
-sub to_include_to_json
-{
-    my( $name ) = @_;
-
-    return '#include "'.  $name . '_to_json.h"';
+    return "require_once __DIR__.'/../".  $name . ".php';";
 }
 ############################################################
 sub array_to_include($$)

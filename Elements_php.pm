@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12833 $ $Date:: 2020-03-10 #$ $Author: serge $
+# $Revision: 12839 $ $Date:: 2020-03-12 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -46,7 +46,7 @@ sub to_php_decl
 {
     my( $self ) = @_;
 
-    return sprintf( "static const %-20s %-10s = %s;", $self->{data_type}->to_php_decl(), $self->{name}, $self->{value} );
+    return sprintf( "const %-10s = %s; // type: %s", $self->{name}, $self->{value}, $self->{data_type}->to_php_decl() );
 }
 
 ############################################################
@@ -55,7 +55,7 @@ package Element;
 sub to_php_decl
 {
     my( $self ) = @_;
-    return sprintf( "%-20s %-10s;", $self->{data_type}->to_php_decl(), $self->{name} );
+    return sprintf( "public \$%-20s; // type: %s", $self->{name}, $self->{data_type}->to_php_decl() );
 }
 
 ############################################################
