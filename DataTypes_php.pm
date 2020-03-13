@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12833 $ $Date:: 2020-03-10 #$ $Author: serge $
+# $Revision: 12844 $ $Date:: 2020-03-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -146,7 +146,7 @@ sub to_php_decl()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "\\" ) : "";
 
     return $pref . $self->{name};
 }
@@ -162,7 +162,7 @@ sub to_php__to_parse_function_name()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "\\" ) : "";
 
     return "${pref}get_value_or_throw";
 }
@@ -174,7 +174,7 @@ sub to_php_decl()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "\\" ) : "";
 
     return $pref . $self->{name};
 }
@@ -190,7 +190,7 @@ sub to_php__to_parse_function_name()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "::" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( $self->{namespace} . "\\" ) : "";
 
     return "${pref}get_value_or_throw";
 }

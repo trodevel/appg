@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12831 $ $Date:: 2020-03-10 #$ $Author: serge $
+# $Revision: 12845 $ $Date:: 2020-03-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -46,14 +46,14 @@ sub get_full_base_class_php()
 {
     my( $self ) = @_;
 
-    return $self->get_protocol_name() . "::Object";
+    return "\\" . $self->get_protocol_name() . "\\Object";
 }
 
 sub get_full_base_class_apg_php()
 {
     my ( $self ) = @_;
 
-    return "apg::" . $self->get_full_base_class_php();
+    return "\\apg\\" . $self->get_full_base_class_php();
 }
 
 sub get_protocol_name_php
@@ -72,14 +72,14 @@ sub get_full_name_php()
 {
     my ( $self ) = @_;
 
-    return $self->get_protocol_name_php() . "::" . $self->{name};
+    return "\\" . $self->get_protocol_name_php() . "\\" . $self->{name};
 }
 
 sub get_full_name_apg_php()
 {
     my ( $self ) = @_;
 
-    return "apg::" . $self->get_full_name_php();
+    return "\\apg\\" . $self->get_full_name_php();
 }
 
 sub append_base_class_php()
@@ -88,7 +88,7 @@ sub append_base_class_php()
 
     my $base = $self->get_base_class_php();
 
-    return $body . ": public $base";
+    return $body . " extends $base";
 }
 
 ############################################################
@@ -121,10 +121,10 @@ sub get_full_name_php
 
     if( defined $self->{parent} && $self->{parent} ne '' )
     {
-        $parent = $self->{parent} . "::";
+        $parent = $self->{parent} . "\\";
     }
 
-    return $self->get_protocol_name_php() . "::" . $parent . $self->{name};
+    return $self->get_protocol_name_php() . "\\" . $parent . $self->{name};
 }
 
 ############################################################
@@ -151,7 +151,7 @@ sub to_php_decl
 
     my $res =
 "// Object\n" .
-"struct " . $self->{name};
+"class " . $self->{name};
 
     $res = $self->append_base_class_php( $res ) . "\n";
 
@@ -175,7 +175,7 @@ sub to_php_decl
 
     my $res =
 "// Base message\n" .
-"struct " . $self->{name};
+"class " . $self->{name};
 
     $res = $self->append_base_class_php( $res ) . "\n";
 
@@ -199,13 +199,13 @@ sub to_php_decl
 
     my $res =
 "// Message\n" .
-"struct " . $self->{name};
+"class " . $self->{name};
 
     $res = $self->append_base_class_php( $res ) . "\n";
 
     my $body = "";
 
-    $body = $body . "enum\n" . main::bracketize( "message_id = " . $self->{message_id} . "\n", 1 ) . "\n";
+    $body = $body . "const MESSAGE_ID = " . $self->{message_id} . ";\n\n";
 
     my @array = @{ $self->{members} };
 
