@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12839 $ $Date:: 2020-03-12 #$ $Author: serge $
+# $Revision: 12846 $ $Date:: 2020-03-14 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -27,13 +27,13 @@ require DataTypes_php;
 ############################################################
 package EnumElement;
 
-sub to_php_decl
+sub to_php_decl($)
 {
-    my( $self ) = @_;
+    my( $self, $enum_name ) = @_;
 
     if( defined $self->{value} && $self->{value} ne '' )
     {
-        return sprintf( "%-20s = %s,", $self->{name}, $self->{value} );
+        return sprintf( "const %s_%-20s = %s;", $enum_name, $self->{name}, $self->{value} );
     }
 
     return $self->{name} . ",";

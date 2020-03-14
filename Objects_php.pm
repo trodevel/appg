@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12845 $ $Date:: 2020-03-13 #$ $Author: serge $
+# $Revision: 12846 $ $Date:: 2020-03-14 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -98,16 +98,13 @@ sub to_php_decl
 {
     my( $self ) = @_;
 
-    my $optional_dt = ( defined $self->{data_type} ) ?
-        " : " . $self->{data_type}->to_php_decl() : "";
-
     my $res =
-"// Enum\n" .
-"enum class " . $self->{name} . $optional_dt . "\n";
+"// Enum " . $self->{name} . "\n";
 
-    my $body = gtphp::array_to_decl( $self->{elements} );
-
-    $res = $res . main::bracketize( $body, 1 );
+    foreach( @{ $self->{elements} } )
+    {
+        $res .= $_->to_php_decl( $self->{name} ) . "\n";
+    }
 
     return $res;
 }
