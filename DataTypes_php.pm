@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12844 $ $Date:: 2020-03-13 #$ $Author: serge $
+# $Revision: 12847 $ $Date:: 2020-03-14 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -123,7 +123,7 @@ package String;
 sub to_php_decl()
 {
     my( $self ) = @_;
-    return "std::string";
+    return "string";
 }
 
 sub to_php_func_param()
@@ -202,7 +202,7 @@ package Vector;
 sub to_php_decl()
 {
     my( $self ) = @_;
-    return "std::vector<" . $self->{value_type}->to_php_decl() . ">";
+    return "array<" . $self->{value_type}->to_php_decl() . ">";
 }
 
 sub to_php_func_param()
@@ -224,7 +224,7 @@ package Map;
 sub to_php_decl()
 {
     my( $self ) = @_;
-    return "std::map<" . $self->{key_type}->to_php_decl() . ", " . $self->{mapped_type}->to_php_decl() . ">";
+    return "map<" . $self->{key_type}->to_php_decl() . ", " . $self->{mapped_type}->to_php_decl() . ">";
 }
 
 sub to_php_func_param()

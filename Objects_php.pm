@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12846 $ $Date:: 2020-03-14 #$ $Author: serge $
+# $Revision: 12849 $ $Date:: 2020-03-14 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -133,7 +133,7 @@ sub get_base_class_php()
 
     if( defined $self->{base_class} && $self->{base_class} ne '' )
     {
-        return $self->{base_class};
+        return gtphp::convert_namespace_name_to_php( $self->{base_class} );
     }
 
     return $self->SUPER::get_base_class_php();

@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12838 $ $Date:: 2020-03-12 #$ $Author: serge $
+# $Revision: 12849 $ $Date:: 2020-03-14 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtphp;
@@ -60,6 +60,20 @@ sub ifndef_define_prot
     my $guard = uc "APG_${protocol_name}__${file_name}";
 
     return ifndef_define( $guard, $body );
+}
+############################################################
+sub convert_namespace_name_to_php($)
+{
+    my( $name ) = @_;
+
+    my $res = $name;
+
+    if( $name =~ "::" )
+    {
+        $res =~ s/::/\\/;
+    }
+
+    return $res;
 }
 ############################################################
 sub array_to_decl
