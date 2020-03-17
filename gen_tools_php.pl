@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12849 $ $Date:: 2020-03-14 #$ $Author: serge $
+# $Revision: 12850 $ $Date:: 2020-03-17 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtphp;
@@ -71,6 +71,8 @@ sub convert_namespace_name_to_php($)
     if( $name =~ "::" )
     {
         $res =~ s/::/\\/;
+
+        $res = '\\' . $res;
     }
 
     return $res;
