@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12847 $ $Date:: 2020-03-14 #$ $Author: serge $
+# $Revision: 12857 $ $Date:: 2020-03-21 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -52,7 +52,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return $self->to_php_decl();
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -81,7 +81,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return $self->to_php_decl();
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -108,7 +108,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return $self->to_php_decl();
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -130,7 +130,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return "const " . $self->to_php_decl() . " & ";
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -155,7 +155,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return "const " . $self->to_php_decl() . " & ";
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -183,7 +183,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return $self->to_php_decl();
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -209,7 +209,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return "const " . $self->to_php_decl() . " & ";
+    return "";
 }
 
 sub to_php__to_parse_function_name()
@@ -231,7 +231,7 @@ sub to_php_func_param()
 {
     my( $self ) = @_;
 
-    return "const " . $self->to_php_decl() . " & ";
+    return "";
 }
 
 sub to_php__to_parse_function_name()

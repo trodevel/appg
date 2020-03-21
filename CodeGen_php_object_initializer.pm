@@ -50,7 +50,7 @@ sub generate_object_initializer_h__to_name_members($$)
 
     foreach( @{ $obj->{members} } )
     {
-        $res .= ( $must_put_comma ? ", " : "" ) . $_->{data_type}->to_php_func_param() . " " . $_->{name} . "\n";
+        $res .= ( $must_put_comma ? ", " : "" ) . $_->{data_type}->to_php_func_param() . " \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
 
         if( $must_put_comma == 0 )
         {
@@ -70,7 +70,7 @@ sub generate_object_initializer_h__to_name__name($$)
     my $res = $is_create ?
 
 "create_${name}(" :
-"initialize_${name}( & res";
+"initialize_${name}( & \$res";
 
     return $res;
 }
@@ -175,7 +175,7 @@ sub generate_object_initializer_php__to_message__body__init_members__body($)
 
     my $name        = $obj->{name};
 
-    $res = "    res->${name} = ${name};";
+    $res = "    \$res->${name} = \$${name};";
 
     return $res;
 }
@@ -202,7 +202,7 @@ sub generate_object_initializer_php__to_message__body__call_init__body($)
 
     foreach( @{ $msg->{members} } )
     {
-        $res .= ", " . $_->{name};
+        $res .= ", \$" . $_->{name};
     }
 
     return $res;
@@ -215,12 +215,12 @@ sub generate_object_initializer_php__to_message__body__call_init($)
     my $name = $msg->{name};
 
     my $res =
-"auto * res = new ${name};\n" .
+"\$res = new ${name};\n" .
 "\n" .
-"initialize_${name}( res" . generate_object_initializer_php__to_message__body__call_init__body( $msg ) . " );\n" .
+"initialize_${name}( \$res" . generate_object_initializer_php__to_message__body__call_init__body( $msg ) . " );\n" .
 "\n";
 
-    $res .= "return res;\n";
+    $res .= "return \$res;\n";
 
     return main::tabulate( $res );
 }
