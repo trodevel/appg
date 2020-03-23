@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 12860 $ $Date:: 2020-03-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -31,6 +31,12 @@ sub tabulate
     my @lines = split /\n/, $body;
     foreach my $line( @lines )
     {
+        if( $line =~ /^\s*$/ )
+        {
+            $res .= "\n";
+            next;
+        }
+
         $res = $res . "    " . $line . "\n";
     }
 
