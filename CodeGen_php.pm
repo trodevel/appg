@@ -31,12 +31,11 @@ require CodeGen_php_protocol;
 #require CodeGen_php_request_type_parser;
 #require CodeGen_php_exported_parser;
 #require CodeGen_php_exported_csv_helper;
-#require CodeGen_php_exported_str_helper;
 #require CodeGen_php_exported_validator;
 #require CodeGen_php_parser;
 require CodeGen_php_object_initializer;
 #require CodeGen_php_csv_helper;
-#require CodeGen_php_str_helper;
+require CodeGen_php_str_helper;
 #require CodeGen_php_makefile;
 #require CodeGen_php_example;
 #
@@ -64,12 +63,9 @@ use constant EXPORTED_VALIDATOR_PHP_FILE          => 'exported_validator.h';
 use constant EXPORTED_VALIDATOR_CPP_FILE        => 'exported_validator.cpp';
 use constant CSV_RESPONSE_ENCODER_PHP_FILE        => 'csv_helper.h';
 use constant CSV_RESPONSE_ENCODER_CPP_FILE      => 'csv_helper.cpp';
-use constant EXPORTED_STR_HELPER_PHP_FILE         => 'exported_str_helper.h';
-use constant EXPORTED_STR_HELPER_CPP_FILE       => 'exported_str_helper.cpp';
 use constant OBJECT_INITIALIZER_PHP_FILE          => 'object_initializer.php';
 use constant OBJECT_INITIALIZER_CPP_FILE        => 'object_initializer.cpp';
-use constant STR_HELPER_PHP_FILE                  => 'str_helper.h';
-use constant STR_HELPER_CPP_FILE                => 'str_helper.cpp';
+use constant STR_HELPER_PHP_FILE                => 'str_helper.php';
 use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
 use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
 use constant MAKEFILE_FILE                      => 'Makefile';
@@ -124,13 +120,7 @@ sub generate($)
 
 #    write_to_file( generate_object_initializer_cpp( $file_ref ), ${\OBJECT_INITIALIZER_CPP_FILE} );
 
-#    write_to_file( generate_exported_str_helper_h( $file_ref ), ${\EXPORTED_STR_HELPER_PHP_FILE} );
-
-#    write_to_file( generate_exported_str_helper_cpp( $file_ref ), ${\EXPORTED_STR_HELPER_CPP_FILE} );
-
-#    write_to_file( generate_str_helper_h( $file_ref ), ${\STR_HELPER_PHP_FILE} );
-
-#    write_to_file( generate_str_helper_cpp( $file_ref ), ${\STR_HELPER_CPP_FILE} );
+    write_to_file( generate_str_helper_php( $file_ref ), ${\STR_HELPER_PHP_FILE} );
 
 #    write_to_file( generate_makefile_lib( $file_ref ), ${\MAKEFILE_LIB_FILE} );
 
