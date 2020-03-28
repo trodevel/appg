@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12857 $ $Date:: 2020-03-21 #$ $Author: serge $
+# $Revision: 12868 $ $Date:: 2020-03-28 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -33,6 +33,12 @@ sub to_php_decl()
 }
 
 sub to_php_func_param()
+{
+    my( $self ) = @_;
+    return "#error 'not implemented yet'";
+}
+
+sub to_php__to_string_func_name()
 {
     my( $self ) = @_;
     return "#error 'not implemented yet'";
@@ -59,6 +65,12 @@ sub to_php__to_parse_function_name()
 {
     my( $self ) = @_;
     return "basic_parser::get_value_or_throw";
+}
+
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_string_bool";
 }
 
 ############################################################
@@ -91,6 +103,12 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_string_int";
+}
+
 ############################################################
 package Float;
 
@@ -117,6 +135,12 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_string_float";
+}
+
 ############################################################
 package String;
 
@@ -137,6 +161,12 @@ sub to_php__to_parse_function_name()
 {
     my( $self ) = @_;
     return "basic_parser::get_value_or_throw";
+}
+
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_string_string";
 }
 
 ############################################################
@@ -167,6 +197,15 @@ sub to_php__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_string_" . $self->{name};
+}
+
 ############################################################
 package UserDefinedEnum;
 
@@ -195,6 +234,15 @@ sub to_php__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_string_" . $self->{name};
+}
+
 ############################################################
 
 package Vector;
@@ -218,6 +266,13 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    return "to_string_vector";
+}
+
 ############################################################
 package Map;
 
@@ -238,6 +293,13 @@ sub to_php__to_parse_function_name()
 {
     my( $self ) = @_;
     return "basic_parser::get_value_or_throw";
+}
+
+sub to_php__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    return "to_string_map";
 }
 
 ############################################################
