@@ -192,7 +192,7 @@ sub generate_str_helper_php__to_object__body__init_members__body($)
 
     my $name        = $obj->{name};
 
-    $res = "    \$res .= \" ${name}=\";    write( os, r.${name} );";
+    $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name} );";
 
     return $res;
 }
