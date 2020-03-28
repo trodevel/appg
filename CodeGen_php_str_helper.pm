@@ -225,7 +225,8 @@ sub generate_str_helper_php__to_object__body($$$$)
     if( $is_message )
     {
         $res .=
-"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"    // base class\n" .
+"    \$res = to_string_" . $msg->get_base_class() . "( \$r );\n" .
 "\n";
     }
 
