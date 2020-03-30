@@ -42,85 +42,6 @@ use 5.010;
 
 ###############################################
 
-sub generate_exported_str_helper_h__to_obj_name($$)
-{
-    my ( $namespace, $name ) = @_;
-
-    return "static std::ostream & write( std::ostream & os, const $namespace::$name & r );";
-}
-
-sub generate_exported_str_helper_h_body_1_core($$)
-{
-    my ( $namespace, $objs_ref ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $objs_ref } )
-    {
-        $res = $res . generate_exported_str_helper_h__to_obj_name( $namespace, $_->{name} ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_exported_str_helper_h_body_1($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_exported_str_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
-}
-
-sub generate_exported_str_helper_h_body_2($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_exported_str_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
-}
-
-sub generate_exported_str_helper_h_body_3($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_exported_str_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs} );
-}
-
-sub generate_exported_str_helper_h_body_4($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_exported_str_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs} );
-}
-
-sub generate_exported_str_helper_h($)
-{
-    my ( $file_ref ) = @_;
-
-    my $body;
-
-    $body =
-
-"// enums\n" .
-generate_exported_str_helper_h_body_1( $file_ref ) .
-"\n" .
-"// objects\n" .
-generate_exported_str_helper_h_body_2( $file_ref ) .
-"\n" .
-"// base messages\n" .
-generate_exported_str_helper_h_body_3( $file_ref ) .
-"\n" .
-"// messages\n" .
-generate_exported_str_helper_h_body_4( $file_ref ) .
-"\n";
-
-    $body = gtphp::namespacize( 'str_helper', $body );
-
-    my $res = to_include_guards( $$file_ref, $body, "basic_parser", "exported_str_helper", 0, 0, [ "protocol" ], [ "sstream" ] );
-
-    return $res;
-}
-
-###############################################
-
 sub generate_str_helper_php__to_enum__body__init_members__body($$)
 {
     my ( $enum_name, $name ) = @_;
@@ -306,6 +227,55 @@ sub generate_str_helper_php__to_message($)
     return generate_str_helper_php__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
 }
 
+sub generate_str_helper_php__write__body($$)
+{
+    my ( $namespace, $name ) = @_;
+
+    return "'$namespace\\$name'         => 'to_string_${name}'";
+}
+
+sub generate_str_helper_php__write($)
+{
+    my ( $file_ref ) = @_;
+
+    my $namespace = get_namespace_name( $$file_ref );
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{msgs} } )
+    {
+        $res = $res . generate_str_helper_php__write__body( $namespace, $_->{name} ) . ",\n";
+    }
+
+    return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_str_helper_php__to_string($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res =
+"function to_string( \$obj )\n" .
+"{\n" .
+"    \$handler_map = array(\n" .
+    generate_str_helper_php__write( $file_ref ) .
+"    );\n" .
+"\n" .
+"    \$type = get_class( \$obj );\n" .
+"\n" .
+"    if( array_key_exists( \$type, \$handler_map ) )\n" .
+"    {\n" .
+"        \$func = '\\\\" . get_namespace_name( $$file_ref ) . "\\\\' . \$handler_map[ \$type ];\n" .
+"        return \$func( \$obj );\n" .
+"    }\n" .
+"\n" .
+"    return \\". $$file_ref->{base_prot} . "\\to_string( \$obj );\n" .
+"}\n" .
+"\n";
+
+    return $res;
+}
+
 sub generate_str_helper_php__to_includes($)
 {
     my ( $file_ref ) = @_;
@@ -339,10 +309,13 @@ sub generate_str_helper_php($)
     generate_str_helper_php__to_base_message( $file_ref ) .
 "// messages\n" .
 "\n" .
-    generate_str_helper_php__to_message( $file_ref )
+    generate_str_helper_php__to_message( $file_ref ) .
+"// generic\n" .
+"\n" .
+    generate_str_helper_php__to_string( $file_ref )
 ;
 
-    my @includes = ( "exported_str_helper" );
+    my @includes;
 
     push( @includes, $$file_ref->{base_prot} . "/str_helper" );
 
