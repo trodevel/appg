@@ -226,7 +226,7 @@ sub generate_str_helper_php__to_object__body($$$$)
     {
         $res .=
 "    // base class\n" .
-"    \$res = to_string_" . $msg->get_base_class() . "( \$r );\n" .
+"    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string" ). "( \$r );\n" .
 "\n";
     }
 
