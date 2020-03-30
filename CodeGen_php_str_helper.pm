@@ -26,6 +26,8 @@
 
 ###############################################
 
+use Scalar::Util qw(blessed);        # blessed
+
 require File;
 require Objects_php;
 require "gen_tools_php.pl";
@@ -192,7 +194,16 @@ sub generate_str_helper_php__to_object__body__init_members__body($)
 
     my $name        = $obj->{name};
 
-    $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name} );";
+#    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";
+
+    if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
+    {
+        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_string_func_name() . "' ); // Vector";
+    }
+    else
+    {
+        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name} );";
+    }
 
     return $res;
 }
