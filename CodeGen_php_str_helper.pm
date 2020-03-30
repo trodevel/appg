@@ -200,6 +200,13 @@ sub generate_str_helper_php__to_object__body__init_members__body($)
     {
         $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_string_func_name() . "' ); // Vector";
     }
+    elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
+    {
+        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() .
+            "( \$r->${name}, '" .
+            $obj->{data_type}->{key_type}->to_php__to_string_func_name() . "', '" .
+            $obj->{data_type}->{mapped_type}->to_php__to_string_func_name() . "' ); // Map";
+    }
     else
     {
         $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name} );";
