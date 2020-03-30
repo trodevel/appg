@@ -18,8 +18,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12872 $ $Date:: 2020-03-30 #$ $Author: serge $
+# $Revision: 12875 $ $Date:: 2020-03-30 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
+
+#use Data::Printer; # DEBUG
 
 package gtphp;
 
@@ -83,20 +85,22 @@ sub extract_namespace_and_object_name($)
 {
     my( $complex_name ) = @_;
 
-    my $temp = preg_split( "/ (::) /", $complex_name );
+    my @temp = split /::/, $complex_name;
 
-    my $size = count( $temp );
+    my $size = scalar @temp;
+
+#    ::p @temp;     # DEBUG
 
     die "invalid complex_name $complex_name" if ( $size == 0 ) ;
 
     my $namespace = "";
     my $name = "";
 
-    if( $count == 1 )
+    if( $size == 1 )
     {
         $name = $temp[0];
     }
-    elsif( $count == 2 )
+    elsif( $size == 2 )
     {
         $namespace  = $temp[0];
         $name       = $temp[1];
