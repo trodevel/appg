@@ -234,20 +234,38 @@ sub generate_str_helper_php__write__body($$)
     return "'$namespace\\$name'         => 'to_string_${name}'";
 }
 
-sub generate_str_helper_php__write($)
+sub generate_str_helper_php__write($$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $objs_ref ) = @_;
 
     my $namespace = get_namespace_name( $$file_ref );
 
     my $res = "";
 
-    foreach( @{ $$file_ref->{msgs} } )
+    foreach( @{ $objs_ref } )
     {
         $res = $res . generate_str_helper_php__write__body( $namespace, $_->{name} ) . ",\n";
     }
 
     return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_str_helper_php__write_objs($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = generate_str_helper_php__write( $file_ref, $$file_ref->{objs} );
+
+    return $res;
+}
+
+sub generate_str_helper_php__write_msgs($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res = generate_str_helper_php__write( $file_ref, $$file_ref->{msgs} );
+
+    return $res;
 }
 
 sub generate_str_helper_php__to_string($)
@@ -258,7 +276,10 @@ sub generate_str_helper_php__to_string($)
 "function to_string( \$obj )\n" .
 "{\n" .
 "    \$handler_map = array(\n" .
-    generate_str_helper_php__write( $file_ref ) .
+"        // objects\n".
+    generate_str_helper_php__write_objs( $file_ref ) .
+"        // messages\n".
+    generate_str_helper_php__write_msgs( $file_ref ) .
 "    );\n" .
 "\n" .
 "    \$type = get_class( \$obj );\n" .
