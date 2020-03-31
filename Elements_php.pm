@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12846 $ $Date:: 2020-03-14 #$ $Author: serge $
+# $Revision: 12887 $ $Date:: 2020-04-01 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -36,7 +36,7 @@ sub to_php_decl($)
         return sprintf( "const %s_%-20s = %s;", $enum_name, $self->{name}, $self->{value} );
     }
 
-    return $self->{name} . ",";
+    return sprintf( "const %s_%-20s = 0;", $enum_name, $self->{name} );
 }
 
 ############################################################
