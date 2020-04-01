@@ -28,11 +28,9 @@
 
 require CodeGen_php_protocol;
 #require CodeGen_php_enums;
-#require CodeGen_php_request_type_parser;
-#require CodeGen_php_exported_parser;
 #require CodeGen_php_exported_csv_helper;
 #require CodeGen_php_exported_validator;
-#require CodeGen_php_parser;
+require CodeGen_php_parser;
 require CodeGen_php_object_initializer;
 #require CodeGen_php_csv_helper;
 require CodeGen_php_str_helper;
@@ -53,10 +51,7 @@ use constant PROTOCOL_FILE      => 'protocol.php';
 use constant ENUMS_FILE         => 'enums.h';
 use constant REQUEST_TYPE_PARSER_PHP_FILE      => 'request_type_parser.h';
 use constant REQUEST_TYPE_PARSER_CPP_FILE    => 'request_type_parser.cpp';
-use constant PARSER_PHP_FILE      => 'parser.h';
-use constant PARSER_CPP_FILE    => 'parser.cpp';
-use constant EXPORTED_PARSER_PHP_FILE     => 'exported_parser.h';
-use constant EXPORTED_PARSER_CPP_FILE   => 'exported_parser.cpp';
+use constant PARSER_PHP_FILE      => 'parser.php';
 use constant EXPORTED_CSV_HELPER_PHP_FILE        => 'exported_csv_helper.h';
 use constant EXPORTED_CSV_HELPER_CPP_FILE      => 'exported_csv_helper.cpp';
 use constant EXPORTED_VALIDATOR_PHP_FILE          => 'exported_validator.h';
@@ -96,9 +91,7 @@ sub generate($)
 
 #    write_to_file( generate_request_type_parser_cpp( $file_ref ), ${\REQUEST_TYPE_PARSER_CPP_FILE} );
 
-#    write_to_file( generate_parser_h( $file_ref ), ${\PARSER_PHP_FILE} );
-
-#    write_to_file( generate_parser_cpp( $file_ref ), ${\PARSER_CPP_FILE} );
+    write_to_file( generate_parser_php( $file_ref ), ${\PARSER_PHP_FILE} );
 
 #    write_to_file( generate_exported_parser_h( $file_ref ), ${\EXPORTED_PARSER_PHP_FILE} );
 
