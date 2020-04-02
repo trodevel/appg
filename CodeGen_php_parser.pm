@@ -299,8 +299,6 @@ sub generate_parser_php__parse($)
 "        return self::create_parse_error();\n" .
 "\n" .
 "    \$handler_map = array(\n" .
-"        // objects\n".
-    generate_parser_php__write_objs( $file_ref ) .
 "        // messages\n".
     generate_parser_php__write_msgs( $file_ref ) .
 "    );\n" .
