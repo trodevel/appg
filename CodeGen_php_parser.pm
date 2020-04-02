@@ -150,11 +150,18 @@ sub generate_parser_php__to_object__body__init_members($)
     return $res;
 }
 
-sub generate_parser_php__to_object__body($$$$)
+sub generate_parser_php__to_object__body($$$$$)
 {
-    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+    my ( $namespace, $msg, $is_message, $is_base_msg, $protocol ) = @_;
 
     my $name = $msg->{name};
+
+    my $extra_param_1 = "";
+
+    if( $is_base_msg == 1 )
+    {
+        $extra_param_1 = "& \$res, ";
+    }
 
     my $extra_param = "";
 
@@ -165,10 +172,15 @@ sub generate_parser_php__to_object__body($$$$)
 
     my $res =
 
-"function parse_${name}( & \$csv_arr${extra_param} )\n" .
-"{\n" .
+"function parse_${name}( ${extra_param_1}& \$csv_arr${extra_param} )\n" .
+"{\n";
+
+    if( $is_base_msg == 0 )
+    {
+        $res .=
 "    \$res = new $name;\n" .
 "\n";
+    }
 
     if( $is_message )
     {
@@ -184,23 +196,28 @@ sub generate_parser_php__to_object__body($$$$)
     generate_parser_php__to_object__body__init_members( $msg ) .
 "\n";
 
-    $res .=
+    if( $is_base_msg == 0 )
+    {
+        $res .=
 
-"    return \$res;\n" .
+"    return \$res;\n";
+    }
+
+    $res .=
 "}\n";
 
     return $res;
 }
 
-sub generate_parser_php__to_object__core($$$)
+sub generate_parser_php__to_object__core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_parser_php__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_parser_php__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $is_base_msg, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -210,21 +227,21 @@ sub generate_parser_php__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_parser_php__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_parser_php__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_parser_php__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_parser_php__write__body($$)
