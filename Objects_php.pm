@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12849 $ $Date:: 2020-03-14 #$ $Author: serge $
+# $Revision: 12899 $ $Date:: 2020-04-03 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -200,7 +200,13 @@ sub to_php_decl
 
     $res = $self->append_base_class_php( $res ) . "\n";
 
-    my $body = "";
+    my $body =
+
+"function __construct()\n" .
+"{\n" .
+"    parent::__construct();\n" .
+"}\n" .
+"\n";
 
     $body = $body . "const MESSAGE_ID = " . $self->{message_id} . ";\n\n";
 
