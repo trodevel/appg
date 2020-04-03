@@ -42,28 +42,6 @@ use 5.010;
 
 ###############################################
 
-sub generate_parser_php__to_enum__body__init_members__body($$)
-{
-    my ( $enum_name, $name ) = @_;
-
-    return "${enum_name}_${name} => '$name',";
-}
-
-sub generate_parser_php__to_enum__body__init_members($)
-{
-    my ( $enum ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $enum->{elements} } )
-    {
-        $res .= generate_parser_php__to_enum__body__init_members__body( $enum->{name}, $_->{name} ) . "\n";
-    }
-
-    return main::tabulate( main::tabulate( $res ) );
-}
-
-
 sub generate_parser_php__to_enum__body($$)
 {
     my ( $namespace, $enum ) = @_;
@@ -72,22 +50,11 @@ sub generate_parser_php__to_enum__body($$)
 
     my $res =
 
-"function parse_${name}( \$r )\n" .
+"function parse_${name}( & \$csv_arr, & \$offset )\n" .
 "{\n" .
-"    \$map = array(\n" .
-"    {\n";
-
-    $res .= generate_parser_php__to_enum__body__init_members( $enum );
-
-    $res .=
-"    );\n" .
+"    \$res = \\basic_parser\\parse_int( \$csv_arr, \$offset );\n" .
 "\n" .
-"    if( array_key_exists( \$r, \$map ) )\n" .
-"    {\n" .
-"        return \$map[ \$r ];\n" .
-"    }\n" .
-"\n" .
-"    return '?';\n" .
+"    return \$res;\n" .
 "}\n";
 
     return $res;
