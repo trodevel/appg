@@ -250,8 +250,6 @@ sub generate_request_encoder_php__to_generic_request($)
 "function to_generic_request( \$obj )\n" .
 "{\n" .
 "    \$handler_map = array(\n" .
-"        // objects\n".
-    generate_request_encoder_php__write_objs( $file_ref ) .
 "        // messages\n".
     generate_request_encoder_php__write_msgs( $file_ref ) .
 "    );\n" .
