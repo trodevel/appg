@@ -28,11 +28,11 @@
 
 require CodeGen_php_protocol;
 #require CodeGen_php_enums;
-#require CodeGen_php_exported_csv_helper;
+#require CodeGen_php_exported_request_encoder;
 #require CodeGen_php_exported_validator;
 require CodeGen_php_parser;
 require CodeGen_php_object_initializer;
-#require CodeGen_php_csv_helper;
+require CodeGen_php_request_encoder;
 require CodeGen_php_str_helper;
 #require CodeGen_php_makefile;
 #require CodeGen_php_example;
@@ -52,12 +52,11 @@ use constant ENUMS_FILE         => 'enums.h';
 use constant REQUEST_TYPE_PARSER_PHP_FILE      => 'request_type_parser.h';
 use constant REQUEST_TYPE_PARSER_CPP_FILE    => 'request_type_parser.cpp';
 use constant PARSER_PHP_FILE      => 'parser.php';
-use constant EXPORTED_CSV_HELPER_PHP_FILE        => 'exported_csv_helper.h';
-use constant EXPORTED_CSV_HELPER_CPP_FILE      => 'exported_csv_helper.cpp';
+use constant EXPORTED_REQUEST_ENCODER_PHP_FILE        => 'exported_request_encoder.php';
+use constant EXPORTED_REQUEST_ENCODER_CPP_FILE      => 'exported_request_encoder.cpp';
 use constant EXPORTED_VALIDATOR_PHP_FILE          => 'exported_validator.h';
 use constant EXPORTED_VALIDATOR_CPP_FILE        => 'exported_validator.cpp';
-use constant CSV_RESPONSE_ENCODER_PHP_FILE        => 'csv_helper.h';
-use constant CSV_RESPONSE_ENCODER_CPP_FILE      => 'csv_helper.cpp';
+use constant REQUEST_ENCODER_PHP_FILE           => 'request_encoder.php';
 use constant OBJECT_INITIALIZER_PHP_FILE          => 'object_initializer.php';
 use constant OBJECT_INITIALIZER_CPP_FILE        => 'object_initializer.cpp';
 use constant STR_HELPER_PHP_FILE                => 'str_helper.php';
@@ -97,17 +96,17 @@ sub generate($)
 
 #    write_to_file( generate_exported_parser_cpp( $file_ref ), ${\EXPORTED_PARSER_CPP_FILE} );
 
-#    write_to_file( generate_exported_csv_helper_h( $file_ref ), ${\EXPORTED_CSV_HELPER_PHP_FILE} );
+#    write_to_file( generate_exported_request_encoder_h( $file_ref ), ${\EXPORTED_REQUEST_ENCODER_PHP_FILE} );
 
-#    write_to_file( generate_exported_csv_helper_cpp( $file_ref ), ${\EXPORTED_CSV_HELPER_CPP_FILE} );
+#    write_to_file( generate_exported_request_encoder_cpp( $file_ref ), ${\EXPORTED_REQUEST_ENCODER_CPP_FILE} );
 
 #    write_to_file( generate_exported_validator_h( $file_ref ), ${\EXPORTED_VALIDATOR_PHP_FILE} );
 
 #    write_to_file( generate_exported_validator_cpp( $file_ref ), ${\EXPORTED_VALIDATOR_CPP_FILE} );
 
-#    write_to_file( generate_csv_helper_h( $file_ref ), ${\CSV_RESPONSE_ENCODER_PHP_FILE} );
+    write_to_file( generate_request_encoder_php( $file_ref ), ${\REQUEST_ENCODER_PHP_FILE} );
 
-#    write_to_file( generate_csv_helper_cpp( $file_ref ), ${\CSV_RESPONSE_ENCODER_CPP_FILE} );
+#    write_to_file( generate_request_encoder_cpp( $file_ref ), ${\REQUEST_ENCODER_CPP_FILE} );
 
     write_to_file( generate_object_initializer_php( $file_ref ), ${\OBJECT_INITIALIZER_PHP_FILE} );
 
