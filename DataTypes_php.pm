@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12902 $ $Date:: 2020-04-06 #$ $Author: serge $
+# $Revision: 12909 $ $Date:: 2020-04-07 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -380,7 +380,7 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_generic_request__vector";
+    return "\\basic_parser\\to_generic_request_vector";
 }
 
 ############################################################
@@ -423,7 +423,7 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_generic_request__map";
+    return "\\basic_parser\\to_generic_request_map";
 }
 
 ############################################################
