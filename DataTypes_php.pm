@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12909 $ $Date:: 2020-04-07 #$ $Author: serge $
+# $Revision: 12912 $ $Date:: 2020-04-14 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -55,6 +55,12 @@ sub to_php__to_generic_request_func_name()
     my( $self ) = @_;
     die "#error 'not implemented yet'";
 }
+
+#sub to_php__to_html_func_name()
+#{
+#    my( $self ) = @_;
+#    return "#error 'not implemented yet'";
+#}
 
 ############################################################
 package Boolean;
@@ -95,6 +101,12 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "\\basic_parser\\to_generic_request_bool";
+}
+
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_html_bool";
 }
 
 ############################################################
@@ -145,6 +157,12 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request_int";
 }
 
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_html_int";
+}
+
 ############################################################
 package Float;
 
@@ -189,6 +207,12 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request_float";
 }
 
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_html_float";
+}
+
 ############################################################
 package String;
 
@@ -227,6 +251,12 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "\\basic_parser\\to_generic_request_string";
+}
+
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\to_html_string";
 }
 
 ############################################################
@@ -284,6 +314,15 @@ sub to_php__to_generic_request_func_name()
     return "${pref}to_generic_request_" . $self->{name};
 }
 
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_html_" . $self->{name};
+}
+
 ############################################################
 package UserDefinedEnum;
 
@@ -339,6 +378,15 @@ sub to_php__to_generic_request_func_name()
     return "${pref}to_generic_request_" . $self->{name};
 }
 
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_html_" . $self->{name};
+}
+
 ############################################################
 
 package Vector;
@@ -381,6 +429,13 @@ sub to_php__to_generic_request_func_name()
     my( $self ) = @_;
 
     return "\\basic_parser\\to_generic_request_vector";
+}
+
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    return "\\basic_parser\\to_html";
 }
 
 ############################################################
@@ -426,5 +481,11 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request_map";
 }
 
-############################################################
+sub to_php__to_html_func_name()
+{
+    my( $self ) = @_;
 
+    return "\\basic_parser\\to_html";
+}
+
+############################################################
