@@ -64,7 +64,23 @@ sub generate_html_helper_php__to_enum__body__init_members($)
 }
 
 
-sub generate_html_helper_php__to_enum__body($$)
+sub generate_html_helper_php__to_enum__body_1($$)
+{
+    my ( $namespace, $enum ) = @_;
+
+    my $name = $enum->{name};
+
+    my $res =
+
+"function to_html_header__${name}( \$r )\n" .
+"{\n" .
+"    return array( '" . uc( ${name} ) . "' );\n".
+"}\n";
+
+    return $res;
+}
+
+sub generate_html_helper_php__to_enum__body_2($$)
 {
     my ( $namespace, $enum ) = @_;
 
@@ -76,6 +92,18 @@ sub generate_html_helper_php__to_enum__body($$)
 "{\n" .
 "    return to_string_${name}( \$r ) . \" (\" . \$r . \")\"\n".
 "}\n";
+
+    return $res;
+}
+
+sub generate_html_helper_php__to_enum__body($$)
+{
+    my ( $namespace, $enum ) = @_;
+
+    my $res =
+
+        generate_html_helper_php__to_enum__body_1( $namespace, $enum ) . "\n" .
+        generate_html_helper_php__to_enum__body_2( $namespace, $enum );
 
     return $res;
 }
