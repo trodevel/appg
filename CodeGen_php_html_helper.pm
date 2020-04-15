@@ -74,20 +74,7 @@ sub generate_html_helper_php__to_enum__body($$)
 
 "function to_html_${name}( \$r )\n" .
 "{\n" .
-"    \$map = array(\n" .
-"    {\n";
-
-    $res .= generate_html_helper_php__to_enum__body__init_members( $enum );
-
-    $res .=
-"    );\n" .
-"\n" .
-"    if( array_key_exists( \$r, \$map ) )\n" .
-"    {\n" .
-"        return \$map[ \$r ];\n" .
-"    }\n" .
-"\n" .
-"    return '?';\n" .
+"    return to_string_${name}( \$r ) . \" (\" . \$r . \")\"\n".
 "}\n";
 
     return $res;
@@ -343,6 +330,8 @@ sub generate_html_helper_php($)
     push( @includes, generate_html_helper_php__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/html_helper" );
+
+    push( @includes, get_namespace_name( $$file_ref ) . "/str_helper" );
 
     my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  \@includes, [ ] );
 
