@@ -122,6 +122,34 @@ sub generate_html_helper_php__to_enum($)
     return $res;
 }
 
+sub generate_html_helper_php__to_object__body__init_headers__body($)
+{
+    my ( $obj ) = @_;
+
+    my $res        = "'" . uc( $obj->{name} ) . "'";
+
+    return $res;
+}
+
+sub generate_html_helper_php__to_object__body__init_headers($)
+{
+    my ( $msg ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $msg->{members} } )
+    {
+        if( $res ne '' )
+        {
+            $res .= ", ";
+        }
+
+        $res .= generate_html_helper_php__to_object__body__init_headers__body( $_ );
+    }
+
+    return $res;
+}
+
 sub generate_html_helper_php__to_object__body__init_members__body($)
 {
     my ( $obj ) = @_;
@@ -134,18 +162,18 @@ sub generate_html_helper_php__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_html_func_name() . "' ); // Vector";
+        $res = $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_html_func_name() . "' )";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
-        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_html_func_name() .
+        $res = $obj->{data_type}->to_php__to_html_func_name() .
             "( \$r->${name}, '" .
             $obj->{data_type}->{key_type}->to_php__to_html_func_name() . "', '" .
-            $obj->{data_type}->{mapped_type}->to_php__to_html_func_name() . "' ); // Map";
+            $obj->{data_type}->{mapped_type}->to_php__to_html_func_name() . "' )";
     }
     else
     {
-        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name} );";
+        $res = $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name} )";
     }
 
     return $res;
@@ -159,7 +187,16 @@ sub generate_html_helper_php__to_object__body__init_members($)
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_html_helper_php__to_object__body__init_members__body( $_ ) . "\n";
+        if( $res ne '' )
+        {
+            $res .= ",\n";
+        }
+        else
+        {
+            $res .= "\n";
+        }
+
+        $res .= generate_html_helper_php__to_object__body__init_members__body( $_ );
     }
 
     return $res;
@@ -176,27 +213,26 @@ sub generate_html_helper_php__to_object__body($$$$)
 "function to_html__${name}( & \$r )\n" .
 "{\n";
 
+    $res .= "    \$header = array( ";
+
     if( $is_message )
     {
-        $res .=
-"    // base class\n" .
-"    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r );\n" .
-"\n";
+        $res .= "'" . $msg->get_base_class() . "', ";
     }
 
-    if( $is_message == 0 )
+    $res .= generate_html_helper_php__to_object__body__init_headers( $msg ) . " );\n";
+
+    $res .= "    \$data = array(";
+
+    if( $is_message )
     {
-        $res .= "    \$res = \"(\";\n\n";
+          $res .= gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r ), ";
     }
 
-    $res .=
-    generate_html_helper_php__to_object__body__init_members( $msg ) .
-"\n";
 
-    if( $is_message == 0 )
-    {
-        $res .= "    \$res .= \")\";\n\n";
-    }
+    $res .= main::tabulate( main::tabulate( generate_html_helper_php__to_object__body__init_members( $msg ) ) );
+
+    $res .= " );\n\n";
 
     $res .=
 
