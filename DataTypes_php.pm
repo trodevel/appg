@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12912 $ $Date:: 2020-04-14 #$ $Author: serge $
+# $Revision: 12921 $ $Date:: 2020-04-16 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -106,7 +106,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_html_bool";
+    return "\\basic_parser\\to_html__bool";
 }
 
 ############################################################
@@ -160,7 +160,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_html_int";
+    return "\\basic_parser\\to_html__int";
 }
 
 ############################################################
@@ -210,7 +210,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_html_float";
+    return "\\basic_parser\\to_html__float";
 }
 
 ############################################################
@@ -256,7 +256,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_html_string";
+    return "\\basic_parser\\to_html__string";
 }
 
 ############################################################
@@ -320,7 +320,7 @@ sub to_php__to_html_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}to_html_" . $self->{name};
+    return "${pref}to_html__" . $self->{name};
 }
 
 ############################################################
@@ -384,7 +384,7 @@ sub to_php__to_html_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}to_html_" . $self->{name};
+    return "${pref}to_html__" . $self->{name};
 }
 
 ############################################################
@@ -435,7 +435,7 @@ sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_html";
+    return "\\basic_parser\\to_html__vector";
 }
 
 ############################################################
@@ -485,7 +485,7 @@ sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_html";
+    return "\\basic_parser\\to_html__map";
 }
 
 ############################################################
