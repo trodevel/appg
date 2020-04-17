@@ -215,27 +215,50 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     $res .= "    \$header = array( ";
 
+    my $headers = generate_html_helper_php__to_object__body__init_headers( $msg );
+
     if( $is_message )
     {
-        $res .= "'" . $msg->get_base_class() . "', ";
+
+        my $base_header = "'" . $msg->get_base_class() . "'";
+
+        if( $headers ne '' )
+        {
+            $headers = $base_header . ", " . $headers;
+        }
+        else
+        {
+            $headers = $base_header;
+        }
     }
 
-    $res .= generate_html_helper_php__to_object__body__init_headers( $msg ) . " );\n";
+    $res .= $headers . " );\n\n";
 
     $res .= "    \$data = array(";
 
+    my $data = generate_html_helper_php__to_object__body__init_members( $msg );
+
     if( $is_message )
     {
-          $res .= gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r ), ";
+        my $base_data = "\n" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r )";
+
+        if( $data ne '' )
+        {
+            $data = $base_data . ", " . $data;
+        }
+        else
+        {
+            $data = $base_data;
+        }
     }
 
+    $res .= main::tabulate( main::tabulate( $data ) );
 
-    $res .= main::tabulate( main::tabulate( generate_html_helper_php__to_object__body__init_members( $msg ) ) );
-
-    $res .= " );\n\n";
+    $res .= "        );\n\n";
 
     $res .=
-
+"    \$res = \\basic_parser\\to_html_table( \$header, \$data );\n" .
+"\n" .
 "    return \$res;\n" .
 "}\n";
 
