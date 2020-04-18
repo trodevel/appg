@@ -72,7 +72,7 @@ sub generate_str_helper_php__to_enum__body($$)
 
     my $res =
 
-"function to_string_${name}( \$r )\n" .
+"function to_string__${name}( \$r )\n" .
 "{\n" .
 "    \$map = array(\n" .
 "    {\n";
@@ -158,14 +158,14 @@ sub generate_str_helper_php__to_object__body($$$$)
 
     my $res =
 
-"function to_string_${name}( & \$r )\n" .
+"function to_string__${name}( & \$r )\n" .
 "{\n";
 
     if( $is_message )
     {
         $res .=
 "    // base class\n" .
-"    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string" ). "( \$r );\n" .
+"    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string_" ). "( \$r );\n" .
 "\n";
     }
 
@@ -231,7 +231,7 @@ sub generate_str_helper_php__write__body($$)
 {
     my ( $namespace, $name ) = @_;
 
-    return "'$namespace\\$name'         => 'to_string_${name}'";
+    return "'$namespace\\$name'         => 'to_string__${name}'";
 }
 
 sub generate_str_helper_php__write($$)
