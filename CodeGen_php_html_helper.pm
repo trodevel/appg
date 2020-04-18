@@ -244,7 +244,7 @@ sub generate_html_helper_php__to_object__body($$$$)
 
         if( $data ne '' )
         {
-            $data = $base_data . ", " . $data;
+            $data = $base_data . "," . $data;
         }
         else
         {
