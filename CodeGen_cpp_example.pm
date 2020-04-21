@@ -40,6 +40,52 @@ use 5.010;
 
 ###############################################
 
+sub generate_example__function_call__body($$$$)
+{
+    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+
+    my $name = $msg->{name};
+
+    my $res = "example_${name}();";
+
+    return $res;
+}
+
+sub generate_example__function_call__core($$$)
+{
+    my ( $file_ref, $objs_ref, $is_message ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res .= generate_example__function_call__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+    }
+
+    return main::tabulate( $res );
+}
+
+sub generate_example__function_call__enum($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_example__function_call__core( $file_ref,  $$file_ref->{enums}, 0 );
+}
+
+sub generate_example__function_call__object($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_example__function_call__core( $file_ref,  $$file_ref->{objs}, 0 );
+}
+
+sub generate_example__function_call__message($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_example__function_call__core( $file_ref,  $$file_ref->{msgs}, 1 );
+}
+
 sub generate_example__to_object__body($$$$)
 {
     my ( $namespace, $msg, $is_message, $protocol ) = @_;
@@ -51,6 +97,8 @@ sub generate_example__to_object__body($$$$)
 "void example_${name}()\n" .
 "{\n" .
 "    $namespace::$name obj;\n" .
+"\n" .
+"    ${namespace}::str_helper::to_string( obj );\n" .
 "}\n";
 
     return $res;
@@ -64,10 +112,17 @@ sub generate_example__to_object__core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
+}
+
+sub generate_example__to_enum($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{enums}, 0 );
 }
 
 sub generate_example__to_object($)
@@ -91,6 +146,11 @@ sub generate_example($)
     my $res =
 
 "#include \"protocol.h\"\n" .
+"#include \"str_helper.h\"\n" .
+"\n" .
+"// enums\n" .
+"\n" .
+    generate_example__to_enum( $file_ref ) .
 "\n" .
 "// objects\n" .
 "\n" .
@@ -102,6 +162,18 @@ sub generate_example($)
 "\n" .
 "int main()\n" .
 "{\n" .
+"    // enums\n" .
+"\n" .
+    generate_example__function_call__enum( $file_ref ) .
+"\n" .
+"    // objects\n" .
+"\n" .
+    generate_example__function_call__object( $file_ref ) .
+"\n" .
+"    // messages\n" .
+"\n" .
+    generate_example__function_call__message( $file_ref ) .
+"\n" .
 "    return 0;\n" .
 "}\n" .
 "\n";
