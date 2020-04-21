@@ -44,7 +44,7 @@ sub generate_str_helper_h__to_obj_name($)
 {
     my ( $name ) = @_;
 
-    return "static std::ostream & write( std::ostream & os, const $name & r );";
+    return "std::ostream & write( std::ostream & os, const $name & r );";
 }
 
 sub generate_str_helper_h_body_1_core($)
