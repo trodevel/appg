@@ -86,9 +86,9 @@ sub generate_example__function_call__message($)
     return generate_example__function_call__core( $file_ref,  $$file_ref->{msgs}, 1 );
 }
 
-sub generate_example__to_object__body($$$$)
+sub generate_example__to_object__body($$$$$)
 {
-    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+    my ( $namespace, $msg, $is_message, $is_enum, $protocol ) = @_;
 
     my $name = $msg->{name};
 
@@ -98,21 +98,30 @@ sub generate_example__to_object__body($$$$)
 "{\n" .
 "    $namespace::$name obj;\n" .
 "\n" .
-"    ${namespace}::str_helper::to_string( obj );\n" .
+"    std::cout << \"$name : \" << ${namespace}::str_helper::to_string( obj ) << std::endl;\n";
+
+    if( $is_message == 1 )
+    {
+        $res .=
+"\n" .
+"    std::cout << \"$name : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n";
+    }
+
+    $res .=
 "}\n";
 
     return $res;
 }
 
-sub generate_example__to_object__core($$$)
+sub generate_example__to_object__core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_enum ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $is_enum, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -122,21 +131,21 @@ sub generate_example__to_enum($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{enums}, 0 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{enums}, 0, 1 );
 }
 
 sub generate_example__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_example__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_example($)
@@ -147,6 +156,9 @@ sub generate_example($)
 
 "#include \"protocol.h\"\n" .
 "#include \"str_helper.h\"\n" .
+"#include \"csv_helper.h\"\n" .
+"\n" .
+"#include <iostream>       // std::cout\n" .
 "\n" .
 "// enums\n" .
 "\n" .
