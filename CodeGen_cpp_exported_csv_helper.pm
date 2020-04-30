@@ -190,7 +190,7 @@ sub generate_exported_csv_helper_cpp__to_object__body($$$$)
     if( $is_message )
     {
         $res .=
-"    write( os, \"$protocol/$name\" );\n".
+"    write( os, std::string( \"$protocol/$name\" ) );\n".
 "\n";
 
         $res .=
