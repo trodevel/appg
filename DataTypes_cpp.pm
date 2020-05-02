@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12808 $ $Date:: 2020-02-28 #$ $Author: serge $
+# $Revision: 12956 $ $Date:: 2020-05-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -61,6 +61,30 @@ sub to_cpp__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::str_helper::write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::parse_bool";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_generic_request_bool";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_html__bool";
+}
+
 ############################################################
 package Integer;
 
@@ -91,6 +115,30 @@ sub to_cpp__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::str_helper::write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::parse_int";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_generic_request_int";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_html__int";
+}
+
 ############################################################
 package Float;
 
@@ -117,6 +165,30 @@ sub to_cpp__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::str_helper::write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::parse_float";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_generic_request_float";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_html__float";
+}
+
 ############################################################
 package String;
 
@@ -137,6 +209,30 @@ sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
     return "basic_parser::get_value_or_throw";
+}
+
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::str_helper::write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::parse_string";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_generic_request_string";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+    return "::basic_parser::to_html__string";
 }
 
 ############################################################
@@ -167,6 +263,42 @@ sub to_cpp__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::str_helper::" ) : "";
+
+    return "${pref}write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}parse_" . $self->{name};
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_generic_request_" . $self->{name};
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_html__" . $self->{name};
+}
+
 ############################################################
 package UserDefinedEnum;
 
@@ -195,6 +327,42 @@ sub to_cpp__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::str_helper::" ) : "";
+
+    return "${pref}write";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}parse_" . $self->{name};
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_generic_request_" . $self->{name};
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}to_html__" . $self->{name};
+}
+
 ############################################################
 
 package Vector;
@@ -216,6 +384,34 @@ sub to_cpp__to_parse_function_name()
 {
     my( $self ) = @_;
     return "basic_parser::get_value_or_throw";
+}
+
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+
+    return "write__t";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::parse_vector";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::to_generic_request_vector";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::to_html__vector";
 }
 
 ############################################################
@@ -240,5 +436,32 @@ sub to_cpp__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-############################################################
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
 
+    return "write__t";
+}
+
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::parse_map";
+}
+
+sub to_cpp__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::to_generic_request_map";
+}
+
+sub to_cpp__to_html_func_name()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::to_html__map";
+}
+
+############################################################

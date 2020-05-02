@@ -129,32 +129,166 @@ generate_str_helper_h_body_4( $file_ref ) .
 
 ###############################################
 
-
-sub generate_str_helper_cpp__to_object__body($)
+sub generate_str_helper_cpp__to_enum__body__init_members__body($)
 {
-    my ( $msg ) = @_;
+    my ( $name ) = @_;
 
-    my $name = $msg->{name};
+    return "{ Type:: TUPLE_VAL_STR( $name ) },";
+}
+
+sub generate_str_helper_cpp__to_enum__body__init_members($)
+{
+    my ( $enum ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $enum->{elements} } )
+    {
+        $res .= generate_str_helper_cpp__to_enum__body__init_members__body( $_->{name} ) . "\n";
+    }
+
+    return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_str_helper_cpp__to_enum__body($)
+{
+    my ( $enum ) = @_;
+
+    my $name = $enum->{name};
 
     my $res =
 
 "std::ostream & write( std::ostream & os, const $name & r )\n" .
 "{\n" .
-"    return ::basic_parser::str_helper::write( os, r );\n".
+"    typedef $name Type;\n" .
+"    static const std::map< Type, std::string > m =\n" .
+"    {\n";
+
+    $res .= generate_str_helper_cpp__to_enum__body__init_members( $enum );
+
+    $res .=
+"    };\n" .
+"\n" .
+"    auto it = m.find( r );\n" .
+"\n" .
+"    static const std::string undef( \"undef\" );\n" .
+"\n" .
+"    if( it != m.end() )\n" .
+"        return write( os, it->second );\n" .
+"\n" .
+"    return write( os, undef );\n" .
 "}\n";
 
     return $res;
 }
 
-sub generate_str_helper_cpp__to_object__core($)
+sub generate_str_helper_cpp__to_enum($)
 {
-    my ( $objs_ref ) = @_;
+    my ( $file_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $$file_ref->{enums} } )
+    {
+        $res = $res . generate_str_helper_cpp__to_enum__body( $_ ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_str_helper_cpp__to_object__body__init_members__body($)
+{
+    my ( $obj ) = @_;
+
+    my $res;
+
+    my $name        = $obj->{name};
+
+#    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";
+
+    if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name}, '" . $obj->{data_type}->{value_type}->to_cpp__to_string_func_name() . "' ); // Vector";
+    }
+    elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() .
+            "( os, r.${name}, '" .
+            $obj->{data_type}->{key_type}->to_cpp__to_string_func_name() . "', '" .
+            $obj->{data_type}->{mapped_type}->to_cpp__to_string_func_name() . "' ); // Map";
+    }
+    else
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name} );";
+    }
+
+    return $res;
+}
+
+sub generate_str_helper_cpp__to_object__body__init_members($)
+{
+    my ( $msg ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $msg->{members} } )
+    {
+        $res = $res . generate_str_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_str_helper_cpp__to_object__body($$$$)
+{
+    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+
+    my $name = $msg->{name};
+
+    my $res =
+
+"std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
+"{\n";
+
+    if( $is_message )
+    {
+        $res .=
+"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"\n";
+    }
+
+
+    if( $is_message == 0 )
+    {
+        $res .= "    os << \"(\";\n\n";
+    }
+
+    $res .=
+    generate_str_helper_cpp__to_object__body__init_members( $msg ) .
+"\n";
+
+    if( $is_message == 0 )
+    {
+        $res .= "    os << \")\";\n\n";
+    }
+
+    $res .=
+
+"    return os;\n" .
+"}\n";
+
+    return $res;
+}
+
+sub generate_str_helper_cpp__to_object__core($$$)
+{
+    my ( $file_ref, $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_str_helper_cpp__to_object__body( $_ ) . "\n";
+        $res = $res . generate_str_helper_cpp__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -164,28 +298,21 @@ sub generate_str_helper_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_str_helper_cpp__to_object__core( $$file_ref->{objs} );
-}
-
-sub generate_str_helper_cpp__to_enum($)
-{
-    my ( $file_ref ) = @_;
-
-    return generate_str_helper_cpp__to_object__core( $$file_ref->{enums} );
+    return generate_str_helper_cpp__to_object__core( $file_ref, $$file_ref->{objs}, 0 );
 }
 
 sub generate_str_helper_cpp__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_str_helper_cpp__to_object__core( $$file_ref->{base_msgs} );
+    return generate_str_helper_cpp__to_object__core( $file_ref, $$file_ref->{base_msgs}, 0 );
 }
 
 sub generate_str_helper_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_str_helper_cpp__to_object__core( $$file_ref->{msgs} );
+    return generate_str_helper_cpp__to_object__core( $file_ref, $$file_ref->{msgs}, 1 );
 }
 
 sub generate_str_helper_cpp($)
