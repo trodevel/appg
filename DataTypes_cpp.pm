@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12956 $ $Date:: 2020-05-02 #$ $Author: serge $
+# $Revision: 12961 $ $Date:: 2020-05-05 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -29,13 +29,25 @@ package Generic;
 sub to_cpp_decl()
 {
     my( $self ) = @_;
-    return "#error 'not implemented yet'";
+    die "to_cpp_decl() - not implemented";
 }
 
 sub to_cpp_func_param()
 {
     my( $self ) = @_;
-    return "#error 'not implemented yet'";
+    die "to_cpp_func_param() - not implemented";
+}
+
+sub to_cpp__to_string_func_name()
+{
+    my( $self ) = @_;
+    die "to_cpp__to_string_func_name() - not implemented";
+}
+
+sub to_cpp__to_string_func_ptr()
+{
+    my( $self ) = @_;
+    return "static_cast<std::ostream & (*)( std::ostream &, " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__to_string_func_name() . " )";
 }
 
 ############################################################
@@ -390,7 +402,7 @@ sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
 
-    return "write__t";
+    return "::basic_parser::str_helper::write_t";
 }
 
 sub to_cpp__parse_func_name()
@@ -440,7 +452,7 @@ sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
 
-    return "write__t";
+    return "::basic_parser::str_helper::write_t";
 }
 
 sub to_cpp__parse_func_name()

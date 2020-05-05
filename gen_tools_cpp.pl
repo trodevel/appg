@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12693 $ $Date:: 2020-02-03 #$ $Author: serge $
+# $Revision: 12963 $ $Date:: 2020-05-05 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 package gtcpp;
@@ -76,6 +76,64 @@ sub array_to_decl
 
     return $res;
 }
+############################################################
+
+sub extract_namespace_and_object_name($)
+{
+    my( $complex_name ) = @_;
+
+    my @temp = split /::/, $complex_name;
+
+    my $size = scalar @temp;
+
+#    ::p @temp;     # DEBUG
+
+    die "invalid complex_name $complex_name" if ( $size == 0 ) ;
+
+    my $namespace = "";
+    my $name = "";
+
+    if( $size == 1 )
+    {
+        $name = $temp[0];
+    }
+    elsif( $size == 2 )
+    {
+        $namespace  = $temp[0];
+        $name       = $temp[1];
+    }
+    else
+    {
+        die "too complex name $complex_name";
+    }
+
+    return ( $namespace, $name );
+}
+
+############################################################
+
+sub to_function_call_with_namespace($$)
+{
+    my( $complex_name, $function_name ) = @_;
+
+    my $res = "";
+
+    my ( $namespace, $name ) = extract_namespace_and_object_name( $complex_name );
+
+    if( $namespace ne '' )
+    {
+        $res = "::" . $namespace . "::" . $function_name;
+    }
+    else
+    {
+        $res = $function_name;
+    }
+
+    return $res;
+}
+
+############################################################
+
 ############################################################
 sub array_to_cpp_to_json_decl
 {
