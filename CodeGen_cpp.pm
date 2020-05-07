@@ -31,7 +31,6 @@ require CodeGen_cpp_enums;
 require CodeGen_cpp_request_type_parser;
 require CodeGen_cpp_exported_parser;
 require CodeGen_cpp_exported_csv_helper;
-require CodeGen_cpp_exported_str_helper;
 require CodeGen_cpp_exported_validator;
 require CodeGen_cpp_parser;
 require CodeGen_cpp_object_initializer;
@@ -64,8 +63,6 @@ use constant EXPORTED_VALIDATOR_H_FILE          => 'exported_validator.h';
 use constant EXPORTED_VALIDATOR_CPP_FILE        => 'exported_validator.cpp';
 use constant CSV_RESPONSE_ENCODER_H_FILE        => 'csv_helper.h';
 use constant CSV_RESPONSE_ENCODER_CPP_FILE      => 'csv_helper.cpp';
-use constant EXPORTED_STR_HELPER_H_FILE         => 'exported_str_helper.h';
-use constant EXPORTED_STR_HELPER_CPP_FILE       => 'exported_str_helper.cpp';
 use constant OBJECT_INITIALIZER_H_FILE          => 'object_initializer.h';
 use constant OBJECT_INITIALIZER_CPP_FILE        => 'object_initializer.cpp';
 use constant STR_HELPER_H_FILE                  => 'str_helper.h';
@@ -123,10 +120,6 @@ sub generate($$)
     write_to_file( generate_object_initializer_h( $file_ref ), ${\OBJECT_INITIALIZER_H_FILE} );
 
     write_to_file( generate_object_initializer_cpp( $file_ref ), ${\OBJECT_INITIALIZER_CPP_FILE} );
-
-    write_to_file( generate_exported_str_helper_h( $file_ref ), ${\EXPORTED_STR_HELPER_H_FILE} );
-
-    write_to_file( generate_exported_str_helper_cpp( $file_ref ), ${\EXPORTED_STR_HELPER_CPP_FILE} );
 
     write_to_file( generate_str_helper_h( $file_ref ), ${\STR_HELPER_H_FILE} );
 

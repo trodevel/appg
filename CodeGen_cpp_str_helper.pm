@@ -337,6 +337,8 @@ sub generate_str_helper_cpp($)
 
     $body =
 
+"using ::basic_parser::str_helper::write;\n" .
+"\n" .
 "// enums\n" .
 "\n" .
 "#define TUPLE_VAL_STR(_x_)  _x_,#_x_\n" .
