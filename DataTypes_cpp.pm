@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12961 $ $Date:: 2020-05-05 #$ $Author: serge $
+# $Revision: 12982 $ $Date:: 2020-05-07 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -76,7 +76,7 @@ sub to_cpp__to_parse_function_name()
 sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::str_helper::write";
+    return "write";
 }
 
 sub to_cpp__parse_func_name()
@@ -130,7 +130,7 @@ sub to_cpp__to_parse_function_name()
 sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::str_helper::write";
+    return "write";
 }
 
 sub to_cpp__parse_func_name()
@@ -180,7 +180,7 @@ sub to_cpp__to_parse_function_name()
 sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::str_helper::write";
+    return "write";
 }
 
 sub to_cpp__parse_func_name()
@@ -226,7 +226,7 @@ sub to_cpp__to_parse_function_name()
 sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::str_helper::write";
+    return "write";
 }
 
 sub to_cpp__parse_func_name()
@@ -402,7 +402,7 @@ sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::str_helper::write_t";
+    return "write_t";
 }
 
 sub to_cpp__parse_func_name()
@@ -452,7 +452,7 @@ sub to_cpp__to_string_func_name()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::str_helper::write_t";
+    return "write_t";
 }
 
 sub to_cpp__parse_func_name()
