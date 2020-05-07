@@ -338,6 +338,7 @@ sub generate_str_helper_cpp($)
     $body =
 
 "using ::basic_parser::str_helper::write;\n" .
+"using ::basic_parser::str_helper::write_t;\n" .
 "\n" .
 "// enums\n" .
 "\n" .
