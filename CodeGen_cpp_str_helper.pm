@@ -253,7 +253,7 @@ sub generate_str_helper_cpp__to_object__body($$$)
     if( $is_message )
     {
         $res .=
-"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "write" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "str_helper::write" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
     }
 
