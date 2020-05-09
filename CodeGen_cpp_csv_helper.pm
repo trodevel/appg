@@ -83,39 +83,74 @@ sub generate_csv_helper_cpp__write($)
     return main::tabulate( main::tabulate( $res ) );
 }
 
-sub generate_csv_helper_cpp__write_message__body($$)
+sub generate_exported_csv_helper_cpp__to_object__body($$$$)
 {
-    my ( $namespace, $msg ) = @_;
+    my ( $namespace, $msg, $is_message, $protocol ) = @_;
 
     my $name = $msg->{name};
 
     my $res =
 
-"std::ostream & write_${name}( std::ostream & os, const generic_protocol::Object & rr )\n" .
-"{\n" .
-"    auto & r = dynamic_cast< const $namespace::$name &>( rr );\n".
+"std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
+"{\n";
+
+    if( $is_message )
+    {
+        $res .=
+"    write( os, std::string( \"$protocol/$name\" ) );\n".
+"\n";
+
+        $res .=
+"    // base class\n" .
+"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"\n";
+    }
+
+    $res = $res .
+    generate_exported_csv_helper_cpp__to_object__body__init_members( $msg ) .
 "\n" .
-"    return ::basic_parser::csv_encoder::write( os, r );\n" .
+"    return os;\n" .
 "}\n";
 
     return $res;
 }
 
-sub generate_csv_helper_cpp__write_message($)
+sub generate_exported_csv_helper_cpp__to_object__core($$$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
-    foreach( @{ $$file_ref->{msgs} } )
+    foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_csv_helper_cpp__write_message__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
+        $res = $res . generate_exported_csv_helper_cpp__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_csv_helper_cpp__to_includes($)
+sub generate_exported_csv_helper_cpp__to_object($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+}
+
+sub generate_exported_csv_helper_cpp__to_base_message($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+}
+
+sub generate_exported_csv_helper_cpp__to_message($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_exported_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+}
+
+sub generate_exported_csv_helper_cpp__to_includes($)
 {
     my ( $file_ref ) = @_;
 
@@ -123,7 +158,7 @@ sub generate_csv_helper_cpp__to_includes($)
 
     foreach( @{ $$file_ref->{includes} } )
     {
-        push( @res, "../" . $_ . "/exported_csv_helper" );
+        push( @res, $_ . "/exported_csv_helper" );
     }
 
     return @res;
@@ -150,6 +185,24 @@ sub generate_csv_helper_cpp($)
     my $body;
 
     $body =
+
+"using namespace " . get_namespace_name( $$file_ref ) . ";\n".
+"\n" .
+"// enums\n" .
+"\n" .
+    generate_exported_csv_helper_cpp__to_enum( $file_ref ) .
+"// objects\n" .
+"\n" .
+    generate_exported_csv_helper_cpp__to_object( $file_ref ) .
+"// base messages\n" .
+"\n" .
+    generate_exported_csv_helper_cpp__to_base_message( $file_ref ) .
+"// messages\n" .
+"\n" .
+    generate_exported_csv_helper_cpp__to_message( $file_ref )
+;
+
+    $body .=
 
     generate_csv_helper_cpp__write_message( $file_ref ) .
 "\n" .
@@ -180,7 +233,15 @@ sub generate_csv_helper_cpp($)
 "\n"
 ;
 
-    $body = gtcpp::namespacize( 'csv_helper', $body );
+    $body = gtcpp::namespacize( 'csv_encoder', $body );
+
+    my @includes = ( "exported_csv_helper" );
+
+    push( @includes, $$file_ref->{base_prot} . "/exported_csv_helper" );
+
+    push( @includes, generate_exported_csv_helper_cpp__to_includes( $file_ref ) );
+
+    push( @includes, "basic_parser/exported_csv_helper" );
 
     my $res = to_body( $$file_ref, $body, "", [ "exported_csv_helper", "generic_protocol/csv_helper" ], [ "map", "typeindex" ] );
 
