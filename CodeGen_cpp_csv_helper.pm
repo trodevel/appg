@@ -40,22 +40,22 @@ use 5.010;
 
 ###############################################
 
-sub generate_csv_helper_h__to_obj_name($$)
+sub generate_csv_helper_h__to_obj_name($)
 {
-    my ( $namespace, $name ) = @_;
+    my ( $name ) = @_;
 
-    return "std::ostream & write( std::ostream & os, const $namespace::$name & r );";
+    return "std::ostream & write( std::ostream & os, const $name & r );";
 }
 
-sub generate_csv_helper_h_body_1_core($$)
+sub generate_csv_helper_h_body_1_core($)
 {
-    my ( $namespace, $objs_ref ) = @_;
+    my ( $objs_ref ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_csv_helper_h__to_obj_name( $namespace, $_->{name} ) . "\n";
+        $res .= generate_csv_helper_h__to_obj_name( $_->{name} ) . "\n";
     }
 
     return $res;
@@ -65,28 +65,28 @@ sub generate_csv_helper_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{enums} );
 }
 
 sub generate_csv_helper_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{objs} );
 }
 
 sub generate_csv_helper_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{base_msgs} );
 }
 
 sub generate_csv_helper_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{msgs} );
 }
 
 sub generate_csv_helper_h($)
@@ -144,13 +144,13 @@ sub generate_csv_helper_cpp__write($)
     return main::tabulate( main::tabulate( $res ) );
 }
 
-sub generate_csv_helper_cpp__to_enum__body($$)
+sub generate_csv_helper_cpp__to_enum__body($)
 {
-    my ( $namespace, $name ) = @_;
+    my ( $name ) = @_;
 
     my $res =
 
-"std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
+"std::ostream & write( std::ostream & os, const $name & r )\n" .
 "{\n" .
 "    write( os, static_cast<unsigned>( r ) );\n" .
 "\n" .
@@ -168,7 +168,7 @@ sub generate_csv_helper_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_csv_helper_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res .= generate_csv_helper_cpp__to_enum__body( $_->{name} ) . "\n";
     }
 
     return $res;
@@ -195,21 +195,21 @@ sub generate_csv_helper_cpp__to_object__body__init_members($)
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_csv_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
+        $res .= generate_csv_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_csv_helper_cpp__to_object__body($$$$)
+sub generate_csv_helper_cpp__to_object__body($$$)
 {
-    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+    my ( $msg, $is_message, $protocol ) = @_;
 
     my $name = $msg->{name};
 
     my $res =
 
-"std::ostream & write( std::ostream & os, const $namespace::$name & r )\n" .
+"std::ostream & write( std::ostream & os, const $name & r )\n" .
 "{\n";
 
     if( $is_message )
@@ -241,7 +241,7 @@ sub generate_csv_helper_cpp__to_object__core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_csv_helper_cpp__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_csv_helper_cpp__to_object__body( $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -268,9 +268,9 @@ sub generate_csv_helper_cpp__to_message($)
     return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
 }
 
-sub generate_csv_helper_cpp__write_message__body($$)
+sub generate_csv_helper_cpp__write_message__body($)
 {
-    my ( $namespace, $msg ) = @_;
+    my ( $msg ) = @_;
 
     my $name = $msg->{name};
 
@@ -278,9 +278,9 @@ sub generate_csv_helper_cpp__write_message__body($$)
 
 "std::ostream & write_${name}( std::ostream & os, const generic_protocol::Object & rr )\n" .
 "{\n" .
-"    auto & r = dynamic_cast< const $namespace::$name &>( rr );\n".
+"    auto & r = dynamic_cast< const $name &>( rr );\n".
 "\n" .
-"    return ::basic_parser::csv_encoder::write( os, r );\n" .
+"    return write( os, r );\n" .
 "}\n";
 
     return $res;
@@ -291,12 +291,12 @@ sub generate_csv_helper_cpp__write_message($)
     my ( $file_ref ) = @_;
 
     my $res = "";
-    
+
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . generate_csv_helper_cpp__write_message__body( get_namespace_name( $$file_ref ), $_ ) . "\n";
+        $res .= generate_csv_helper_cpp__write_message__body( $_ ) . "\n";
     }
-    
+
     return $res;
 }
 
