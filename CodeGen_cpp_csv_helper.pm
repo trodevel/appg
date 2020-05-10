@@ -182,7 +182,23 @@ sub generate_csv_helper_cpp__to_object__body__init_members__body($)
 
     my $name        = $obj->{name};
 
-    $res = "    write( os, r.${name} );";
+#    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";
+
+    if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__to_string_func_ptr() . " ); // Vector";
+    }
+    elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() .
+            "( os, r.${name}, " .
+            $obj->{data_type}->{key_type}->to_cpp__to_string_func_ptr() . ", " .
+            $obj->{data_type}->{mapped_type}->to_cpp__to_string_func_ptr() . " ); // Map";
+    }
+    else
+    {
+        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name} );";
+    }
 
     return $res;
 }
@@ -220,11 +236,11 @@ sub generate_csv_helper_cpp__to_object__body($$$)
 
         $res .=
 "    // base class\n" .
-"    write( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "csv_helper::write" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
     }
 
-    $res = $res .
+    $res .=
     generate_csv_helper_cpp__to_object__body__init_members( $msg ) .
 "\n" .
 "    return os;\n" .
@@ -336,7 +352,8 @@ sub generate_csv_helper_cpp($)
 
     $body =
 
-"using namespace " . get_namespace_name( $$file_ref ) . ";\n".
+"using ::basic_parser::csv_helper::write;\n" .
+"using ::basic_parser::csv_helper::write_t;\n" .
 "\n" .
 "// enums\n" .
 "\n" .
