@@ -372,7 +372,7 @@ sub generate_csv_helper_cpp($)
 "{\n" .
 "    typedef std::ostream & (*PPMF)( std::ostream & os, const generic_protocol::Object & );\n" .
 "\n" .
-"#define HANDLER_MAP_ENTRY(_v)       { typeid( ::" . get_namespace_name( $$file_ref ) . "::_v ),        & ::" . get_namespace_name( $$file_ref ) . "::csv_helper::write_##_v }\n" .
+"#define HANDLER_MAP_ENTRY(_v)       { typeid( _v ),        & write_##_v }\n" .
 "\n" .
 "    static const std::map<std::type_index, PPMF> funcs =\n" .
 "    {\n" .
