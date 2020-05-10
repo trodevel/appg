@@ -190,7 +190,7 @@ sub generate_str_helper_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_str_helper_cpp__to_enum__body( $_ ) . "\n";
+        $res .= generate_str_helper_cpp__to_enum__body( $_ ) . "\n";
     }
 
     return $res;
@@ -233,7 +233,7 @@ sub generate_str_helper_cpp__to_object__body__init_members($)
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_str_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
+        $res .= generate_str_helper_cpp__to_object__body__init_members__body( $_ ) . "\n";
     }
 
     return $res;
@@ -253,6 +253,7 @@ sub generate_str_helper_cpp__to_object__body($$$)
     if( $is_message )
     {
         $res .=
+"    // base class\n" .
 "    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "str_helper::write" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
     }
@@ -273,7 +274,6 @@ sub generate_str_helper_cpp__to_object__body($$$)
     }
 
     $res .=
-
 "    return os;\n" .
 "}\n";
 
@@ -288,7 +288,7 @@ sub generate_str_helper_cpp__to_object__core($$$)
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_str_helper_cpp__to_object__body( $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_str_helper_cpp__to_object__body( $_, $is_message, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
