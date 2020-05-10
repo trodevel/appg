@@ -110,7 +110,7 @@ generate_str_helper_h_body_3( $file_ref ) .
 generate_str_helper_h_body_4( $file_ref ) .
 "\n" .
 "template<class T>\n" .
-"static std::string to_string( const T & l )\n" .
+"std::string to_string( const T & l )\n" .
 "{\n" .
 "    std::ostringstream os;\n" .
 "\n" .
