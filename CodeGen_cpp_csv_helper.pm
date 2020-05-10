@@ -195,18 +195,18 @@ sub generate_csv_helper_cpp__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__to_string_func_ptr() . " ); // Vector";
+        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__to_string_func_ptr() . " ); // Vector";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
-        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() .
+        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() .
             "( os, r.${name}, " .
             $obj->{data_type}->{key_type}->to_cpp__to_string_func_ptr() . ", " .
             $obj->{data_type}->{mapped_type}->to_cpp__to_string_func_ptr() . " ); // Map";
     }
     else
     {
-        $res = "    os << \" ${name}=\"; " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name} );";
+        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name} );";
     }
 
     return $res;
