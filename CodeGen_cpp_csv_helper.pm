@@ -109,9 +109,18 @@ generate_csv_helper_h_body_3( $file_ref ) .
 "// messages\n" .
 generate_csv_helper_h_body_4( $file_ref ) .
 "\n".
+"template<class T>\n" .
+"std::string to_csv( const T & l )\n" .
+"{\n" .
+"    std::ostringstream os;\n" .
+"\n" .
+"    write( os, l );\n" .
+"\n" .
+"    return os.str();\n" .
+"}\n" .
+"\n".
 "// generic\n" .
 "std::ostream & write( std::ostream & os, const generic_protocol::Object & r );\n" .
-"std::string to_csv( const generic_protocol::Object & r );\n" .
 "\n";
 
     $body = gtcpp::namespacize( 'csv_helper', $body );
@@ -330,20 +339,6 @@ sub generate_csv_helper_cpp__to_includes($)
     return @res;
 }
 
-sub generate_csv_helper_cpp__to_csv()
-{
-    my $res =
-"std::string to_csv( const generic_protocol::Object & r )\n" .
-"{\n" .
-"    std::ostringstream os;\n" .
-"\n" .
-"    write( os, r );\n" .
-"\n" .
-"    return os.str();\n" .
-"}\n";
-
-}
-
 sub generate_csv_helper_cpp($)
 {
     my ( $file_ref ) = @_;
@@ -395,8 +390,6 @@ sub generate_csv_helper_cpp($)
 "\n" .
 "    return ::generic_protocol::csv_helper::write( os, r );\n" .
 "}\n" .
-"\n" .
-    generate_csv_helper_cpp__to_csv() .
 "\n"
 ;
 
