@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12999 $ $Date:: 2020-05-10 #$ $Author: serge $
+# $Revision: 13012 $ $Date:: 2020-05-12 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -62,6 +62,18 @@ sub to_cpp__to_csv_func_ptr()
     return "static_cast<std::ostream & (*)( std::ostream &, " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__to_csv_func_name() . " )";
 }
 
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+    die "to_cpp__validate_func_name() - not implemented";
+}
+
+sub to_cpp__validate_func_ptr()
+{
+    my( $self ) = @_;
+    return "static_cast<bool (*)( " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__validate_func_name() . " )";
+}
+
 ############################################################
 package Boolean;
 
@@ -95,6 +107,12 @@ sub to_cpp__to_csv_func_name()
 {
     my( $self ) = @_;
     return "write";
+}
+
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+    return "validate";
 }
 
 sub to_cpp__parse_func_name()
@@ -157,6 +175,12 @@ sub to_cpp__to_csv_func_name()
     return "write";
 }
 
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+    return "validate";
+}
+
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
@@ -213,6 +237,12 @@ sub to_cpp__to_csv_func_name()
     return "write";
 }
 
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+    return "validate";
+}
+
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
@@ -263,6 +293,12 @@ sub to_cpp__to_csv_func_name()
 {
     my( $self ) = @_;
     return "write";
+}
+
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+    return "validate";
 }
 
 sub to_cpp__parse_func_name()
@@ -327,6 +363,15 @@ sub to_cpp__to_csv_func_name()
     my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::csv_helper::" ) : "";
 
     return "${pref}write";
+}
+
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::validator::" ) : "";
+
+    return "${pref}validate";
 }
 
 sub to_cpp__parse_func_name()
@@ -402,6 +447,15 @@ sub to_cpp__to_csv_func_name()
     return "${pref}write";
 }
 
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::validator::" ) : "";
+
+    return "${pref}validate";
+}
+
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
@@ -466,6 +520,13 @@ sub to_cpp__to_csv_func_name()
     return "write_t";
 }
 
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+
+    return "validate_t";
+}
+
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
@@ -521,6 +582,13 @@ sub to_cpp__to_csv_func_name()
     my( $self ) = @_;
 
     return "write_t";
+}
+
+sub to_cpp__validate_func_name()
+{
+    my( $self ) = @_;
+
+    return "validate_t";
 }
 
 sub to_cpp__parse_func_name()

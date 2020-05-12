@@ -161,18 +161,18 @@ sub generate_validator_cpp__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__to_string_func_ptr() . " ); // Vector";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . " ); // Vector";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() .
-            "( os, r.${name}, " .
-            $obj->{data_type}->{key_type}->to_cpp__to_string_func_ptr() . ", " .
-            $obj->{data_type}->{mapped_type}->to_cpp__to_string_func_ptr() . " ); // Map";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() .
+            "( r.${name}, " .
+            $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
+            $obj->{data_type}->{mapped_type}->to_cpp__validate_func_ptr() . " ); // Map";
     }
     else
     {
-        $res = "    " . $obj->{data_type}->to_cpp__to_string_func_name() . "( os, r.${name} );";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( r.${name} );";
     }
 
     return $res;
@@ -207,7 +207,7 @@ sub generate_validator_cpp__to_object__body($$$)
     {
         $res .=
 "    // base class\n" .
-"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "validator::validate" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "validator::validate" ). "( static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
     }
 
