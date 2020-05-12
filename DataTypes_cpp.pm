@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13012 $ $Date:: 2020-05-12 #$ $Author: serge $
+# $Revision: 13035 $ $Date:: 2020-05-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -71,7 +71,7 @@ sub to_cpp__validate_func_name()
 sub to_cpp__validate_func_ptr()
 {
     my( $self ) = @_;
-    return "static_cast<bool (*)( " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__validate_func_name() . " )";
+    return "static_cast<bool (*)( const std::string &, " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__validate_func_name() . " )";
 }
 
 ############################################################

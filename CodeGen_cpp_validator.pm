@@ -292,8 +292,8 @@ sub generate_validator_cpp($)
 
     $body =
 
-"using ::basic_parser::validator::validator;\n" .
-"using ::basic_parser::validator::validator_t;\n" .
+"using ::basic_parser::validator::validate;\n" .
+"using ::basic_parser::validator::validate_t;\n" .
 "\n" .
 "// enums\n" .
 "\n" .
