@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5076 $ $Date:: 2016-11-28 #$ $Author: serge $
+# $Revision: 13014 $ $Date:: 2020-05-12 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -61,7 +61,7 @@ sub to_cpp_decl
 ############################################################
 package ValidRange;
 
-sub to_cpp_decl
+sub to_cpp_comment
 {
     my( $self ) = @_;
 
@@ -119,7 +119,7 @@ sub to_cpp_decl
             $comment = "size constrain";
         }
 
-        $add = " // $comment: " . $self->{valid_range_or_size}->to_cpp_decl();
+        $add = " // $comment: " . $self->{valid_range_or_size}->to_cpp_comment();
     }
 
     return $self->SUPER::to_cpp_decl() . $add;
