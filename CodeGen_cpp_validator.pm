@@ -167,7 +167,7 @@ sub generate_validator_cpp__to_object__body__init_members__body($$$)
 
     if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
     {
-        $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params();
+        $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( $obj->{data_type}->to_cpp_decl() );
     }
 
 #    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";

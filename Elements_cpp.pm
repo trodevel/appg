@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13016 $ $Date:: 2020-05-12 #$ $Author: serge $
+# $Revision: 13033 $ $Date:: 2020-05-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -101,9 +101,9 @@ sub to_cpp_comment
     return "$prefix$from, $to$suffix";
 }
 
-sub to_cpp_func_params
+sub to_cpp_func_params($)
 {
-    my( $self ) = @_;
+    my( $self, $data_type ) = @_;
 
     my $has_from = "false";
     my $has_to   = "false";
@@ -137,7 +137,7 @@ sub to_cpp_func_params
     }
 
 
-    return "$has_from, $is_inclusive_from, $from, $has_to, $is_inclusive_to, $to";
+    return "$has_from, $is_inclusive_from, static_cast<$data_type>( $from ), $has_to, $is_inclusive_to, static_cast<$data_type>( $to )";
 }
 
 ############################################################
