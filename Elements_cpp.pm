@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13014 $ $Date:: 2020-05-12 #$ $Author: serge $
+# $Revision: 13016 $ $Date:: 2020-05-12 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -99,6 +99,45 @@ sub to_cpp_comment
         }
     }
     return "$prefix$from, $to$suffix";
+}
+
+sub to_cpp_func_params
+{
+    my( $self ) = @_;
+
+    my $has_from = "false";
+    my $has_to   = "false";
+    my $is_inclusive_from = "false";
+    my $is_inclusive_to   = "false";
+    my $from = "0";
+    my $to   = "0";
+
+    if( $self->{has_from} == 1 )
+    {
+        $has_from = "true";
+
+        $from = $self->{from};
+
+        if( $self->{is_inclusive_from} == 1 )
+        {
+            $is_inclusive_from = "true";
+        }
+    }
+
+    if( $self->{has_to} == 1 )
+    {
+        $has_to = "true";
+
+        $to = $self->{to};
+
+        if( $self->{is_inclusive_to} == 1 )
+        {
+            $is_inclusive_to = "true";
+        }
+    }
+
+
+    return "$has_from, $is_inclusive_from, $from, $has_to, $is_inclusive_to, $to";
 }
 
 ############################################################
