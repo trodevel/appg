@@ -40,22 +40,24 @@ use 5.010;
 
 ###############################################
 
-sub generate_validator_h__to_obj_name($)
+sub generate_validator_h__to_obj_name($$$)
 {
-    my ( $name ) = @_;
+    my ( $name, $is_message, $is_base_msg ) = @_;
 
-    return "bool validate( const $name & r );";
+    my $prefix = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? "" : "const std::string & prefix, ";
+
+    return "bool validate( ${prefix}const $name & r );";
 }
 
-sub generate_validator_h_body_1_core($)
+sub generate_validator_h_body_1_core($$$)
 {
-    my ( $objs_ref ) = @_;
+    my ( $objs_ref, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_validator_h__to_obj_name( $_->{name} ) . "\n";
+        $res .= generate_validator_h__to_obj_name( $_->{name}, $is_message, $is_base_msg ) . "\n";
     }
 
     return $res;
@@ -65,28 +67,28 @@ sub generate_validator_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{enums} );
+    return generate_validator_h_body_1_core( $$file_ref->{enums}, 0, 0 );
 }
 
 sub generate_validator_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{objs} );
+    return generate_validator_h_body_1_core( $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_validator_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{base_msgs} );
+    return generate_validator_h_body_1_core( $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_validator_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{msgs} );
+    return generate_validator_h_body_1_core( $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_validator_h($)
@@ -125,7 +127,7 @@ sub generate_validator_cpp__to_enum__body($)
 
     my $res =
 
-"bool validate( const $name & r )\n" .
+"bool validate( const std::string & prefix, const $name & r )\n" .
 "{\n" .
 "    //validate( static_cast<unsigned>( r ) );\n" .
 "\n" .
@@ -149,13 +151,17 @@ sub generate_validator_cpp__to_enum($)
     return $res;
 }
 
-sub generate_validator_cpp__to_object__body__init_members__body($)
+sub generate_validator_cpp__to_object__body__init_members__body($$$)
 {
-    my ( $obj ) = @_;
+    my ( $obj, $is_message, $is_base_msg ) = @_;
 
     my $res;
 
     my $name        = $obj->{name};
+
+    my $key_name    = uc( $name );
+
+    my $full_key_name = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? '"' . $key_name . '"' : 'prefix + ".' . $key_name . '"';
 
     my $valid_range_or_size = "";
 
@@ -168,46 +174,48 @@ sub generate_validator_cpp__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Vector";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Vector";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() .
-            "( r.${name}, " .
+            "( $full_key_name, r.${name}, " .
             $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
             $obj->{data_type}->{mapped_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Map";
     }
     else
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( r.${name}$valid_range_or_size );";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}$valid_range_or_size );";
     }
 
     return $res;
 }
 
-sub generate_validator_cpp__to_object__body__init_members($)
+sub generate_validator_cpp__to_object__body__init_members($$$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res .= generate_validator_cpp__to_object__body__init_members__body( $_ ) . "\n";
+        $res .= generate_validator_cpp__to_object__body__init_members__body( $_, $is_message, $is_base_msg ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_validator_cpp__to_object__body($$$)
+sub generate_validator_cpp__to_object__body($$$$)
 {
-    my ( $msg, $is_message, $protocol ) = @_;
+    my ( $msg, $is_message, $is_base_msg, $protocol ) = @_;
 
     my $name = $msg->{name};
 
+    my $prefix = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? "" : "const std::string & prefix, ";
+
     my $res =
 
-"bool validate( const $name & r )\n" .
+"bool validate( ${prefix}const $name & r )\n" .
 "{\n";
 
     if( $is_message )
@@ -219,7 +227,7 @@ sub generate_validator_cpp__to_object__body($$$)
     }
 
     $res .=
-    generate_validator_cpp__to_object__body__init_members( $msg ) .
+    generate_validator_cpp__to_object__body__init_members( $msg, $is_message, $is_base_msg ) .
 "\n" .
 "    return true;\n" .
 "}\n";
@@ -227,15 +235,15 @@ sub generate_validator_cpp__to_object__body($$$)
     return $res;
 }
 
-sub generate_validator_cpp__to_object__core($$$)
+sub generate_validator_cpp__to_object__core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_validator_cpp__to_object__body( $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_validator_cpp__to_object__body( $_, $is_message, $is_base_msg, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -245,21 +253,21 @@ sub generate_validator_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_validator_cpp__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_validator_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_validator_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_validator_cpp__to_includes($)
