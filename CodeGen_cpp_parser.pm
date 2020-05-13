@@ -155,13 +155,13 @@ generate_parser_h_body_5( $file_ref ) .
 
 ###############################################
 
-sub generate_parser_cpp__to_enum__body($$)
+sub generate_parser_cpp__to_enum__body($)
 {
-    my ( $namespace, $name ) = @_;
+    my ( $name ) = @_;
 
     my $res =
 
-"void get_value_or_throw( $namespace::${name} * res, const std::string & key, const generic_request::Request & r )\n" .
+"void get_value_or_throw( ${name} * res, const std::string & key, const generic_request::Request & r )\n" .
 "{\n" .
 "    uint32_t res_i;\n" .
 "\n" .
@@ -204,9 +204,9 @@ sub generate_parser_cpp__to_message__body__init_members($$)
     return $res;
 }
 
-sub generate_parser_cpp__to_body($$$)
+sub generate_parser_cpp__to_body($$)
 {
-    my ( $namespace, $msg, $is_message ) = @_;
+    my ( $msg, $is_message ) = @_;
 
     my $name = $msg->{name};
 
@@ -214,7 +214,7 @@ sub generate_parser_cpp__to_body($$$)
 
     my $res =
 
-"void get_value_or_throw( ${namespace}::${name} * res, ${extra_param}const generic_request::Request & r )\n" .
+"void get_value_or_throw( ${name} * res, ${extra_param}const generic_request::Request & r )\n" .
 "{\n";
 
     if( $is_message )
@@ -231,15 +231,15 @@ sub generate_parser_cpp__to_body($$$)
     return $res;
 }
 
-sub generate_parser_cpp__to_object__core($$$)
+sub generate_parser_cpp__to_object__core($$)
 {
-    my ( $namespace, $objs_ref, $is_message ) = @_;
+    my ( $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_parser_cpp__to_body( $namespace, $_, $is_message ) . "\n";
+        $res .= generate_parser_cpp__to_body( $_, $is_message ) . "\n";
     }
 
     return $res;
@@ -253,7 +253,7 @@ sub generate_parser_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_parser_cpp__to_enum__body( get_namespace_name( $$file_ref ), $_->{name} ) . "\n";
+        $res = $res . generate_parser_cpp__to_enum__body( $_->{name} ) . "\n";
     }
 
     return $res;
@@ -263,21 +263,21 @@ sub generate_parser_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_parser_cpp__to_object__core( $$file_ref->{objs}, 0 );
 }
 
 sub generate_parser_cpp__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_parser_cpp__to_object__core( $$file_ref->{base_msgs}, 1 );
 }
 
 sub generate_parser_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+    return generate_parser_cpp__to_object__core( $$file_ref->{msgs}, 1 );
 }
 
 sub generate_parser_cpp__to_includes($)
