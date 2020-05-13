@@ -40,24 +40,24 @@ use 5.010;
 
 ###############################################
 
-sub generate_parser_h__to_obj_name($$$)
+sub generate_parser_h__to_obj_name($$)
 {
-    my ( $namespace, $name, $is_message ) = @_;
+    my ( $name, $is_message ) = @_;
 
     my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
 
-    return "void get_value_or_throw( $namespace::$name * res, ${extra_param}const generic_request::Request & r );";
+    return "void get_value_or_throw( $name * res, ${extra_param}const generic_request::Request & r );";
 }
 
-sub generate_parser_h_body_1_core($$$)
+sub generate_parser_h_body_1_core($$)
 {
-    my ( $namespace, $objs_ref, $is_message ) = @_;
+    my ( $objs_ref, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_parser_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
+        $res .= generate_parser_h__to_obj_name( $_->{name}, $is_message ) . "\n";
     }
 
     return $res;
@@ -67,28 +67,28 @@ sub generate_parser_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums}, 0 );
+    return generate_parser_h_body_1_core( $$file_ref->{enums}, 0 );
 }
 
 sub generate_parser_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+    return generate_parser_h_body_1_core( $$file_ref->{objs}, 0 );
 }
 
 sub generate_parser_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
+    return generate_parser_h_body_1_core( $$file_ref->{base_msgs}, 1 );
 }
 
 sub generate_parser_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+    return generate_parser_h_body_1_core( $$file_ref->{msgs}, 1 );
 }
 
 sub generate_parser_h__to_msg_name($)
