@@ -40,13 +40,64 @@ use 5.010;
 
 ###############################################
 
-sub generate_parser_h__to_msg_name($)
+sub generate_parser_h__to_obj_name($$$)
 {
-    my $name = shift;
-    return "static Object *     to_" . $name . "( const generic_request::Request & r );";
+    my ( $namespace, $name, $is_message ) = @_;
+
+    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
+
+    return "void get_value_or_throw( $namespace::$name * res, ${extra_param}const generic_request::Request & r );";
+}
+
+sub generate_parser_h_body_1_core($$$)
+{
+    my ( $namespace, $objs_ref, $is_message ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res = $res . generate_parser_h__to_obj_name( $namespace, $_->{name}, $is_message ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_parser_h_body_1($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{enums}, 0 );
+}
+
+sub generate_parser_h_body_2($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{objs}, 0 );
+}
+
+sub generate_parser_h_body_3($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{base_msgs}, 1 );
 }
 
 sub generate_parser_h_body_4($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_parser_h_body_1_core( get_namespace_name( $$file_ref ), $$file_ref->{msgs}, 1 );
+}
+
+sub generate_parser_h__to_msg_name($)
+{
+    my $name = shift;
+    return "Object * to_" . $name . "( const generic_request::Request & r );";
+}
+
+sub generate_parser_h_body_5($)
 {
     my ( $file_ref ) = @_;
 
@@ -54,10 +105,10 @@ sub generate_parser_h_body_4($)
 
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . generate_parser_h__to_msg_name( $_->{name} ) . "\n";
+        $res .= generate_parser_h__to_msg_name( $_->{name} ) . "\n";
     }
 
-    return main::tabulate( $res );
+    return $res;
 }
 
 sub generate_parser_h($)
@@ -68,23 +119,34 @@ sub generate_parser_h($)
 
     $body =
 
-"class Parser\n" .
-"{\n" .
-"public:\n" .
-"    typedef generic_protocol::Object    Object;\n" .
+"typedef generic_protocol::Object    Object;\n" .
 "\n" .
-"public:\n" .
+"generic_protocol::Object * to_forward_message( const generic_request::Request & r );\n" .
 "\n" .
-"    static generic_protocol::Object*    to_forward_message( const generic_request::Request & r );\n" .
+"request_type_e detect_request_type( const generic_request::Request & r );\n" .
 "\n" .
-"private:\n" .
+"// enums\n".
 "\n" .
-"    static request_type_e   detect_request_type( const generic_request::Request & r );\n" .
+generate_parser_h_body_1( $file_ref ) .
+"\n" .
+"// objects\n".
+"\n" .
+generate_parser_h_body_2( $file_ref ) .
+"\n" .
+"// base messages\n".
+"\n" .
+generate_parser_h_body_3( $file_ref ) .
+"\n" .
+"// messages\n".
 "\n" .
 generate_parser_h_body_4( $file_ref ) .
 "\n" .
-"};\n" .
+"// to_... functions\n".
+"\n" .
+generate_parser_h_body_5( $file_ref ) .
 "\n";
+
+    $body = gtcpp::namespacize( 'parser', $body );
 
     my $res = to_include_guards( $$file_ref, $body, "", "parser", 0, 0, [ "generic_request/request", "enums", "protocol" ], [] );
 
@@ -200,7 +262,7 @@ sub generate_parser_cpp($)
     generate_parser_cpp__to_message( $file_ref )
 ;
 
-    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_parser", "validator", "request_type_parser", "basic_parser/malformed_request" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "parser", "validator", "request_type_parser", "basic_parser/malformed_request" ], [ "map" ] );
 
     return $res;
 }
