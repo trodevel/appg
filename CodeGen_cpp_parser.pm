@@ -294,14 +294,14 @@ sub generate_parser_cpp__to_includes($)
     return @res;
 }
 
-sub generate_parser_cpp__to_forward_message__body($)
+sub generate_parser_cpp__to_forward_message__body__msg($)
 {
     my $name = shift;
 
     return "HANDLER_MAP_ENTRY( $name )";
 }
 
-sub generate_parser_cpp__to_forward_message($)
+sub generate_parser_cpp__to_forward_message__body($)
 {
     my ( $file_ref ) = @_;
 
@@ -309,10 +309,44 @@ sub generate_parser_cpp__to_forward_message($)
 
     foreach( @{ $$file_ref->{msgs} } )
     {
-        $res = $res . generate_parser_cpp__to_forward_message__body( $_->{name} ) . ",\n";
+        $res = $res . generate_parser_cpp__to_forward_message__body__msg( $_->{name} ) . ",\n";
     }
 
     return main::tabulate( main::tabulate( $res ) );
+}
+
+sub generate_parser_cpp__to_forward_message($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res =
+
+"generic_protocol::Object* to_forward_message( const generic_request::Request & r )\n" .
+"{\n" .
+"    auto type = Parser::detect_request_type( r );\n" .
+"\n" .
+"    typedef request_type_e KeyType;\n" .
+"\n" .
+"    typedef Object* (*PPMF)( const generic_request::Request & r );\n" .
+"\n" .
+"#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & to_##_v }\n" .
+"\n" .
+"    static const std::map<KeyType, PPMF> funcs =\n" .
+"    {\n" .
+    generate_parser_cpp__to_forward_message__body( $file_ref ) .
+"    };\n" .
+"\n" .
+"#undef HANDLER_MAP_ENTRY\n" .
+"\n" .
+"    auto it = funcs.find( type );\n" .
+"\n" .
+"    if( it != funcs.end() )\n" .
+"        return it->second( r );\n" .
+"\n" .
+"    return nullptr;\n" .
+"}\n";
+
+    return $res;
 }
 
 sub generate_parser_cpp__to_message_2__body($)
@@ -332,6 +366,24 @@ sub generate_parser_cpp__to_message_2__body($)
 "    validator::validate( * res );\n" .
 "\n" .
 "    return res;\n" .
+"}\n";
+
+    return $res;
+}
+
+sub generate_parser_cpp__detect_request_type($)
+{
+    my ( $file_ref ) = @_;
+
+    my $res =
+"request_type_e  detect_request_type( const generic_request::Request & r )\n" .
+"{\n" .
+"    std::string cmd;\n" .
+"\n" .
+"    if( r.get_value( \"CMD\", cmd ) == false )\n" .
+"        throw MalformedRequest( \"CMD is not defined\" );\n" .
+"\n" .
+"    return RequestTypeParser::to_request_type( cmd );\n" .
 "}\n";
 
     return $res;
@@ -372,43 +424,15 @@ sub generate_parser_cpp($)
 "// messages\n" .
 "\n" .
     generate_parser_cpp__to_message( $file_ref ) .
+"// to object\n" .
 "\n" .
-"generic_protocol::Object* to_forward_message( const generic_request::Request & r )\n" .
-"{\n" .
-"    auto type = Parser::detect_request_type( r );\n" .
+    generate_parser_cpp__to_message_2( $file_ref ) .
+"// to forward message\n" .
 "\n" .
-"    typedef request_type_e KeyType;\n" .
-"\n" .
-"    typedef Object* (*PPMF)( const generic_request::Request & r );\n" .
-"\n" .
-"#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & to_##_v }\n" .
-"\n" .
-"    static const std::map<KeyType, PPMF> funcs =\n" .
-"    {\n" .
     generate_parser_cpp__to_forward_message( $file_ref ) .
-"    };\n" .
 "\n" .
-"#undef HANDLER_MAP_ENTRY\n" .
-"\n" .
-"    auto it = funcs.find( type );\n" .
-"\n" .
-"    if( it != funcs.end() )\n" .
-"        return it->second( r );\n" .
-"\n" .
-"    return nullptr;\n" .
-"}\n" .
-"\n" .
-"request_type_e  detect_request_type( const generic_request::Request & r )\n" .
-"{\n" .
-"    std::string cmd;\n" .
-"\n" .
-"    if( r.get_value( \"CMD\", cmd ) == false )\n" .
-"        throw MalformedRequest( \"CMD is not defined\" );\n" .
-"\n" .
-"    return RequestTypeParser::to_request_type( cmd );\n" .
-"}\n" .
-"\n" .
-    generate_parser_cpp__to_message_2( $file_ref )
+    generate_parser_cpp__detect_request_type( $file_ref ) .
+"\n"
 ;
 
     $body = gtcpp::namespacize( 'parser', $body );
