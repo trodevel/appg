@@ -29,7 +29,6 @@
 require CodeGen_cpp_protocol;
 require CodeGen_cpp_enums;
 require CodeGen_cpp_request_type_parser;
-require CodeGen_cpp_exported_parser;
 require CodeGen_cpp_validator;
 require CodeGen_cpp_parser;
 require CodeGen_cpp_object_initializer;
@@ -54,8 +53,6 @@ use constant REQUEST_TYPE_PARSER_H_FILE      => 'request_type_parser.h';
 use constant REQUEST_TYPE_PARSER_CPP_FILE    => 'request_type_parser.cpp';
 use constant PARSER_H_FILE      => 'parser.h';
 use constant PARSER_CPP_FILE    => 'parser.cpp';
-use constant EXPORTED_PARSER_H_FILE     => 'exported_parser.h';
-use constant EXPORTED_PARSER_CPP_FILE   => 'exported_parser.cpp';
 use constant VALIDATOR_H_FILE                   => 'validator.h';
 use constant VALIDATOR_CPP_FILE                 => 'validator.cpp';
 use constant CSV_RESPONSE_ENCODER_H_FILE        => 'csv_helper.h';
@@ -97,10 +94,6 @@ sub generate($$)
     write_to_file( generate_parser_h( $file_ref ), ${\PARSER_H_FILE} );
 
     write_to_file( generate_parser_cpp( $file_ref ), ${\PARSER_CPP_FILE} );
-
-    write_to_file( generate_exported_parser_h( $file_ref ), ${\EXPORTED_PARSER_H_FILE} );
-
-    write_to_file( generate_exported_parser_cpp( $file_ref ), ${\EXPORTED_PARSER_CPP_FILE} );
 
     write_to_file( generate_validator_h( $file_ref ), ${\VALIDATOR_H_FILE} );
 

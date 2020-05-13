@@ -77,7 +77,6 @@ sub generate_makefile_lib($)
 "\n" .
 "LIB_SRCC = \\\n" .
 "\tcsv_helper.cpp \\\n" .
-"\texported_parser.cpp \\\n" .
 "\tvalidator.cpp \\\n" .
 "\trequest_type_parser.cpp \\\n" .
 "\tobject_initializer.cpp \\\n" .
