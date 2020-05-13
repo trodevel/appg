@@ -184,7 +184,7 @@ sub generate_parser_cpp__to_message__body($)
 
     my $res =
 
-"Parser::Object * Parser::to_${name}( const generic_request::Request & r )\n" .
+"Object * to_${name}( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto * res = new $name;\n" .
 "\n" .
@@ -221,16 +221,15 @@ sub generate_parser_cpp($)
     $body =
 "using basic_parser::MalformedRequest;\n" .
 "\n" .
-"generic_protocol::Object* Parser::to_forward_message( const generic_request::Request & r )\n" .
+"generic_protocol::Object* to_forward_message( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto type = Parser::detect_request_type( r );\n" .
 "\n" .
 "    typedef request_type_e KeyType;\n" .
-"    typedef Parser Type;\n" .
 "\n" .
 "    typedef Object* (*PPMF)( const generic_request::Request & r );\n" .
 "\n" .
-"#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & Type::to_##_v }\n" .
+"#define HANDLER_MAP_ENTRY(_v)       { KeyType::_v,    & to_##_v }\n" .
 "\n" .
 "    static const std::map<KeyType, PPMF> funcs =\n" .
 "    {\n" .
@@ -249,7 +248,7 @@ sub generate_parser_cpp($)
 "    return nullptr;\n" .
 "}\n" .
 "\n" .
-"request_type_e  Parser::detect_request_type( const generic_request::Request & r )\n" .
+"request_type_e  detect_request_type( const generic_request::Request & r )\n" .
 "{\n" .
 "    std::string cmd;\n" .
 "\n" .
@@ -261,6 +260,8 @@ sub generate_parser_cpp($)
 "\n" .
     generate_parser_cpp__to_message( $file_ref )
 ;
+
+    $body = gtcpp::namespacize( 'parser', $body );
 
     my $res = to_body( $$file_ref, $body, "", [ "parser", "validator", "request_type_parser", "basic_parser/malformed_request" ], [ "map" ] );
 
