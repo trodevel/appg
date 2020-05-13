@@ -128,7 +128,7 @@ sub generate_parser_cpp__to_message__body($)
 "\n" .
 "    ::basic_parser::get_value_or_throw( res, r );\n" .
 "\n" .
-"    ::basic_parser::validator::validate( * res );\n" .
+"    validator::validate( * res );\n" .
 "\n" .
 "    return res;\n" .
 "}\n";
@@ -200,7 +200,7 @@ sub generate_parser_cpp($)
     generate_parser_cpp__to_message( $file_ref )
 ;
 
-    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_parser", "exported_validator", "request_type_parser", "basic_parser/malformed_request" ], [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", [ "parser", "exported_parser", "validator", "request_type_parser", "basic_parser/malformed_request" ], [ "map" ] );
 
     return $res;
 }
