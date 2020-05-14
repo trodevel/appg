@@ -86,7 +86,7 @@ sub generate_parser_php__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() . "( \$csv_arr, \$offset, '" . $obj->{data_type}->{value_type}->to_php__parse_func_name() . "' ); // Vector";
+        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() . "( \$csv_arr, \$offset, '" . $obj->{data_type}->{value_type}->to_php__parse_func_name() . "' ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {

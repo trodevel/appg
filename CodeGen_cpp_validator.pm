@@ -174,7 +174,7 @@ sub generate_validator_cpp__to_object__body__init_members__body($$$)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Vector";
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {

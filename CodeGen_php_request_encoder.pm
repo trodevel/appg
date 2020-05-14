@@ -90,7 +90,7 @@ sub generate_request_encoder_php__to_object__body__init_members__body($$$)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() . "( $full_key_name, \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_generic_request_func_name() . "' ); // Vector";
+        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() . "( $full_key_name, \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_generic_request_func_name() . "' ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
