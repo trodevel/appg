@@ -376,13 +376,13 @@ sub generate_parser_cpp__to_message_2__body($)
 
 "Object * to_${name}( const generic_request::Request & r )\n" .
 "{\n" .
-"    auto * res = new $name;\n" .
+"    std::unique_ptr<$name> res( new $name );\n" .
 "\n" .
 "    get_value_or_throw( res, r );\n" .
 "\n" .
 "    validator::validate( * res );\n" .
 "\n" .
-"    return res;\n" .
+"    return res.release();\n" .
 "}\n";
 
     return $res;
@@ -469,7 +469,7 @@ sub generate_parser_cpp($)
     push( @includes, "validator" );
     push( @includes, "request_type_parser" );
 
-    my $res = to_body( $$file_ref, $body, "", \@includes, [ "map" ] );
+    my $res = to_body( $$file_ref, $body, "", \@includes, [ "map", "memory" ] );
 
     return $res;
 }
