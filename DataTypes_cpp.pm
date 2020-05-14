@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13035 $ $Date:: 2020-05-13 #$ $Author: serge $
+# $Revision: 13050 $ $Date:: 2020-05-15 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -74,6 +74,18 @@ sub to_cpp__validate_func_ptr()
     return "static_cast<bool (*)( const std::string &, " . $self->to_cpp_func_param() . " )>( &" . $self->to_cpp__validate_func_name() . " )";
 }
 
+sub to_cpp__parse_func_name()
+{
+    my( $self ) = @_;
+    die "to_cpp__parse_func_name() - not implemented";
+}
+
+sub to_cpp__parse_func_ptr()
+{
+    my( $self ) = @_;
+    return "static_cast<void (*)( " . $self->to_cpp_decl() . " * , const std::string & , const generic_request::Request & )>( &" . $self->to_cpp__parse_func_name() . " )";
+}
+
 ############################################################
 package Boolean;
 
@@ -118,7 +130,7 @@ sub to_cpp__validate_func_name()
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::parse_bool";
+    return "get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -184,7 +196,7 @@ sub to_cpp__validate_func_name()
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::parse_int";
+    return "get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -246,7 +258,7 @@ sub to_cpp__validate_func_name()
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::parse_float";
+    return "get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -304,7 +316,7 @@ sub to_cpp__validate_func_name()
 sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
-    return "::basic_parser::parse_string";
+    return "get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -378,9 +390,9 @@ sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::parser::" ) : "";
 
-    return "${pref}parse_" . $self->{name};
+    return "${pref}get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -460,9 +472,9 @@ sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::parser::" ) : "";
 
-    return "${pref}parse_" . $self->{name};
+    return "${pref}get_value_or_throw";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -531,7 +543,7 @@ sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::parse_vector";
+    return "get_value_or_throw_t";
 }
 
 sub to_cpp__to_generic_request_func_name()
@@ -595,7 +607,7 @@ sub to_cpp__parse_func_name()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::parse_map";
+    return "get_value_or_throw_t";
 }
 
 sub to_cpp__to_generic_request_func_name()

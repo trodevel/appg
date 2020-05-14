@@ -203,18 +203,18 @@ sub generate_parser_cpp__to_message__body__init_members__body($$$)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( & r->${name}, $full_key_name, r, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . " ); // Vector";
+        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & r->${name}, $full_key_name, r, " . $obj->{data_type}->{value_type}->to_cpp__parse_func_ptr() . " ); // Vector";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() .
+        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() .
             "( & r->${name}, $full_key_name, r, " .
-            $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
-            $obj->{data_type}->{mapped_type}->to_cpp__validate_func_ptr() . " ); // Map";
+            $obj->{data_type}->{key_type}->to_cpp__parse_func_ptr() . ", " .
+            $obj->{data_type}->{mapped_type}->to_cpp__parse_func_ptr() . " ); // Map";
     }
     else
     {
-        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( & r->${name}, $full_key_name, r );";
+        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & r->${name}, $full_key_name, r );";
     }
 
     return $res;
