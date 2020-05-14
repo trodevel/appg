@@ -173,78 +173,6 @@ sub generate_parser_cpp__to_enum__body($)
     return $res;
 }
 
-sub generate_parser_cpp__to_message__body__init_members__body($$)
-{
-    my ( $obj, $is_message ) = @_;
-
-    my $res;
-
-    my $name        = $obj->{name};
-
-    my $key_name    = uc( $name );
-
-    my $key_expr    = ( $is_message == 1 ) ? "\"${key_name}\"" : "key + \".${key_name}\"";
-
-    $res = "    get_value_or_throw( & res->${name}, ${key_expr}, r );";
-
-    return $res;
-}
-
-sub generate_parser_cpp__to_message__body__init_members($$)
-{
-    my ( $msg, $is_message ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $msg->{members} } )
-    {
-        $res = $res . generate_parser_cpp__to_message__body__init_members__body( $_, $is_message ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_parser_cpp__to_body($$)
-{
-    my ( $msg, $is_message ) = @_;
-
-    my $name = $msg->{name};
-
-    my $extra_param = ( $is_message == 0 ) ? "const std::string & key, " : "";
-
-    my $res =
-
-"void get_value_or_throw( ${name} * res, ${extra_param}const generic_request::Request & r )\n" .
-"{\n";
-
-    if( $is_message )
-    {
-        $res = $res .
-"    get_value_or_throw( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
-"\n";
-    }
-
-    $res = $res .
-    generate_parser_cpp__to_message__body__init_members( $msg, $is_message ) .
-"}\n";
-
-    return $res;
-}
-
-sub generate_parser_cpp__to_object__core($$)
-{
-    my ( $objs_ref, $is_message ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $objs_ref } )
-    {
-        $res .= generate_parser_cpp__to_body( $_, $is_message ) . "\n";
-    }
-
-    return $res;
-}
-
 sub generate_parser_cpp__to_enum($)
 {
     my ( $file_ref ) = @_;
@@ -253,7 +181,96 @@ sub generate_parser_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res = $res . generate_parser_cpp__to_enum__body( $_->{name} ) . "\n";
+        $res .= generate_parser_cpp__to_enum__body( $_->{name} ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_parser_cpp__to_message__body__init_members__body($$$)
+{
+    my ( $obj, $is_message, $is_base_msg ) = @_;
+
+    my $res;
+
+    my $name        = $obj->{name};
+
+    my $key_name    = uc( $name );
+
+    my $full_key_name = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? '"' . $key_name . '"' : 'prefix + ".' . $key_name . '"';
+
+#    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";
+
+    if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
+    {
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( & r->${name}, $full_key_name, r, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . " ); // Vector";
+    }
+    elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
+    {
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() .
+            "( & r->${name}, $full_key_name, r, " .
+            $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
+            $obj->{data_type}->{mapped_type}->to_cpp__validate_func_ptr() . " ); // Map";
+    }
+    else
+    {
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( & r->${name}, $full_key_name, r );";
+    }
+
+    return $res;
+}
+
+sub generate_parser_cpp__to_message__body__init_members($$$)
+{
+    my ( $msg, $is_message, $is_base_msg ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $msg->{members} } )
+    {
+        $res .= generate_parser_cpp__to_message__body__init_members__body( $_, $is_message, $is_base_msg ) . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_parser_cpp__to_body($$$$)
+{
+    my ( $msg, $is_message, $is_base_msg, $protocol ) = @_;
+
+    my $name = $msg->{name};
+
+    my $prefix = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? "" : "const std::string & prefix, ";
+
+    my $res =
+
+"void get_value_or_throw( ${name} * res, ${prefix}const generic_request::Request & r )\n" .
+"{\n";
+
+    if( $is_message )
+    {
+        $res .=
+"    // base class\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "parser::get_value_or_throw" ). "( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
+"\n";
+    }
+
+    $res .=
+    generate_parser_cpp__to_message__body__init_members( $msg, $is_message, $is_base_msg ) .
+"}\n";
+
+    return $res;
+}
+
+sub generate_parser_cpp__to_object__core($$$$)
+{
+    my ( $file_ref, $objs_ref, $is_message, $is_base_msg ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        $res .= generate_parser_cpp__to_body( $_, $is_message, $is_base_msg, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -263,21 +280,21 @@ sub generate_parser_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( $$file_ref->{objs}, 0 );
+    return generate_parser_cpp__to_object__core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_parser_cpp__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( $$file_ref->{base_msgs}, 1 );
+    return generate_parser_cpp__to_object__core( $file_ref, $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_parser_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_parser_cpp__to_object__core( $$file_ref->{msgs}, 1 );
+    return generate_parser_cpp__to_object__core( $file_ref, $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_parser_cpp__to_includes($)
@@ -410,7 +427,9 @@ sub generate_parser_cpp($)
     my $body;
 
     $body =
-"using basic_parser::MalformedRequest;\n" .
+
+"using ::basic_parser::parser::get_value_or_throw;\n" .
+"using ::basic_parser::parser::get_value_or_throw_t;\n" .
 "\n" .
 "// enums\n" .
 "\n" .
@@ -430,6 +449,8 @@ sub generate_parser_cpp($)
 "// to forward message\n" .
 "\n" .
     generate_parser_cpp__to_forward_message( $file_ref ) .
+"\n" .
+"using basic_parser::MalformedRequest;\n" .
 "\n" .
     generate_parser_cpp__detect_request_type( $file_ref ) .
 "\n"
