@@ -98,13 +98,13 @@ sub generate_example__to_object__body($$$$$)
 "{\n" .
 "    $namespace::$name obj;\n" .
 "\n" .
-"    std::cout << \"$name : \" << ${namespace}::str_helper::to_string( obj ) << std::endl;\n";
+"    std::cout << \"$name : STR : \" << ${namespace}::str_helper::to_string( obj ) << std::endl;\n";
 
     if( $is_message == 1 )
     {
         $res .=
 "\n" .
-"    std::cout << \"$name : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n";
+"    std::cout << \"$name : CSV : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n";
     }
 
     $res .=
@@ -148,6 +148,30 @@ sub generate_example__to_message($)
     return generate_example__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
+sub generate_example__validate($)
+{
+    my ( $file_ref ) = @_;
+
+    my $namespace = get_namespace_name( $$file_ref );
+
+    my $res =
+"template <class T>\n" .
+"void validate( const T & o, const std::string & name )\n" .
+"{\n" .
+"    try\n" .
+"    {\n" .
+"        ${namespace}::validator::validate( o );\n" .
+"        std::cout << name << \" : valid\" << std::endl;\n" .
+"    }\n" .
+"    catch( std::exception & e )\n" .
+"    {\n" .
+"        std::cout << name << \" : invalid : \" << e.what() << std::endl;\n" .
+"    }\n" .
+"}\n";
+
+    return $res;
+}
+
 sub generate_example($)
 {
     my ( $file_ref ) = @_;
@@ -157,8 +181,11 @@ sub generate_example($)
 "#include \"protocol.h\"\n" .
 "#include \"str_helper.h\"\n" .
 "#include \"csv_helper.h\"\n" .
+"#include \"validator.h\"\n" .
 "\n" .
 "#include <iostream>       // std::cout\n" .
+"\n" .
+    generate_example__validate( $file_ref ) .
 "\n" .
 "// enums\n" .
 "\n" .
