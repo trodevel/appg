@@ -203,18 +203,18 @@ sub generate_parser_cpp__to_message__body__init_members__body($$$)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & r->${name}, $full_key_name, r, " . $obj->{data_type}->{value_type}->to_cpp__parse_func_ptr() . " ); // Array";
+        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & res->${name}, $full_key_name, r, " . $obj->{data_type}->{value_type}->to_cpp__parse_func_ptr() . " ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() .
-            "( & r->${name}, $full_key_name, r, " .
+            "( & res->${name}, $full_key_name, r, " .
             $obj->{data_type}->{key_type}->to_cpp__parse_func_ptr() . ", " .
             $obj->{data_type}->{mapped_type}->to_cpp__parse_func_ptr() . " ); // Map";
     }
     else
     {
-        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & r->${name}, $full_key_name, r );";
+        $res = "    " . $obj->{data_type}->to_cpp__parse_func_name() . "( & res->${name}, $full_key_name, r );";
     }
 
     return $res;
@@ -340,7 +340,7 @@ sub generate_parser_cpp__to_forward_message($)
 
 "generic_protocol::Object* to_forward_message( const generic_request::Request & r )\n" .
 "{\n" .
-"    auto type = Parser::detect_request_type( r );\n" .
+"    auto type = detect_request_type( r );\n" .
 "\n" .
 "    typedef request_type_e KeyType;\n" .
 "\n" .
@@ -378,7 +378,7 @@ sub generate_parser_cpp__to_message_2__body($)
 "{\n" .
 "    std::unique_ptr<$name> res( new $name );\n" .
 "\n" .
-"    get_value_or_throw( res.ptr(), r );\n" .
+"    get_value_or_throw( res.get(), r );\n" .
 "\n" .
 "    validator::validate( * res );\n" .
 "\n" .
