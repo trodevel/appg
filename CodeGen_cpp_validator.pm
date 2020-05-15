@@ -165,19 +165,24 @@ sub generate_validator_cpp__to_object__body__init_members__body($$$)
 
     my $valid_range_or_size = "";
 
-    if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
-    {
-        $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( $obj->{data_type}->to_cpp_decl() );
-    }
-
 #    print "DEBUG: type = " . ::blessed( $obj->{data_type} ). "\n";
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
+        if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
+        {
+            $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( "std::size_t" );
+        }
+
         $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}, " . $obj->{data_type}->{value_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
+        if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
+        {
+            $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( "std::size_t" );
+        }
+
         $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() .
             "( $full_key_name, r.${name}, " .
             $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
@@ -185,6 +190,11 @@ sub generate_validator_cpp__to_object__body__init_members__body($$$)
     }
     else
     {
+        if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
+        {
+            $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( $obj->{data_type}->to_cpp_decl() );
+        }
+
         $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}$valid_range_or_size );";
     }
 
