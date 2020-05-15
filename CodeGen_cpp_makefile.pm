@@ -73,7 +73,7 @@ sub generate_makefile_lib($)
 "\n" .
 "LIB_PROJECT = $name\n" .
 "\n" .
-"LIB_BOOST_LIB_NAMES :=\n" .
+"LIB_BOOST_LIB_NAMES := regex\n" .
 "\n" .
 "LIB_SRCC = \\\n" .
 "\tcsv_helper.cpp \\\n" .
@@ -87,8 +87,8 @@ sub generate_makefile_lib($)
 "\tbasic_parser \\\n" .
 "\tgeneric_protocol \\\n" .
 "\tgeneric_request \\\n" .
-"\tutils \\\n" .
     generate_makefile_lib__to_includes( $file_ref ) .
+"\tutils \\\n" .
 "\n";
 
     return $res;
@@ -125,8 +125,8 @@ sub generate_makefile_app($)
 "\tbasic_parser \\\n" .
 "\tgeneric_protocol \\\n" .
 "\tgeneric_request \\\n" .
-"\tutils \\\n" .
     generate_makefile_lib__to_includes( $file_ref ) .
+"\tutils \\\n" .
 "\n";
 
     return $res;
