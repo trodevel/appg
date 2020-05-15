@@ -104,7 +104,9 @@ sub generate_example__to_object__body($$$$$)
     {
         $res .=
 "\n" .
-"    std::cout << \"$name : CSV : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n";
+"    std::cout << \"$name : CSV : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n" .
+"\n" .
+"    validate( obj, \"$name\" );\n";
     }
 
     $res .=
