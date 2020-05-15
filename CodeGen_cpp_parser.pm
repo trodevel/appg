@@ -378,7 +378,7 @@ sub generate_parser_cpp__to_message_2__body($)
 "{\n" .
 "    std::unique_ptr<$name> res( new $name );\n" .
 "\n" .
-"    get_value_or_throw( res, r );\n" .
+"    get_value_or_throw( res.ptr(), r );\n" .
 "\n" .
 "    validator::validate( * res );\n" .
 "\n" .
