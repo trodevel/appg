@@ -123,13 +123,28 @@ generate_validator_h_body_4( $file_ref ) .
 
 sub generate_validator_cpp__to_enum__body($)
 {
-    my ( $name ) = @_;
+    my ( $obj ) = @_;
+
+    my $name = $obj->{name};
+
+    my $type = "unsigned";
+
+    my @elements = @{ $obj->{elements} };
+
+    my $size = scalar @elements;
+
+    my $extra_params = "";
+
+    if( $size > 0 )
+    {
+        $extra_params = ", true, true, static_cast<$type>( $name::$elements[0]->{name} ), true, true, static_cast<$type>( $name::$elements[$size-1]->{name} )";
+    }
 
     my $res =
 
 "bool validate( const std::string & prefix, const $name & r )\n" .
 "{\n" .
-"    //validate( static_cast<unsigned>( r ) );\n" .
+"    validate( prefix, static_cast<$type>( r )${extra_params} );\n" .
 "\n" .
 "    return true;\n" .
 "}\n";
@@ -145,7 +160,7 @@ sub generate_validator_cpp__to_enum($)
 
     foreach( @{ $$file_ref->{enums} } )
     {
-        $res .= generate_validator_cpp__to_enum__body( $_->{name} ) . "\n";
+        $res .= generate_validator_cpp__to_enum__body( $_ ) . "\n";
     }
 
     return $res;
