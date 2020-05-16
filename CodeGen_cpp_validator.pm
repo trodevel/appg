@@ -129,6 +129,11 @@ sub generate_validator_cpp__to_enum__body($)
 
     my $type = "unsigned";
 
+    if( defined $obj->{data_type} )
+    {
+        $type = $obj->{data_type}->to_cpp_decl();
+    }
+
     my @elements = @{ $obj->{elements} };
 
     my $size = scalar @elements;
