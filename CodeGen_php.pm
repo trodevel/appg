@@ -35,7 +35,7 @@ require CodeGen_php_object_initializer;
 require CodeGen_php_request_encoder;
 require CodeGen_php_str_helper;
 #require CodeGen_php_makefile;
-#require CodeGen_php_example;
+require CodeGen_php_example;
 #
 ###############################################
 
@@ -62,7 +62,7 @@ use constant STR_HELPER_PHP_FILE                => 'str_helper.php';
 use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
 use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
 use constant MAKEFILE_FILE                      => 'Makefile';
-use constant EXAMPLE_FILE                       => 'example.cpp';
+use constant EXAMPLE_FILE                       => 'example.php';
 
 ###############################################
 
@@ -119,7 +119,7 @@ sub generate($)
 
 #    write_to_file( generate_makefile( $file_ref ), ${\MAKEFILE_FILE} );
 
-#    write_to_file( generate_example( $file_ref ), ${\EXAMPLE_FILE} );
+    write_to_file( generate_example( $file_ref ), ${\EXAMPLE_FILE} );
 }
 
 ###############################################
