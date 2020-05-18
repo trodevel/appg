@@ -113,6 +113,15 @@ sub to_include_guards($$$$$$$$)
 
 ############################################################
 
+sub add_php_header_footer($)
+{
+    my( $body ) = @_;
+
+    return "<?php\n\n" . $body . "\n?>\n";
+}
+
+############################################################
+
 sub to_body($$$$$)
 {
     my( $file, $body, $alternative_namespace, $other_incl_ref, $system_incl_ref ) = @_;
@@ -131,7 +140,7 @@ sub to_body($$$$$)
             gtphp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
     }
 
-    return $body;
+    return add_php_header_footer( $body );
 }
 
 ############################################################
