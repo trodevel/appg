@@ -74,8 +74,8 @@ sub generate_str_helper_php__to_enum__body($$)
 
 "function to_string__${name}( \$r )\n" .
 "{\n" .
-"    \$map = array(\n" .
-"    {\n";
+"    \$map = array\n" .
+"    (\n";
 
     $res .= generate_str_helper_php__to_enum__body__init_members( $enum );
 
