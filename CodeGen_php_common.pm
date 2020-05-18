@@ -73,11 +73,18 @@ sub namespacize($$)
 
 ############################################################
 
+sub add_php_header_footer($)
+{
+    my( $body ) = @_;
+
+    return "<?php\n\n" . $body . "\n?>\n";
+}
+
+############################################################
+
 sub to_include_guards($$$$$$$$)
 {
     my( $file, $body, $alternative_namespace, $prefix, $must_include_myself, $must_include_userdef, $other_incl_ref, $system_incl_ref ) = @_;
-
-    $body = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
 
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
@@ -105,19 +112,11 @@ sub to_include_guards($$$$$$$$)
             gtphp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
     }
 
+    my $res = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
+
     #my $res = gtphp::ifndef_define_prot( $file->{name}, $prefix, $body );
-    my $res = $body;
 
-    return $res;
-}
-
-############################################################
-
-sub add_php_header_footer($)
-{
-    my( $body ) = @_;
-
-    return "<?php\n\n" . $body . "\n?>\n";
+    return add_php_header_footer( $res );
 }
 
 ############################################################
@@ -125,8 +124,6 @@ sub add_php_header_footer($)
 sub to_body($$$$$)
 {
     my( $file, $body, $alternative_namespace, $other_incl_ref, $system_incl_ref ) = @_;
-
-    $body = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
 
     if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
     {
@@ -140,7 +137,9 @@ sub to_body($$$$$)
             gtphp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
     }
 
-    return add_php_header_footer( $body );
+    my $res = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
+
+    return add_php_header_footer( $res );
 }
 
 ############################################################
