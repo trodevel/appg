@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12932 $ $Date:: 2020-04-18 #$ $Author: serge $
+# $Revision: 13100 $ $Date:: 2020-05-20 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -100,7 +100,7 @@ sub to_php__parse_func_name()
 sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_generic_request_bool";
+    return "\\basic_parser\\to_generic_request__bool";
 }
 
 sub to_php__to_html_func_name()
@@ -154,7 +154,7 @@ sub to_php__parse_func_name()
 sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_generic_request_int";
+    return "\\basic_parser\\to_generic_request__int";
 }
 
 sub to_php__to_html_func_name()
@@ -204,7 +204,7 @@ sub to_php__parse_func_name()
 sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_generic_request_float";
+    return "\\basic_parser\\to_generic_request__float";
 }
 
 sub to_php__to_html_func_name()
@@ -250,7 +250,7 @@ sub to_php__parse_func_name()
 sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\to_generic_request_string";
+    return "\\basic_parser\\to_generic_request__string";
 }
 
 sub to_php__to_html_func_name()
@@ -311,7 +311,7 @@ sub to_php__to_generic_request_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}to_generic_request_" . $self->{name};
+    return "${pref}to_generic_request__" . $self->{name};
 }
 
 sub to_php__to_html_func_name()
@@ -375,7 +375,7 @@ sub to_php__to_generic_request_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}to_generic_request_" . $self->{name};
+    return "${pref}to_generic_request__" . $self->{name};
 }
 
 sub to_php__to_html_func_name()
@@ -428,7 +428,7 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_generic_request_vector";
+    return "\\basic_parser\\to_generic_request__vector";
 }
 
 sub to_php__to_html_func_name()
@@ -478,7 +478,7 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\to_generic_request_map";
+    return "\\basic_parser\\to_generic_request__map";
 }
 
 sub to_php__to_html_func_name()

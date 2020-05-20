@@ -50,9 +50,9 @@ sub generate_request_encoder_php__to_enum__body($$)
 
     my $res =
 
-"function to_generic_request_${name}( \$prefix, \$r )\n" .
+"function to_generic_request__${name}( \$prefix, \$r )\n" .
 "{\n" .
-"    \$res = \\basic_parser\\to_generic_request_int( \$prefix, \$r );\n" .
+"    \$res = \\basic_parser\\to_generic_request__int( \$prefix, \$r );\n" .
 "\n" .
 "    return \$res;\n" .
 "}\n";
@@ -131,7 +131,7 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 
     my $res =
 
-"function to_generic_request_${name}( $prefix& \$r )\n" .
+"function to_generic_request__${name}( $prefix& \$r )\n" .
 "{\n";
 
     if( $is_message )
@@ -139,7 +139,7 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 
         $res .=
 "    // name\n" .
-"    \$res = \\basic_parser\\to_generic_request_string( \"CMD\", \"$protocol/$name\" );\n" .
+"    \$res = \\basic_parser\\to_generic_request__string( \"CMD\", \"$protocol/$name\" );\n" .
 "\n";
 
         $res .=
@@ -205,7 +205,7 @@ sub generate_request_encoder_php__write__body($$)
 {
     my ( $namespace, $name ) = @_;
 
-    return "'$namespace\\$name'         => 'to_generic_request_${name}'";
+    return "'$namespace\\$name'         => 'to_generic_request__${name}'";
 }
 
 sub generate_request_encoder_php__write($$)
