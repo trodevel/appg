@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13100 $ $Date:: 2020-05-20 #$ $Author: serge $
+# $Revision: 13115 $ $Date:: 2020-05-21 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -414,7 +414,7 @@ sub to_php__to_string_func_name()
 {
     my( $self ) = @_;
 
-    return "to_string__vector";
+    return "\\basic_parser\\to_string__vector";
 }
 
 sub to_php__parse_func_name()
