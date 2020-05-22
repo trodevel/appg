@@ -311,7 +311,7 @@ sub generate_object_initializer_php($)
     generate_object_initializer_php__to_message_ctor( $file_ref )
 ;
 
-    my @includes = ( "object_initializer" );
+    my @includes = ( );
 
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
