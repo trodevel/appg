@@ -69,8 +69,8 @@ sub generate_object_initializer_h__to_name__name($$)
 
     my $res = $is_create ?
 
-"create_${name}(" :
-"initialize_${name}( & \$res";
+"create__${name}(" :
+"initialize__${name}( & \$res";
 
     return $res;
 }
@@ -217,7 +217,7 @@ sub generate_object_initializer_php__to_message__body__call_init($)
     my $res =
 "\$res = new ${name};\n" .
 "\n" .
-"initialize_${name}( \$res" . generate_object_initializer_php__to_message__body__call_init__body( $msg ) . " );\n" .
+"initialize__${name}( \$res" . generate_object_initializer_php__to_message__body__call_init__body( $msg ) . " );\n" .
 "\n";
 
     $res .= "return \$res;\n";
