@@ -81,7 +81,7 @@ sub generate_object_initializer_h__to_name__name($$$)
             $res .= ", ";
         }
 
-        $res .= "\$base_class_params // params of " . $obj->get_base_class() . "\n";
+        $res .= "\$base_class_params // params of " . gtphp::to_object_name_with_namespace( $obj->get_base_class() ) . "\n";
     }
 
     return $res;

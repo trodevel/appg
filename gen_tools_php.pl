@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12875 $ $Date:: 2020-03-30 #$ $Author: serge $
+# $Revision: 13124 $ $Date:: 2020-05-23 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 #use Data::Printer; # DEBUG
@@ -111,6 +111,28 @@ sub extract_namespace_and_object_name($)
     }
 
     return ( $namespace, $name );
+}
+
+############################################################
+
+sub to_object_name_with_namespace($)
+{
+    my( $complex_name ) = @_;
+
+    my $res = "";
+
+    my ( $namespace, $name ) = extract_namespace_and_object_name( $complex_name );
+
+    if( $namespace ne '' )
+    {
+        $res = "\\" . $namespace . "\\" . $name;
+    }
+    else
+    {
+        $res = $name;
+    }
+
+    return $res;
 }
 
 ############################################################
