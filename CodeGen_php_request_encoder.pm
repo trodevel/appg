@@ -144,7 +144,7 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 
         $res .=
 "    // base class\n" .
-"    \$res .= " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_generic_request" ). "( \$r );\n" .
+"    \$res .= " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_generic_request_" ). "( \$r );\n" .
 "\n";
     }
     else
