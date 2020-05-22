@@ -74,12 +74,14 @@ sub generate_object_initializer_h__to_name__name($$$)
 
     if( $is_message )
     {
+        $res .= "\n    ";
+
         if( $is_create == 0 )
         {
             $res .= ", ";
         }
 
-        $res .= "\$base_class_params";
+        $res .= "\$base_class_params // params of " . $obj->get_base_class() . "\n";
     }
 
     return $res;
