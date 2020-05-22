@@ -61,9 +61,9 @@ sub generate_object_initializer_h__to_name_members($$)
     return $res;
 }
 
-sub generate_object_initializer_h__to_name__name($$)
+sub generate_object_initializer_h__to_name__name($$$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $obj, $is_create, $is_message ) = @_;
 
     my $name = $obj->{name};
 
@@ -72,14 +72,24 @@ sub generate_object_initializer_h__to_name__name($$)
 "create__${name}(" :
 "initialize__${name}( & \$res";
 
+    if( $is_message )
+    {
+        if( $is_create == 0 )
+        {
+            $res .= ", ";
+        }
+
+        $res .= "\$base_class_params";
+    }
+
     return $res;
 }
 
-sub generate_object_initializer_h__to_name($$)
+sub generate_object_initializer_h__to_name($$$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $obj, $is_create, $is_message ) = @_;
 
-    my $res = generate_object_initializer_h__to_name__name( $obj, $is_create );
+    my $res = generate_object_initializer_h__to_name__name( $obj, $is_create, $is_message );
 
     my $params = generate_object_initializer_h__to_name_members( $obj, $is_create );
 
@@ -93,15 +103,15 @@ sub generate_object_initializer_h__to_name($$)
     return $res;
 }
 
-sub generate_object_initializer_h_body_1_core($$)
+sub generate_object_initializer_h_body_1_core($$$)
 {
-    my ( $objs_ref, $is_create ) = @_;
+    my ( $objs_ref, $is_create, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_h__to_name( $_, $is_create ) . ";\n";
+        $res = $res . generate_object_initializer_h__to_name( $_, $is_create, $is_message ) . ";\n";
     }
 
     return $res;
@@ -111,28 +121,28 @@ sub generate_object_initializer_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{objs}, 0 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_object_initializer_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{base_msgs}, 0 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 0 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_5($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 1 );
+    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_h($)
@@ -229,7 +239,7 @@ sub generate_object_initializer_php__to_body($$$)
 {
     my ( $msg, $is_create, $is_message ) = @_;
 
-    my $func_name = generate_object_initializer_h__to_name( $msg, $is_create );
+    my $func_name = generate_object_initializer_h__to_name( $msg, $is_create, $is_message );
 
     my $res =
 
@@ -242,7 +252,7 @@ sub generate_object_initializer_php__to_body($$$)
 "    // base class\n" .
 "\n" .
 "    \$params = array();\n" .
-"    array_push( \$params, \$res );\n" .
+"    array_push( \$params, \$res, \$base_class_params );\n" .
 "    call_user_func_array( '" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ). "', \$params );\n" .
 "\n";
     }
