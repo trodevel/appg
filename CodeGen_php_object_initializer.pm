@@ -46,16 +46,9 @@ sub generate_object_initializer_h__to_name_members($$)
 
     my $res = "";
 
-    my $must_put_comma = $is_create ? 0 : 1;
-
     foreach( @{ $obj->{members} } )
     {
-        $res .= ( $must_put_comma ? ", " : "" ) . $_->{data_type}->to_php_func_param() . " \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
-
-        if( $must_put_comma == 0 )
-        {
-            $must_put_comma = 1;
-        }
+        $res .= ", " . $_->{data_type}->to_php_func_param() . " \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
     }
 
     return $res;
