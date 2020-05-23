@@ -48,7 +48,7 @@ sub generate_object_initializer_h__to_name_members($$)
 
     foreach( @{ $obj->{members} } )
     {
-        $res .= ", " . $_->{data_type}->to_php_func_param() . " \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
+        $res .= ", \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
     }
 
     return $res;
