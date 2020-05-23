@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 5115 $ $Date:: 2016-12-01 #$ $Author: serge $
+# $Revision: 13130 $ $Date:: 2020-05-23 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -196,6 +196,25 @@ sub new
     $self->{base_class}  = $_[2];
     $self->{message_id}  = 0;
     $self->{is_message}  = 1;
+
+    bless $self, $class;
+    return $self;
+}
+
+############################################################
+package ExternBaseMessage;
+use strict;
+use warnings;
+
+our @ISA = qw( ObjectWithMembers );
+
+sub new
+{
+    my ($class) = @_;
+
+    my $self = $class->SUPER::new( $_[1] );
+
+    $self->{base_class}  = $_[2];
 
     bless $self, $class;
     return $self;
