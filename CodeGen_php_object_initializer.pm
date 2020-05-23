@@ -310,7 +310,7 @@ sub generate_object_initializer_php__to_message_ctor($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_php__to_object__core( $$file_ref->{msgs}, 1, 0 );
+    return generate_object_initializer_php__to_object__core( $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_php($)
