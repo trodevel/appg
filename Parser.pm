@@ -34,6 +34,7 @@ use 5.010;
 
 ###############################################
 
+use constant KW_EXTERN      => 'extern';
 use constant KW_CONST       => 'const';
 use constant KW_ENUM        => 'enum';
 use constant KW_ENUM_END    => 'enum_end';
@@ -387,6 +388,27 @@ sub parse_const($$$$$)
     my $val    = $3;
 
     print STDERR "DEBUG: parse_const: dt_str=$dt_str name=$name val=$val\n";
+
+    my $dt = to_data_type( $dt_str );
+
+    my $obj = new ConstElement( $dt, $name, $val );
+
+    $$file_ref->add_const( $obj );
+}
+
+###############################################
+
+sub parse_extern_base_msg($$$$$)
+{
+    my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
+
+    die "parse_extern_base_msg: malformed $line" if( $line !~ /${\KW_EXTERN}\s*(${\REGEXP_POD}|${\REGEXP_STR})\s*(${\REGEXP_ID_NAME_W_NAMESPACE})\s*/ );
+
+    my $dt_str = $1;
+    my $name   = $2;
+    my $val    = $3;
+
+    print STDERR "DEBUG: parse_extern_base_msg: dt_str=$dt_str name=$name val=$val\n";
 
     my $dt = to_data_type( $dt_str );
 
