@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12501 $ $Date:: 2019-12-13 #$ $Author: serge $
+# $Revision: 13129 $ $Date:: 2020-05-23 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -46,6 +46,7 @@ sub new
         objs      => [],    # objects
         base_msgs => [],    # base messages
         msgs      => [],    # messages
+        extern_base_msgs => [],   # external base messages
         must_use_ns     => 0,     # should use APG namespace
     };
 
@@ -121,6 +122,13 @@ sub add_msg
     $elem->set_protocol( $self->{name} );
 
     push @{ $self->{msgs} }, $elem;
+}
+
+sub add_extern_base_msg($)
+{
+    my ( $self, $elem ) = @_;
+
+    push @{ $self->{extern_base_msgs} }, $elem;
 }
 
 sub set_use_ns($)
