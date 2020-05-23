@@ -90,7 +90,12 @@ sub generate_object_initializer_h__to_name($$$)
 
     if( $params ne "" )
     {
-        $res .= "\n" . main::tabulate( $params );
+        if( $is_message == 0 )
+        {
+            $res .= "\n";
+        }
+
+        $res .= main::tabulate( $params );
     }
 
     $res .= " )";
