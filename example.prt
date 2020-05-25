@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12618 $ $Date:: 2020-01-13 #$ $Author: serge $
+# $Revision: 13132 $ $Date:: 2020-05-25 #$ $Author: serge $
 
 ############################################################
 
@@ -31,6 +31,8 @@ use basic_stuff
 use communication
 
 use basic_objects
+
+extern generic_base::Request int16
 
 ############################################################
 
@@ -135,7 +137,7 @@ base_msg_end
 
 ############################################################
 
-base_msg DerivedRequest : base::GenericRequest
+base_msg DerivedRequest : generic_base::GenericRequest
 
     e Color     color
 
@@ -149,13 +151,13 @@ msg_end
 
 ############################################################
 
-msg Request1 : base::Request
+msg Request1 : generic_base::Request
 
 msg_end
 
 ############################################################
 
-msg Request2 : base::Request
+msg Request2 : generic_base::Request
 
     uint8 pass_range : [1, 100]
 
