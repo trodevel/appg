@@ -409,7 +409,12 @@ sub parse_extern($$$$$)
 
     print STDERR "DEBUG: parse_extern: name=$name dt_str=$dt_str\n";
 
-    my $dt = to_data_type( $dt_str );
+    foreach ($line =~ /(${\REGEXP_POD}|${\REGEXP_STR})/g)
+    {
+        my $dt_str = $1;
+        my $dt = to_data_type( $dt_str );
+        print STDERR "DEBUG: dt_str=$dt_str\n";
+    }
 
     #my $obj = new ConstElement( $dt, $name, $val );
 
