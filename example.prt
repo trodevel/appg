@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13132 $ $Date:: 2020-05-25 #$ $Author: serge $
+# $Revision: 13135 $ $Date:: 2020-05-25 #$ $Author: serge $
 
 ############################################################
 
@@ -32,7 +32,9 @@ use communication
 
 use basic_objects
 
+extern generic_base::GenericRequest string
 extern generic_base::Request int16
+extern generic_base::ExtendedRequest int16 string float
 
 ############################################################
 
