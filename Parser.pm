@@ -398,23 +398,22 @@ sub parse_const($$$$$)
 
 ###############################################
 
-sub parse_extern_base_msg($$$$$)
+sub parse_extern($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "parse_extern_base_msg: malformed $line" if( $line !~ /${\KW_EXTERN}\s*(${\REGEXP_POD}|${\REGEXP_STR})\s*(${\REGEXP_ID_NAME_W_NAMESPACE})\s*/ );
+    die "parse_extern: malformed $line" if( $line !~ /${\KW_EXTERN}\s*(${\REGEXP_ID_NAME_W_NAMESPACE})\s*(${\REGEXP_POD}|${\REGEXP_STR})\s*/ );
 
-    my $dt_str = $1;
-    my $name   = $2;
-    my $val    = $3;
+    my $name   = $1;
+    my $dt_str = $2;
 
-    print STDERR "DEBUG: parse_extern_base_msg: dt_str=$dt_str name=$name val=$val\n";
+    print STDERR "DEBUG: parse_extern: name=$name dt_str=$dt_str\n";
 
     my $dt = to_data_type( $dt_str );
 
-    my $obj = new ConstElement( $dt, $name, $val );
+    #my $obj = new ConstElement( $dt, $name, $val );
 
-    $$file_ref->add_const( $obj );
+    #$$file_ref->add_const( $obj );
 }
 
 ###############################################
@@ -661,6 +660,12 @@ sub parse($$)
             print STDERR "DEBUG: const\n";
 
             parse_const( $array_ref, $file_ref, $size, \$i, $line );
+        }
+        elsif ( $line =~ /${\KW_EXTERN} / )
+        {
+            print STDERR "DEBUG: extern\n";
+
+            parse_extern( $array_ref, $file_ref, $size, \$i, $line );
         }
         elsif ( $line =~ /${\KW_ENUM} (${\REGEXP_ID_NAME})/ )
         {
