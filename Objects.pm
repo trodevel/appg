@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13130 $ $Date:: 2020-05-23 #$ $Author: serge $
+# $Revision: 13137 $ $Date:: 2020-05-26 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -213,8 +213,6 @@ sub new
     my ($class) = @_;
 
     my $self = $class->SUPER::new( $_[1] );
-
-    $self->{base_class}  = $_[2];
 
     bless $self, $class;
     return $self;
