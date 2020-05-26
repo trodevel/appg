@@ -420,9 +420,7 @@ sub parse_extern($$$$$)
         $obj->add_member( $dt );
     }
 
-    #my $obj = new ConstElement( $dt, $name, $val );
-
-    #$$file_ref->add_const( $obj );
+    $$file_ref->add_extern_base_msg( $obj );
 }
 
 ###############################################
