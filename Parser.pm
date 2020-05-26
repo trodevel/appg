@@ -411,7 +411,7 @@ sub parse_extern($$$$$)
 
     foreach ($line =~ /(${\REGEXP_POD}|${\REGEXP_STR})/g)
     {
-        my $dt_str = $1;
+        my $dt_str = $_;
         my $dt = to_data_type( $dt_str );
         print STDERR "DEBUG: dt_str=$dt_str\n";
     }
