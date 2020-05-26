@@ -409,11 +409,15 @@ sub parse_extern($$$$$)
 
     print STDERR "DEBUG: parse_extern: name=$name dt_str=$dt_str\n";
 
+    my $obj = new ExternBaseMessage( $name );
+
     foreach ($line =~ /(${\REGEXP_POD}|${\REGEXP_STR})/g)
     {
         my $dt_str = $_;
         my $dt = to_data_type( $dt_str );
         print STDERR "DEBUG: dt_str=$dt_str\n";
+
+        $obj->add_member( $dt );
     }
 
     #my $obj = new ConstElement( $dt, $name, $val );
