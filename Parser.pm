@@ -402,10 +402,10 @@ sub parse_extern($$$$$)
 {
     my ( $array_ref, $file_ref, $size, $i_ref, $line ) = @_;
 
-    die "parse_extern: malformed $line" if( $line !~ /${\KW_EXTERN}\s*(${\REGEXP_ID_NAME_W_NAMESPACE})\s*(${\REGEXP_POD}|${\REGEXP_STR})\s*/ );
+    die "parse_extern: malformed $line" if( $line !~ /${\KW_EXTERN}\s*(${\REGEXP_ID_NAME_W_NAMESPACE})\s*(${\REGEXP_POD}|${\REGEXP_STR})*\s*/ );
 
     my $name   = $1;
-    my $dt_str = $2;
+    my $dt_str = ( defined $2 ) ? $2 : '<none>';
 
     print STDERR "DEBUG: parse_extern: name=$name dt_str=$dt_str\n";
 
