@@ -41,6 +41,14 @@ sub validate_extern__objects__core__body($$)
     if( defined $obj->{base_class} )
     {
         print STDERR "validate: $obj->{name} $obj->{base_class}\n";
+
+        if( $$file_ref->find_base_msg( $obj->{base_class} ) == 0 )
+        {
+            if( $$file_ref->find_extern_base_msg( $obj->{base_class} ) == 0 )
+            {
+                die "validate: cannot find base class $obj->{base_class}";
+            }
+        }
     }
 }
 
