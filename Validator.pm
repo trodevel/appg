@@ -34,27 +34,49 @@ use 5.010;
 
 ###############################################
 
-sub validate__obj($$)
+sub validate_extern__objects__core__body($$)
 {
     my ( $file_ref, $obj ) = @_;
+
+    if( defined $obj->{base_class} )
+    {
+        print STDERR "validate: $obj->{name} $obj->{base_class}\n";
+    }
 }
 
 ###############################################
 
-sub validate__base_msgs($)
+sub validate_extern__objects__core($$)
+{
+    my ( $file_ref, $objs_ref ) = @_;
+
+    my $res = "";
+
+    foreach( @{ $objs_ref } )
+    {
+        validate_extern__objects__core__body( $file_ref, $_  );
+    }
+
+    return $res;
+}
+
+
+###############################################
+
+sub validate_extern__base_msgs($)
 {
     my ( $file_ref ) = @_;
 
-    validate__obj( $file_ref, $$file_ref->{base_msgs} );
+    validate_extern__objects__core( $file_ref, $$file_ref->{base_msgs} );
 }
 
 ###############################################
 
-sub validate__msgs($)
+sub validate_extern__msgs($)
 {
     my ( $file_ref ) = @_;
 
-    validate__obj( $file_ref, $$file_ref->{msgs} );
+    validate_extern__objects__core( $file_ref, $$file_ref->{msgs} );
 }
 
 ###############################################
@@ -63,9 +85,9 @@ sub validate_extern($)
 {
     my ( $file_ref ) = @_;
 
-    validate__base_msgs( $file_ref );
+    validate_extern__base_msgs( $file_ref );
 
-    validate__msgs( $file_ref );
+    validate_extern__msgs( $file_ref );
 }
 
 ###############################################
