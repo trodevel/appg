@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13143 $ $Date:: 2020-05-27 #$ $Author: serge $
+# $Revision: 13145 $ $Date:: 2020-05-27 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -143,6 +143,23 @@ sub find_base_msg($)
     my ( $self, $name ) = @_;
 
     foreach( @{ $self->{base_msgs} } )
+    {
+        my $obj = $_;
+
+        if( $obj->{name} eq $name )
+        {
+            return \$obj;
+        }
+    }
+
+    return 0;
+}
+
+sub find_extern_base_msg($)
+{
+    my ( $self, $name ) = @_;
+
+    foreach( @{ $self->{extern_base_msgs} } )
     {
         my $obj = $_;
 
