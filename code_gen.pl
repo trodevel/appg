@@ -39,6 +39,7 @@ use Getopt::Long;
 require 'Parser.pm';
 require 'CodeGen_cpp.pm';
 require 'CodeGen_php.pm';
+require Validator;
 
 ###############################################
 
@@ -124,6 +125,8 @@ my $file = new File( "example" );
 Parser::parse( \@input, \$file );
 
 $file->set_use_ns( 0 );
+
+Validator::validate( \$file );
 
 CodeGen_cpp::generate( \$file, $output_file );
 
