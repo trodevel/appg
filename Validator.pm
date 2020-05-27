@@ -71,7 +71,11 @@ sub validate_extern__objects__core__body($$)
 
     if( defined $obj->{base_class} )
     {
-        print STDERR "validate: $obj->{name} $obj->{base_class}\n";
+        my @params = $$file_ref->get_base_msg_params( $obj->{base_class} );
+
+        my $num_params = scalar @params;
+
+        print STDERR "validate: $obj->{name} $obj->{base_class} params $num_params\n";
 
         validate_extern__objects__core__body__name( $file_ref, $obj->{base_class} );
 
