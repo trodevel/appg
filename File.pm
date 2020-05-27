@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13151 $ $Date:: 2020-05-27 #$ $Author: serge $
+# $Revision: 13152 $ $Date:: 2020-05-27 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -183,6 +183,29 @@ sub get_base_msg_params__for_extern($)
     foreach( @{ $obj_ref->{members} } )
     {
         push @res, $_;
+    }
+
+    return @res;
+}
+
+############################################################
+
+sub get_base_msg_params($$);
+
+sub get_base_msg_params__for_intern($)
+{
+    my ( $self, $obj_ref ) = @_;
+
+    my @res;
+
+    if( defined $obj_ref->{base_class} )
+    {
+        @res = $self->get_base_msg_params( $obj_ref->{base_class} );
+    }
+
+    foreach( @{ $obj_ref->{members} } )
+    {
+        push @res, $_->{data_type};
     }
 
     return @res;
