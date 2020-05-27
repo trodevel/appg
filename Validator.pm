@@ -47,6 +47,22 @@ sub validate_extern__objects__core__body__name($$)
     }
 
 }
+
+###############################################
+
+sub validate_extern__objects__core__body__name_duplicate($$)
+{
+    my ( $file_ref, $name ) = @_;
+
+    if( $$file_ref->find_base_msg( $name ) != 0 )
+    {
+        if( $$file_ref->find_extern_base_msg( $name ) != 0 )
+        {
+            die "validate: base class $name defined twice: as extern and as intern";
+        }
+    }
+}
+
 ###############################################
 
 sub validate_extern__objects__core__body($$)
@@ -58,6 +74,8 @@ sub validate_extern__objects__core__body($$)
         print STDERR "validate: $obj->{name} $obj->{base_class}\n";
 
         validate_extern__objects__core__body__name( $file_ref, $obj->{base_class} );
+
+        validate_extern__objects__core__body__name_duplicate( $file_ref, $obj->{base_class} );
     }
 }
 
