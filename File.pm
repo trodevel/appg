@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13129 $ $Date:: 2020-05-23 #$ $Author: serge $
+# $Revision: 13143 $ $Date:: 2020-05-27 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -136,6 +136,23 @@ sub set_use_ns($)
     my ( $self, $v ) = @_;
 
     $self->{must_use_ns} = $v;
+}
+
+sub find_base_msg($)
+{
+    my ( $self, $name ) = @_;
+
+    foreach( @{ $self->{base_msgs} } )
+    {
+        my $obj = $_;
+
+        if( $obj->{name} eq $name )
+        {
+            return \$obj;
+        }
+    }
+
+    return 0;
 }
 
 ############################################################
