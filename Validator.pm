@@ -34,8 +34,38 @@ use 5.010;
 
 ###############################################
 
+sub validate__obj($$)
+{
+    my ( $file_ref, $obj ) = @_;
+}
+
+###############################################
+
+sub validate__base_msgs($)
+{
+    my ( $file_ref ) = @_;
+
+    validate__obj( $file_ref, $$file_ref->{base_msgs} );
+}
+
+###############################################
+
+sub validate__msgs($)
+{
+    my ( $file_ref ) = @_;
+
+    validate__obj( $file_ref, $$file_ref->{msgs} );
+}
+
+###############################################
+
 sub validate_extern($)
 {
+    my ( $file_ref ) = @_;
+
+    validate__base_msgs( $file_ref );
+
+    validate__msgs( $file_ref );
 }
 
 ###############################################
