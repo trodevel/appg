@@ -34,6 +34,21 @@ use 5.010;
 
 ###############################################
 
+sub validate_extern__objects__core__body__name($$)
+{
+    my ( $file_ref, $name ) = @_;
+
+    if( $$file_ref->find_base_msg( $name ) == 0 )
+    {
+        if( $$file_ref->find_extern_base_msg( $name ) == 0 )
+        {
+            die "validate: cannot find base class $name";
+        }
+    }
+
+}
+###############################################
+
 sub validate_extern__objects__core__body($$)
 {
     my ( $file_ref, $obj ) = @_;
@@ -42,13 +57,7 @@ sub validate_extern__objects__core__body($$)
     {
         print STDERR "validate: $obj->{name} $obj->{base_class}\n";
 
-        if( $$file_ref->find_base_msg( $obj->{base_class} ) == 0 )
-        {
-            if( $$file_ref->find_extern_base_msg( $obj->{base_class} ) == 0 )
-            {
-                die "validate: cannot find base class $obj->{base_class}";
-            }
-        }
+        validate_extern__objects__core__body__name( $file_ref, $obj->{base_class} );
     }
 }
 
