@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13153 $ $Date:: 2020-05-27 #$ $Author: serge $
+# $Revision: 13154 $ $Date:: 2020-05-27 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -180,7 +180,7 @@ sub get_base_msg_params__for_extern($)
 
     my @res;
 
-    foreach( @{ $obj_ref->{members} } )
+    foreach( @{ $$obj_ref->{members} } )
     {
         push @res, $_;
     }
@@ -198,12 +198,12 @@ sub get_base_msg_params__for_intern($)
 
     my @res;
 
-    if( defined $obj_ref->{base_class} )
+    if( defined $$obj_ref->{base_class} )
     {
-        @res = $self->get_base_msg_params( $obj_ref->{base_class} );
+        @res = $self->get_base_msg_params( $$obj_ref->{base_class} );
     }
 
-    foreach( @{ $obj_ref->{members} } )
+    foreach( @{ $$obj_ref->{members} } )
     {
         push @res, $_->{data_type};
     }
@@ -217,13 +217,21 @@ sub get_base_msg_params($$)
 {
     my ( $self, $name ) = @_;
 
-    if( my $obj_ref = $self->find_extern_base_msg( $name ) != 0 )
+    my $obj_ref = $self->find_extern_base_msg( $name );
+
+    if( $obj_ref != 0 )
     {
+        #print STDERR "get_base_msg_params: $name - extern $obj_ref\n";
+
         return $self->get_base_msg_params__for_extern( $obj_ref );
     }
 
-    if( my $obj_ref = $self->find_base_msg( $name ) != 0 )
+    $obj_ref = $self->find_base_msg( $name );
+
+    if( $obj_ref != 0 )
     {
+        #print STDERR "get_base_msg_params: $name - intern $obj_ref\n";
+
         return $self->get_base_msg_params__for_intern( $obj_ref );
     }
 
