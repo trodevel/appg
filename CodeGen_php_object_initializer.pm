@@ -40,11 +40,20 @@ use 5.010;
 
 ###############################################
 
-sub generate_object_initializer_h__to_name_members($$)
+sub generate_object_initializer_h__to_name_members($$$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $obj, $is_create, $base_params_ref ) = @_;
 
     my $res = "";
+
+    my $i = 1;
+
+    foreach( @{ $base_params_ref } )
+    {
+        $res .= ", \$base_class_param_" . $i . " // " . $_->to_php_decl() . "\n";
+
+        $i++;
+    }
 
     foreach( @{ $obj->{members} } )
     {
@@ -84,18 +93,20 @@ sub generate_object_initializer_h__to_name($$$$)
 {
     my ( $file_ref, $obj, $is_create, $is_message ) = @_;
 
+    my @base_params;
+
     if( defined $obj->{base_class} )
     {
-        my @params = $$file_ref->get_base_msg_params( $obj->{base_class} );
+        @base_params = $$file_ref->get_base_msg_params( $obj->{base_class} );
 
-        my $num_params = scalar @params;
+        my $num_params = scalar @base_params;
 
         print STDERR "generate: $obj->{name} $obj->{base_class} params $num_params\n";
     }
 
     my $res = generate_object_initializer_h__to_name__name( $obj, $is_create, $is_message );
 
-    my $params = generate_object_initializer_h__to_name_members( $obj, $is_create );
+    my $params = generate_object_initializer_h__to_name_members( $obj, $is_create, \@base_params );
 
     if( $params ne "" )
     {
@@ -247,6 +258,17 @@ sub generate_object_initializer_php__to_message__body__call_init($)
 sub generate_object_initializer_php__to_body($$$$)
 {
     my ( $file_ref, $msg, $is_create, $is_message ) = @_;
+
+    my @base_params;
+
+    if( defined $msg->{base_class} )
+    {
+        @base_params = $$file_ref->get_base_msg_params( $msg->{base_class} );
+
+        my $num_params = scalar @base_params;
+
+        print STDERR "generate: $msg->{name} $msg->{base_class} params $num_params\n";
+    }
 
     my $func_name = generate_object_initializer_h__to_name( $file_ref, $msg, $is_create, $is_message );
 
