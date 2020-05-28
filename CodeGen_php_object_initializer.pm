@@ -80,9 +80,18 @@ sub generate_object_initializer_h__to_name__name($$$)
     return $res;
 }
 
-sub generate_object_initializer_h__to_name($$$)
+sub generate_object_initializer_h__to_name($$$$)
 {
-    my ( $obj, $is_create, $is_message ) = @_;
+    my ( $file_ref, $obj, $is_create, $is_message ) = @_;
+
+    if( defined $obj->{base_class} )
+    {
+        my @params = $$file_ref->get_base_msg_params( $obj->{base_class} );
+
+        my $num_params = scalar @params;
+
+        print STDERR "generate: $obj->{name} $obj->{base_class} params $num_params\n";
+    }
 
     my $res = generate_object_initializer_h__to_name__name( $obj, $is_create, $is_message );
 
@@ -103,15 +112,15 @@ sub generate_object_initializer_h__to_name($$$)
     return $res;
 }
 
-sub generate_object_initializer_h_body_1_core($$$)
+sub generate_object_initializer_h_body_1_core($$$$)
 {
-    my ( $objs_ref, $is_create, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_create, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_h__to_name( $_, $is_create, $is_message ) . ";\n";
+        $res = $res . generate_object_initializer_h__to_name( $file_ref, $_, $is_create, $is_message ) . ";\n";
     }
 
     return $res;
@@ -121,28 +130,28 @@ sub generate_object_initializer_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{objs}, 0, 0 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_object_initializer_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{base_msgs}, 0, 1 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 0, 1 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_5($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 1, 1 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_h($)
@@ -235,11 +244,11 @@ sub generate_object_initializer_php__to_message__body__call_init($)
     return main::tabulate( $res );
 }
 
-sub generate_object_initializer_php__to_body($$$)
+sub generate_object_initializer_php__to_body($$$$)
 {
-    my ( $msg, $is_create, $is_message ) = @_;
+    my ( $file_ref, $msg, $is_create, $is_message ) = @_;
 
-    my $func_name = generate_object_initializer_h__to_name( $msg, $is_create, $is_message );
+    my $func_name = generate_object_initializer_h__to_name( $file_ref, $msg, $is_create, $is_message );
 
     my $res =
 
@@ -269,15 +278,15 @@ sub generate_object_initializer_php__to_body($$$)
     return $res;
 }
 
-sub generate_object_initializer_php__to_object__core($$$)
+sub generate_object_initializer_php__to_object__core($$$$)
 {
-    my ( $objs_ref, $is_create, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_create, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_php__to_body( $_, $is_create, $is_message ) . "\n";
+        $res = $res . generate_object_initializer_php__to_body( $file_ref, $_, $is_create, $is_message ) . "\n";
     }
 
     return $res;
@@ -287,28 +296,28 @@ sub generate_object_initializer_php__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_php__to_object__core( $$file_ref->{objs}, 0, 0 );
+    return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_object_initializer_php__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_php__to_object__core( $$file_ref->{base_msgs}, 0, 1 );
+    return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_php__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_php__to_object__core( $$file_ref->{msgs}, 0, 1 );
+    return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_php__to_message_ctor($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_php__to_object__core( $$file_ref->{msgs}, 1, 1 );
+    return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_php($)
