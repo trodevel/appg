@@ -40,9 +40,9 @@ use 5.010;
 
 ###############################################
 
-sub generate_object_initializer_h__to_name_members($$$)
+sub generate_object_initializer_h__base_params($)
 {
-    my ( $obj, $is_create, $base_params_ref ) = @_;
+    my ( $base_params_ref ) = @_;
 
     my $res = "";
 
@@ -54,6 +54,15 @@ sub generate_object_initializer_h__to_name_members($$$)
 
         $i++;
     }
+
+    return $res;
+}
+
+sub generate_object_initializer_h__to_name_members($$$)
+{
+    my ( $obj, $is_create, $base_params_ref ) = @_;
+
+    my $res = generate_object_initializer_h__base_params( $base_params_ref );
 
     foreach( @{ $obj->{members} } )
     {
@@ -82,8 +91,6 @@ sub generate_object_initializer_h__to_name__name($$$)
         {
             $res .= ", ";
         }
-
-        $res .= "\$base_class_params // params of " . gtphp::to_object_name_with_namespace( $obj->get_base_class() ) . "\n";
     }
 
     return $res;
@@ -255,6 +262,29 @@ sub generate_object_initializer_php__to_message__body__call_init($)
     return main::tabulate( $res );
 }
 
+sub generate_object_initializer_php__base_params($)
+{
+    my ( $base_params_ref ) = @_;
+
+    my $res = "";
+
+    my $i = 1;
+
+    foreach( @{ $base_params_ref } )
+    {
+        if( $i > 1 )
+        {
+            $res .= ", ";
+        }
+
+        $res .= "\$base_class_param_" . $i;
+
+        $i++;
+    }
+
+    return $res;
+}
+
 sub generate_object_initializer_php__to_body($$$$)
 {
     my ( $file_ref, $msg, $is_create, $is_message ) = @_;
@@ -281,10 +311,7 @@ sub generate_object_initializer_php__to_body($$$$)
     {
         $res .=
 "    // base class\n" .
-"\n" .
-"    \$params = array();\n" .
-"    array_push( \$params, \$res, \$base_class_params );\n" .
-"    call_user_func_array( '" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ). "', \$params );\n" .
+"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( " . generate_object_initializer_php__base_params( \@base_params ) . " );\n" .
 "\n";
     }
 
