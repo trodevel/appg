@@ -40,17 +40,32 @@ use 5.010;
 
 ###############################################
 
-sub generate_object_initializer_h__base_params($)
+sub generate_object_initializer_h__base_params($$)
 {
-    my ( $base_params_ref ) = @_;
+    my ( $is_create, $base_params_ref ) = @_;
 
     my $res = "";
+
+    if( scalar @{ $base_params_ref } == 0 )
+    {
+        return $res;
+    }
+
+    if( $is_create == 0 )
+    {
+        $res .= ", ";
+    }
 
     my $i = 1;
 
     foreach( @{ $base_params_ref } )
     {
-        $res .= ", \$base_class_param_" . $i . " // " . $_->to_php_decl() . "\n";
+        if( $i > 1 )
+        {
+            $res .= ", ";
+        }
+
+        $res .= "\$base_class_param_" . $i . " // " . $_->to_php_decl() . "\n";
 
         $i++;
     }
@@ -62,11 +77,16 @@ sub generate_object_initializer_h__to_name_members($$$)
 {
     my ( $obj, $is_create, $base_params_ref ) = @_;
 
-    my $res = generate_object_initializer_h__base_params( $base_params_ref );
+    my $res = generate_object_initializer_h__base_params( $is_create, $base_params_ref );
 
     foreach( @{ $obj->{members} } )
     {
-        $res .= ", \$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
+        if( $res ne '' or $is_create == 0 )
+        {
+            $res .= ", ";
+        }
+
+        $res .= "\$" . $_->{name} . " // " . $_->{data_type}->to_php_decl() . "\n";
     }
 
     return $res;
@@ -83,15 +103,17 @@ sub generate_object_initializer_h__to_name__name($$$)
 "create__${name}(" :
 "initialize__${name}( & \$res";
 
-    if( $is_message )
-    {
-        $res .= "\n    ";
+    $res .= "\n";
 
-        if( $is_create == 0 )
-        {
-            $res .= ", ";
-        }
-    }
+#    if( $is_message )
+#    {
+#        $res .= "\n    ";
+#
+#        if( $is_create == 0 )
+#        {
+#            $res .= ", ";
+#        }
+#    }
 
     return $res;
 }
