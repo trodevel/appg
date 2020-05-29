@@ -324,7 +324,7 @@ sub generate_object_initializer_php__to_body($$$$)
 "function $func_name\n" .
 "{\n";
 
-    if( $is_message )
+    if( $is_message and $is_create == 0 )
     {
         $res .=
 "    // base class\n" .
