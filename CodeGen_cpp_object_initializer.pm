@@ -397,6 +397,8 @@ sub generate_object_initializer_cpp($)
 
     my @includes = ( "object_initializer" );
 
+    push( @includes, $$file_ref->{base_prot} . "/object_initializer" );
+
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
     return $res;
