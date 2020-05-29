@@ -315,7 +315,7 @@ sub generate_object_initializer_cpp__to_body($$$$)
     {
         $res .=
 "    // base class\n" .
-"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize" ) . "( res" . generate_object_initializer_cpp__base_params( \@base_params ) . " );\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize" ) . "( static_cast<" . $msg->get_base_class() . "*>( res )" . generate_object_initializer_cpp__base_params( \@base_params ) . " );\n" .
 "\n";
     }
 
