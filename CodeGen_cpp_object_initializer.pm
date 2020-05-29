@@ -252,11 +252,11 @@ sub generate_object_initializer_cpp__to_message__body__call_init__body($)
     return $res;
 }
 
-sub generate_object_initializer_cpp__base_params($$);
+sub generate_object_initializer_cpp__base_params($);
 
-sub generate_object_initializer_cpp__to_message__body__call_init($)
+sub generate_object_initializer_cpp__to_message__body__call_init($$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $base_params_ref ) = @_;
 
     my $name = $msg->{name};
 
@@ -271,9 +271,9 @@ sub generate_object_initializer_cpp__to_message__body__call_init($)
     return main::tabulate( $res );
 }
 
-sub generate_object_initializer_cpp__base_params($$)
+sub generate_object_initializer_cpp__base_params($)
 {
-    my ( $base_params_ref, $need_first_comma ) = @_;
+    my ( $base_params_ref ) = @_;
 
     my $res = "";
 
@@ -281,12 +281,7 @@ sub generate_object_initializer_cpp__base_params($$)
 
     foreach( @{ $base_params_ref } )
     {
-        if( $i > 1 or $need_first_comma )
-        {
-            $res .= ", ";
-        }
-
-        $res .= "base_class_param_" . $i;
+        $res .= ", base_class_param_" . $i;
 
         $i++;
     }
@@ -320,14 +315,14 @@ sub generate_object_initializer_cpp__to_body($$$$)
     {
         $res .=
 "    // base class\n" .
-"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( " . generate_object_initializer_cpp__base_params( \@base_params, 0 ) . " );\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize" ) . "( res" . generate_object_initializer_cpp__base_params( \@base_params ) . " );\n" .
 "\n";
     }
 
 
     $res .=
         $is_create ?
-        generate_object_initializer_cpp__to_message__body__call_init( $msg ) :
+        generate_object_initializer_cpp__to_message__body__call_init( $msg, \@base_params ) :
         generate_object_initializer_cpp__to_message__body__init_members( $msg );
 
     $res .=

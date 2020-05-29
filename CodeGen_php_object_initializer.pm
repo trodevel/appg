@@ -252,7 +252,7 @@ sub generate_object_initializer_php__to_message__body__call_init__body($)
     return $res;
 }
 
-sub generate_object_initializer_php__base_params($$);
+sub generate_object_initializer_php__base_params($);
 
 sub generate_object_initializer_php__to_message__body__call_init($$)
 {
@@ -264,7 +264,7 @@ sub generate_object_initializer_php__to_message__body__call_init($$)
 "\$res = new ${name};\n" .
 "\n" .
 "initialize__${name}( \$res" .
-        generate_object_initializer_php__base_params( $base_params_ref, 1 ) .
+        generate_object_initializer_php__base_params( $base_params_ref ) .
         generate_object_initializer_php__to_message__body__call_init__body( $msg ) . " );\n" .
 "\n";
 
@@ -273,9 +273,9 @@ sub generate_object_initializer_php__to_message__body__call_init($$)
     return main::tabulate( $res );
 }
 
-sub generate_object_initializer_php__base_params($$)
+sub generate_object_initializer_php__base_params($)
 {
-    my ( $base_params_ref, $need_first_comma ) = @_;
+    my ( $base_params_ref ) = @_;
 
     my $res = "";
 
@@ -283,12 +283,7 @@ sub generate_object_initializer_php__base_params($$)
 
     foreach( @{ $base_params_ref } )
     {
-        if( $i > 1 or $need_first_comma )
-        {
-            $res .= ", ";
-        }
-
-        $res .= "\$base_class_param_" . $i;
+        $res .= ", \$base_class_param_" . $i;
 
         $i++;
     }
@@ -322,7 +317,7 @@ sub generate_object_initializer_php__to_body($$$$)
     {
         $res .=
 "    // base class\n" .
-"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( " . generate_object_initializer_php__base_params( \@base_params, 0 ) . " );\n" .
+"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( \$res" . generate_object_initializer_php__base_params( \@base_params ) . " );\n" .
 "\n";
     }
 
