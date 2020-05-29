@@ -40,30 +40,61 @@ use 5.010;
 
 ###############################################
 
-sub generate_object_initializer_h__to_name_members($$)
+sub generate_object_initializer_h__base_params($$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $is_create, $base_params_ref ) = @_;
 
     my $res = "";
 
-    my $must_put_comma = $is_create ? 0 : 1;
-
-    foreach( @{ $obj->{members} } )
+    if( scalar @{ $base_params_ref } == 0 )
     {
-        $res .= ( $must_put_comma ? ", " : "" ) . $_->{data_type}->to_cpp_func_param() . " " . $_->{name} . "\n";
+        return $res;
+    }
 
-        if( $must_put_comma == 0 )
+    if( $is_create == 0 )
+    {
+        $res .= ", ";
+    }
+
+    my $i = 1;
+
+    foreach( @{ $base_params_ref } )
+    {
+        if( $i > 1 )
         {
-            $must_put_comma = 1;
+            $res .= ", ";
         }
+
+        $res .= $_->to_cpp_func_param() . " base_class_param_" . $i . "\n";
+
+        $i++;
     }
 
     return $res;
 }
 
-sub generate_object_initializer_h__to_name__name($$)
+sub generate_object_initializer_h__to_name_members($$$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $obj, $is_create, $base_params_ref ) = @_;
+
+    my $res = generate_object_initializer_h__base_params( $is_create, $base_params_ref );
+
+    foreach( @{ $obj->{members} } )
+    {
+        if( $res ne '' or $is_create == 0 )
+        {
+            $res .= ", ";
+        }
+
+        $res .= $_->{data_type}->to_cpp_func_param() . " " . $_->{name} . "\n";
+    }
+
+    return $res;
+}
+
+sub generate_object_initializer_h__to_name__name($$$)
+{
+    my ( $obj, $is_create, $is_message ) = @_;
 
     my $name = $obj->{name};
 
@@ -72,20 +103,33 @@ sub generate_object_initializer_h__to_name__name($$)
 "${name} * create_${name}(" :
 "void initialize( ${name} * res";
 
+    $res .= "\n";
+
     return $res;
 }
 
-sub generate_object_initializer_h__to_name($$)
+sub generate_object_initializer_h__to_name($$$$)
 {
-    my ( $obj, $is_create ) = @_;
+    my ( $file_ref, $obj, $is_create, $is_message ) = @_;
 
-    my $res = generate_object_initializer_h__to_name__name( $obj, $is_create );
+    my @base_params;
 
-    my $params = generate_object_initializer_h__to_name_members( $obj, $is_create );
+    if( defined $obj->{base_class} )
+    {
+        @base_params = $$file_ref->get_base_msg_params( $obj->{base_class} );
+
+        my $num_params = scalar @base_params;
+
+        print STDERR "generate: $obj->{name} $obj->{base_class} params $num_params\n";
+    }
+
+    my $res = generate_object_initializer_h__to_name__name( $obj, $is_create, $is_message );
+
+    my $params = generate_object_initializer_h__to_name_members( $obj, $is_create, \@base_params );
 
     if( $params ne "" )
     {
-        $res .= "\n" . main::tabulate( $params );
+        $res .= main::tabulate( $params );
     }
 
     $res .= " )";
@@ -93,15 +137,15 @@ sub generate_object_initializer_h__to_name($$)
     return $res;
 }
 
-sub generate_object_initializer_h_body_1_core($$)
+sub generate_object_initializer_h_body_1_core($$$$)
 {
-    my ( $objs_ref, $is_create ) = @_;
+    my ( $file_ref, $objs_ref, $is_create, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_h__to_name( $_, $is_create ) . ";\n";
+        $res = $res . generate_object_initializer_h__to_name( $file_ref, $_, $is_create, $is_message ) . ";\n";
     }
 
     return $res;
@@ -111,28 +155,28 @@ sub generate_object_initializer_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{objs}, 0 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_object_initializer_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{base_msgs}, 0 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 0 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_h_body_5($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_h_body_1_core( $$file_ref->{msgs}, 1 );
+    return generate_object_initializer_h_body_1_core( $file_ref, $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_h($)
@@ -208,6 +252,8 @@ sub generate_object_initializer_cpp__to_message__body__call_init__body($)
     return $res;
 }
 
+sub generate_object_initializer_cpp__base_params($$);
+
 sub generate_object_initializer_cpp__to_message__body__call_init($)
 {
     my ( $msg ) = @_;
@@ -225,16 +271,59 @@ sub generate_object_initializer_cpp__to_message__body__call_init($)
     return main::tabulate( $res );
 }
 
-sub generate_object_initializer_cpp__to_body($$)
+sub generate_object_initializer_cpp__base_params($$)
 {
-    my ( $msg, $is_create ) = @_;
+    my ( $base_params_ref, $need_first_comma ) = @_;
 
-    my $func_name = generate_object_initializer_h__to_name( $msg, $is_create );
+    my $res = "";
+
+    my $i = 1;
+
+    foreach( @{ $base_params_ref } )
+    {
+        if( $i > 1 or $need_first_comma )
+        {
+            $res .= ", ";
+        }
+
+        $res .= "base_class_param_" . $i;
+
+        $i++;
+    }
+
+    return $res;
+}
+
+sub generate_object_initializer_cpp__to_body($$$$)
+{
+    my ( $file_ref, $msg, $is_create, $is_message ) = @_;
+
+    my @base_params;
+
+    if( defined $msg->{base_class} )
+    {
+        @base_params = $$file_ref->get_base_msg_params( $msg->{base_class} );
+
+        my $num_params = scalar @base_params;
+
+        print STDERR "generate: $msg->{name} $msg->{base_class} params $num_params\n";
+    }
+
+    my $func_name = generate_object_initializer_h__to_name( $file_ref, $msg, $is_create, $is_message );
 
     my $res =
 
 "$func_name\n" .
 "{\n";
+
+    if( $is_message and $is_create == 0 )
+    {
+        $res .=
+"    // base class\n" .
+"    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( " . generate_object_initializer_cpp__base_params( \@base_params, 0 ) . " );\n" .
+"\n";
+    }
+
 
     $res .=
         $is_create ?
@@ -247,15 +336,15 @@ sub generate_object_initializer_cpp__to_body($$)
     return $res;
 }
 
-sub generate_object_initializer_cpp__to_object__core($$)
+sub generate_object_initializer_cpp__to_object__core($$$$)
 {
-    my ( $objs_ref, $is_create ) = @_;
+    my ( $file_ref, $objs_ref, $is_create, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_object_initializer_cpp__to_body( $_, $is_create ) . "\n";
+        $res = $res . generate_object_initializer_cpp__to_body( $file_ref, $_, $is_create, $is_message ) . "\n";
     }
 
     return $res;
@@ -265,28 +354,28 @@ sub generate_object_initializer_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( $$file_ref->{objs}, 0 );
+    return generate_object_initializer_cpp__to_object__core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_object_initializer_cpp__to_base_msg($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( $$file_ref->{base_msgs}, 0 );
+    return generate_object_initializer_cpp__to_object__core( $file_ref, $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( $$file_ref->{msgs}, 0 );
+    return generate_object_initializer_cpp__to_object__core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_object_initializer_cpp__to_message_ctor($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_object_initializer_cpp__to_object__core( $$file_ref->{msgs}, 1 );
+    return generate_object_initializer_cpp__to_object__core( $file_ref, $$file_ref->{msgs}, 1, 1 );
 }
 
 sub generate_object_initializer_cpp($)
