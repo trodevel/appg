@@ -105,16 +105,6 @@ sub generate_object_initializer_h__to_name__name($$$)
 
     $res .= "\n";
 
-#    if( $is_message )
-#    {
-#        $res .= "\n    ";
-#
-#        if( $is_create == 0 )
-#        {
-#            $res .= ", ";
-#        }
-#    }
-
     return $res;
 }
 
