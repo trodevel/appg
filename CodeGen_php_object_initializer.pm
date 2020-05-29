@@ -240,7 +240,7 @@ sub generate_object_initializer_php__to_message__body__init_members($)
 
 sub generate_object_initializer_php__to_message__body__call_init__body($)
 {
-    my ( $msg) = @_;
+    my ( $msg ) = @_;
 
     my $res = "";
 
