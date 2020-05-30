@@ -263,7 +263,9 @@ sub generate_object_initializer_cpp__to_message__body__call_init($$)
     my $res =
 "auto * res = new ${name};\n" .
 "\n" .
-"initialize( res" . generate_object_initializer_cpp__to_message__body__call_init__body( $msg ) . " );\n" .
+"initialize( res" .
+    generate_object_initializer_cpp__base_params( $base_params_ref ) .
+    generate_object_initializer_cpp__to_message__body__call_init__body( $msg ) . " );\n" .
 "\n";
 
     $res .= "return res;\n";
