@@ -315,10 +315,18 @@ sub generate_object_initializer_cpp__to_body($$$$)
 
     if( $is_message and $is_create == 0 )
     {
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "initialize" ) . "( static_cast<" . $msg->get_base_class() . "*>( res )" . generate_object_initializer_cpp__base_params( \@base_params ) . " );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
 

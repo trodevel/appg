@@ -249,10 +249,18 @@ sub generate_parser_cpp__to_body($$$$)
 
     if( $is_message )
     {
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "parser::get_value_or_throw" ). "( static_cast<" . $msg->get_base_class() . "*>( res ), r );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
     $res .=

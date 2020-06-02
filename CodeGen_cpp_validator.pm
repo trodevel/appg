@@ -250,10 +250,18 @@ sub generate_validator_cpp__to_object__body($$$$)
 
     if( $is_message )
     {
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "validator::validate" ). "( static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
     $res .=

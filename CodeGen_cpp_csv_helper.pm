@@ -243,10 +243,18 @@ sub generate_csv_helper_cpp__to_object__body($$$)
 "    write( os, std::string( \"$protocol/$name\" ) );\n".
 "\n";
 
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    " . gtcpp::to_function_call_with_namespace( $msg->get_base_class(), "csv_helper::write" ). "( os, static_cast<const " . $msg->get_base_class() . "&>( r ) );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
     $res .=
