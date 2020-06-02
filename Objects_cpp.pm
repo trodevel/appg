@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12506 $ $Date:: 2019-12-13 #$ $Author: serge $
+# $Revision: 13174 $ $Date:: 2020-06-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -39,7 +39,7 @@ sub get_base_class()
 {
     my( $self ) = @_;
 
-    return "Object";
+    die "not defined for object $self->{name}";
 }
 
 sub get_full_base_class()
@@ -82,13 +82,16 @@ sub get_full_name_apg
     return "apg::" . $self->get_full_name();
 }
 
-sub append_base_class()
+sub get_optional_base_class_suffix($$)
 {
-    my( $self, $body ) = @_;
+    my( $self ) = @_;
 
-    my $base = $self->get_base_class();
+    if( defined $self->{base_class} && $self->{base_class} ne '' )
+    {
+        return ": public " . $self->{base_class};
+    }
 
-    return $body . ": public $base";
+    return "";
 }
 
 ############################################################
@@ -151,9 +154,7 @@ sub to_cpp_decl
 
     my $res =
 "// Object\n" .
-"struct " . $self->{name};
-
-    $res = $self->append_base_class( $res ) . "\n";
+"struct " . $self->{name} . $self->get_optional_base_class_suffix() . "\n";
 
     my @array = @{ $self->{members} };
 
@@ -175,9 +176,7 @@ sub to_cpp_decl
 
     my $res =
 "// Base message\n" .
-"struct " . $self->{name};
-
-    $res = $self->append_base_class( $res ) . "\n";
+"struct " . $self->{name} . $self->get_optional_base_class_suffix() . "\n";
 
     my @array = @{ $self->{members} };
 
@@ -199,9 +198,7 @@ sub to_cpp_decl
 
     my $res =
 "// Message\n" .
-"struct " . $self->{name};
-
-    $res = $self->append_base_class( $res ) . "\n";
+"struct " . $self->{name} . $self->get_optional_base_class_suffix() . "\n";
 
     my $body = "";
 
