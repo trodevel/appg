@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13177 $ $Date:: 2020-06-02 #$ $Author: serge $
+# $Revision: 13178 $ $Date:: 2020-06-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -156,7 +156,17 @@ sub get_base_class()
 {
     my( $self ) = @_;
 
-    die "no base class for object $self->{name}" if ( $self->has_base_class() == 0 );
+    if ( $self->has_base_class() == 0 )
+    {
+        my $i = 1;
+        print STDERR "Stack Trace:\n";
+        while ( (my @call_details = (caller($i++))) )
+        {
+            print STDERR $call_details[1].":".$call_details[2]." in function ".$call_details[3]."\n";
+        }
+
+        die "no base class for object $self->{name}";
+    }
 
     return $self->{base_class};
 }
