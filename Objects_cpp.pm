@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13174 $ $Date:: 2020-06-02 #$ $Author: serge $
+# $Revision: 13175 $ $Date:: 2020-06-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -35,11 +35,25 @@ sub to_cpp_decl
     return '#error not implemented yet';
 }
 
+sub has_base_class()
+{
+    my( $self ) = @_;
+
+    if( defined $self->{base_class} && $self->{base_class} ne '' )
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
 sub get_base_class()
 {
     my( $self ) = @_;
 
-    die "not defined for object $self->{name}";
+    die "no base class for object $self->{name}" if ( $self->has_base_class() == 0 );
+
+    return $self->{base_class};
 }
 
 sub get_full_base_class()
@@ -86,9 +100,9 @@ sub get_optional_base_class_suffix($$)
 {
     my( $self ) = @_;
 
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
+    if( $self->has_base_class() )
     {
-        return ": public " . $self->{base_class};
+        return ": public " . $self->get_base_class();
     }
 
     return "";
