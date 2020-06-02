@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13175 $ $Date:: 2020-06-02 #$ $Author: serge $
+# $Revision: 13177 $ $Date:: 2020-06-02 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -39,21 +39,14 @@ sub has_base_class()
 {
     my( $self ) = @_;
 
-    if( defined $self->{base_class} && $self->{base_class} ne '' )
-    {
-        return 1;
-    }
-
-    return 0;
+    die "not defined for object $self->{name}";
 }
 
 sub get_base_class()
 {
     my( $self ) = @_;
 
-    die "no base class for object $self->{name}" if ( $self->has_base_class() == 0 );
-
-    return $self->{base_class};
+    die "not defined for object $self->{name}";
 }
 
 sub get_full_base_class()
@@ -147,16 +140,25 @@ sub get_full_name
 ############################################################
 package ObjectWithMembers;
 
-sub get_base_class()
+sub has_base_class()
 {
     my( $self ) = @_;
 
     if( defined $self->{base_class} && $self->{base_class} ne '' )
     {
-        return $self->{base_class};
+        return 1;
     }
 
-    return $self->SUPER::get_base_class();
+    return 0;
+}
+
+sub get_base_class()
+{
+    my( $self ) = @_;
+
+    die "no base class for object $self->{name}" if ( $self->has_base_class() == 0 );
+
+    return $self->{base_class};
 }
 
 ############################################################
