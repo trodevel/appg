@@ -151,12 +151,20 @@ sub generate_parser_php__to_object__body($$$$$)
 
     if( $is_message )
     {
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    \$offset = 1;\n" .
 "\n".
 "    // base class\n" .
 "    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "parse" ). "( \$res, \$csv_arr, \$offset );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
     $res .=

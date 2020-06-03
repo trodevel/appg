@@ -219,16 +219,21 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     if( $is_message )
     {
-
-        my $base_header = "'" . $msg->get_base_class() . "'";
-
-        if( $headers ne '' )
+        if( $msg->has_base_class() )
         {
-            $headers = $base_header . ", " . $headers;
+            my $base_header = "'" . $msg->get_base_class() . "'";
+
+            if( $headers ne '' )
+            {
+                $headers = $base_header . ", " . $headers;
+            }
+            else
+            {
+                $headers = $base_header;
+            }
         }
         else
         {
-            $headers = $base_header;
         }
     }
 
@@ -240,15 +245,21 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     if( $is_message )
     {
-        my $base_data = "\n" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r )";
-
-        if( $data ne '' )
+        if( $msg->has_base_class() )
         {
-            $data = $base_data . "," . $data;
+            my $base_data = "\n" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r )";
+
+            if( $data ne '' )
+            {
+                $data = $base_data . "," . $data;
+            }
+            else
+            {
+                $data = $base_data;
+            }
         }
         else
         {
-            $data = $base_data;
         }
     }
 

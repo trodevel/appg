@@ -163,10 +163,18 @@ sub generate_str_helper_php__to_object__body($$$$)
 
     if( $is_message )
     {
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string_" ). "( \$r );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
 
 

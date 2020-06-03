@@ -142,10 +142,18 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 "    \$res = \\basic_parser\\to_generic_request__string( \"CMD\", \"$protocol/$name\" );\n" .
 "\n";
 
-        $res .=
+        if( $msg->has_base_class() )
+        {
+            $res .=
 "    // base class\n" .
 "    \$res .= " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_generic_request_" ). "( \$r );\n" .
 "\n";
+        }
+        else
+        {
+            $res .=
+"    // no base class\n";
+        }
     }
     else
     {
