@@ -103,81 +103,15 @@ generate_dummy_creator_h_body_4( $file_ref ) .
 
 ###############################################
 
-sub generate_dummy_creator_php__to_message__body__init_members__body($)
+sub generate_dummy_creator_php__to_body__init($)
 {
-    my ( $obj ) = @_;
-
-    my $res;
-
-    my $name        = $obj->{name};
-
-    $res = "    \$res->${name} = \$${name};";
-
-    return $res;
-}
-
-sub generate_dummy_creator_php__to_message__body__init_members($)
-{
-    my ( $msg ) = @_;
+    my ( $params_ref ) = @_;
 
     my $res = "";
 
-    foreach( @{ $msg->{members} } )
+    foreach( @{ $params_ref } )
     {
-        $res = $res . generate_dummy_creator_php__to_message__body__init_members__body( $_ ) . "\n";
-    }
-
-    return $res;
-}
-
-sub generate_dummy_creator_php__to_message__body__call_init__body($)
-{
-    my ( $msg ) = @_;
-
-    my $res = "";
-
-    foreach( @{ $msg->{members} } )
-    {
-        $res .= ", \$" . $_->{name};
-    }
-
-    return $res;
-}
-
-sub generate_dummy_creator_php__base_params($);
-
-sub generate_dummy_creator_php__to_message__body__call_init($$)
-{
-    my ( $msg, $base_params_ref ) = @_;
-
-    my $name = $msg->{name};
-
-    my $res =
-"\$res = new ${name};\n" .
-"\n" .
-"initialize__${name}( \$res" .
-        generate_dummy_creator_php__base_params( $base_params_ref ) .
-        generate_dummy_creator_php__to_message__body__call_init__body( $msg ) . " );\n" .
-"\n";
-
-    $res .= "return \$res;\n";
-
-    return main::tabulate( $res );
-}
-
-sub generate_dummy_creator_php__base_params($)
-{
-    my ( $base_params_ref ) = @_;
-
-    my $res = "";
-
-    my $i = 1;
-
-    foreach( @{ $base_params_ref } )
-    {
-        $res .= ", \$base_class_param_" . $i;
-
-        $i++;
+        #$res .= ", \$" . $_->{name};
     }
 
     return $res;
@@ -187,16 +121,7 @@ sub generate_dummy_creator_php__to_body($$$$)
 {
     my ( $file_ref, $msg, $is_enum, $is_message ) = @_;
 
-    my @base_params;
-
-    if( defined $msg->{base_class} )
-    {
-        @base_params = $$file_ref->get_base_msg_params( $msg->{base_class} );
-
-        my $num_params = scalar @base_params;
-
-        print STDERR "generate: $msg->{name} $msg->{base_class} params $num_params\n";
-    }
+    my $name = $msg->{name};
 
     my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg );
 
@@ -205,29 +130,31 @@ sub generate_dummy_creator_php__to_body($$$$)
 "function $func_name\n" .
 "{\n";
 
-    if( $is_message and $is_create == 0 )
+    if( $is_enum )
     {
-        if( $msg->has_base_class() )
-        {
-            $res .=
-"    // base class\n" .
-"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "initialize_" ) . "( \$res" . generate_dummy_creator_php__base_params( \@base_params ) . " );\n" .
-"\n";
-        }
-        else
-        {
-            $res .=
-"    // no base class\n";
-        }
+        $res .=
+"    \$res = 0;\n";
+    }
+    else
+    {
+        $res .=
+"    \$res = new ${name};\n";
     }
 
+        $res .=
+"\n";
+    if( $is_enum )
+    {
+    }
+    else
+    {
+        my @params = $$file_ref->get_obj_params__by_ref( \$msg );
+
+        $res .= generate_dummy_creator_php__to_body__init( \@params );
+    }
 
     $res .=
-        $is_create ?
-        generate_dummy_creator_php__to_message__body__call_init( $msg, \@base_params ) :
-        generate_dummy_creator_php__to_message__body__init_members( $msg );
-
-    $res .=
+"    return \$res;\n" .
 "}\n";
 
     return $res;
