@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13187 $ $Date:: 2020-06-04 #$ $Author: serge $
+# $Revision: 13189 $ $Date:: 2020-06-04 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -280,7 +280,7 @@ sub get_obj_params__by_ref($$)
 {
     my ( $self, $obj_ref ) = @_;
 
-    die "cannot find message $name" if $obj_ref == 0;
+    die "object reference is 0" if $obj_ref == 0;
 
     my @res;
 
