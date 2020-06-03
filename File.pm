@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13154 $ $Date:: 2020-05-27 #$ $Author: serge $
+# $Revision: 13185 $ $Date:: 2020-06-04 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -138,11 +138,45 @@ sub set_use_ns($)
     $self->{must_use_ns} = $v;
 }
 
+sub find_obj($)
+{
+    my ( $self, $name ) = @_;
+
+    foreach( @{ $self->{objs} } )
+    {
+        my $obj = $_;
+
+        if( $obj->{name} eq $name )
+        {
+            return \$obj;
+        }
+    }
+
+    return 0;
+}
+
 sub find_base_msg($)
 {
     my ( $self, $name ) = @_;
 
     foreach( @{ $self->{base_msgs} } )
+    {
+        my $obj = $_;
+
+        if( $obj->{name} eq $name )
+        {
+            return \$obj;
+        }
+    }
+
+    return 0;
+}
+
+sub find_msg($)
+{
+    my ( $self, $name ) = @_;
+
+    foreach( @{ $self->{msgs} } )
     {
         my $obj = $_;
 
@@ -236,6 +270,31 @@ sub get_base_msg_params($$)
     }
 
     my @res;
+
+    return @res;
+}
+
+############################################################
+
+sub get_msg_params($$)
+{
+    my ( $self, $name ) = @_;
+
+    my $obj_ref = $self->find_msg( $name );
+
+    die "cannot find message $name" if $obj_ref == 0;
+
+    my @res;
+
+    if( $$obj_ref->has_base_class() )
+    {
+        @res = $self->get_base_msg_params( $$obj_ref->get_base_class() );
+    }
+
+    foreach( @{ $$obj_ref->{members} } )
+    {
+        push @res, $_->{data_type};
+    }
 
     return @res;
 }
