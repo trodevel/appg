@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13186 $ $Date:: 2020-06-04 #$ $Author: serge $
+# $Revision: 13187 $ $Date:: 2020-06-04 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -306,6 +306,19 @@ sub get_msg_params($$)
     my $obj_ref = $self->find_msg( $name );
 
     die "cannot find message $name" if $obj_ref == 0;
+
+    return $self->get_obj_params__by_ref( $obj_ref );
+}
+
+############################################################
+
+sub get_obj_params($$)
+{
+    my ( $self, $name ) = @_;
+
+    my $obj_ref = $self->find_obj( $name );
+
+    die "cannot find object $name" if $obj_ref == 0;
 
     return $self->get_obj_params__by_ref( $obj_ref );
 }
