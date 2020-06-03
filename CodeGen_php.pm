@@ -34,7 +34,7 @@ require CodeGen_php_parser;
 require CodeGen_php_object_initializer;
 require CodeGen_php_request_encoder;
 require CodeGen_php_str_helper;
-#require CodeGen_php_makefile;
+require CodeGen_php_dummy_creator;
 require CodeGen_php_example;
 #
 ###############################################
@@ -61,7 +61,7 @@ use constant OBJECT_INITIALIZER_CPP_FILE        => 'object_initializer.cpp';
 use constant STR_HELPER_PHP_FILE                => 'str_helper.php';
 use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
 use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
-use constant MAKEFILE_FILE                      => 'Makefile';
+use constant DUMMY_CREATOR_FILE                 => 'dummy_creator.php';
 use constant EXAMPLE_FILE                       => 'example.php';
 
 ###############################################
@@ -113,11 +113,11 @@ sub generate($)
 
     write_to_file( generate_str_helper_php( $file_ref ), ${\STR_HELPER_PHP_FILE} );
 
-#    write_to_file( generate_makefile_lib( $file_ref ), ${\MAKEFILE_LIB_FILE} );
+#    write_to_file( generate_dummy_creator_lib( $file_ref ), ${\MAKEFILE_LIB_FILE} );
 
 #    write_to_file( generate_makefile_app( $file_ref ), ${\MAKEFILE_APP_FILE} );
 
-#    write_to_file( generate_makefile( $file_ref ), ${\MAKEFILE_FILE} );
+    write_to_file( generate_dummy_creator_php( $file_ref ), ${\DUMMY_CREATOR_FILE} );
 
     write_to_file( generate_example( $file_ref ), ${\EXAMPLE_FILE} );
 }
