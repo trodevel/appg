@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13115 $ $Date:: 2020-05-21 #$ $Author: serge $
+# $Revision: 13184 $ $Date:: 2020-06-04 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -51,6 +51,12 @@ sub to_php__parse_func_name()
 }
 
 sub to_php__to_generic_request_func_name()
+{
+    my( $self ) = @_;
+    die "#error 'not implemented yet'";
+}
+
+sub to_php__to_dummy_value()
 {
     my( $self ) = @_;
     die "#error 'not implemented yet'";
