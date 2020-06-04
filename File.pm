@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13189 $ $Date:: 2020-06-04 #$ $Author: serge $
+# $Revision: 13193 $ $Date:: 2020-06-04 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -69,6 +69,15 @@ sub set_base_prot
 
     $self->{prot_object}->set_base_class( $elem . "::Object" );
     $self->{prot_object}->set_protocol( $self->{name} );
+}
+
+sub has_base_prot()
+{
+    my ( $self ) = @_;
+
+    return 1 if ( defined $self->{base_prot} and $self->{base_prot} ne '' );
+
+    return 0;
 }
 
 sub add_include
