@@ -278,7 +278,7 @@ sub generate_parser_php__parse($)
     generate_parser_php__write_msgs( $file_ref ) .
 "    );\n" .
 "\n" .
-"    \$type = \$csv_arr[0][0]\n" .
+"    \$type = \$csv_arr[0][0];\n" .
 "\n" .
 "    if( array_key_exists( \$type, \$handler_map ) )\n" .
 "    {\n" .
