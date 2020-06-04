@@ -351,7 +351,7 @@ sub generate_validator_cpp($)
 
     my @includes = ( "validator" );
 
-    push( @includes, $$file_ref->{base_prot} . "/validator" );
+    push( @includes, $$file_ref->{base_prot} . "/validator" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_validator_cpp__to_includes( $file_ref ) );
 

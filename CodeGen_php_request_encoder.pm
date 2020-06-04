@@ -270,7 +270,7 @@ sub generate_request_encoder_php__to_generic_request($)
 "        return \$func( \$obj );\n" .
 "    }\n" .
 "\n" .
-"    return \\". $$file_ref->{base_prot} . "\\to_generic_request( \$obj );\n" .
+"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\to_generic_request( \$obj )" ) : "NULL" ) . ";\n" .
 "}\n" .
 "\n";
 
@@ -318,7 +318,7 @@ sub generate_request_encoder_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/request_encoder" );
+    push( @includes, $$file_ref->{base_prot} . "/request_encoder" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_request_encoder_php__to_includes( $file_ref ) );
 

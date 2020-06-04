@@ -265,7 +265,7 @@ sub generate_parser_php__parse($)
     my ( $file_ref ) = @_;
 
     my $res =
-"class Parser extends \\". $$file_ref->{base_prot} . "\\Parser\n".
+"class Parser" . ( $$file_ref->has_base_prot() ? ( " extends \\". $$file_ref->{base_prot} . "\\Parser" ) : "" ) . "\n".
 "{\n" .
 "\n" .
 "protected static function parse_csv_array( \$csv_arr )\n" .
@@ -286,7 +286,7 @@ sub generate_parser_php__parse($)
 "        return \$func( \$obj );\n" .
 "    }\n" .
 "\n" .
-"    return \\". $$file_ref->{base_prot} . "\\Parser::parse_csv_array( \$obj );\n" .
+"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\Parser::parse_csv_array( \$obj )" ) : "NULL" ) . ";\n" .
 "}\n" .
 "\n" .
 "}\n" .
@@ -336,7 +336,7 @@ sub generate_parser_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/parser" );
+    push( @includes, $$file_ref->{base_prot} . "/parser" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_parser_php__to_includes( $file_ref ) );
 

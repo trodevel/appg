@@ -368,7 +368,7 @@ sub generate_str_helper_cpp($)
 
     my @includes = ( "str_helper" );
 
-    push( @includes, $$file_ref->{base_prot} . "/str_helper" );
+    push( @includes, $$file_ref->{base_prot} . "/str_helper" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_str_helper_cpp__to_includes( $file_ref ) );
 

@@ -374,7 +374,7 @@ sub generate_html_helper_php__to_html($)
 "        return \$func( \$obj );\n" .
 "    }\n" .
 "\n" .
-"    return \\". $$file_ref->{base_prot} . "\\to_html( \$obj );\n" .
+"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\to_html( \$obj )" ) : "NULL" ) . ";\n" .
 "}\n" .
 "\n";
 
@@ -422,7 +422,7 @@ sub generate_html_helper_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/html_helper" );
+    push( @includes, $$file_ref->{base_prot} . "/html_helper" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_html_helper_php__to_includes( $file_ref ) );
 

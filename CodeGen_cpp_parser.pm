@@ -468,7 +468,7 @@ sub generate_parser_cpp($)
 
     my @includes = ( "parser" );
 
-    push( @includes, $$file_ref->{base_prot} . "/parser" );
+    push( @includes, $$file_ref->{base_prot} . "/parser" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_parser_cpp__to_includes( $file_ref ) );
 

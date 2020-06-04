@@ -405,7 +405,7 @@ sub generate_csv_helper_cpp($)
 
     my @includes = ( "csv_helper" );
 
-    push( @includes, $$file_ref->{base_prot} . "/csv_helper" );
+    push( @includes, $$file_ref->{base_prot} . "/csv_helper" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_csv_helper_cpp__to_includes( $file_ref ) );
 

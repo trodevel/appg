@@ -298,7 +298,7 @@ sub generate_str_helper_php__to_string($)
 "        return \$func( \$obj );\n" .
 "    }\n" .
 "\n" .
-"    return \\". $$file_ref->{base_prot} . "\\to_string( \$obj );\n" .
+"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\to_string( \$obj )" ) : "NULL" ) . ";\n" .
 "}\n" .
 "\n";
 
@@ -346,7 +346,7 @@ sub generate_str_helper_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/str_helper" );
+    push( @includes, $$file_ref->{base_prot} . "/str_helper" ) if $$file_ref->has_base_prot();
 
     push( @includes, generate_str_helper_php__to_includes( $file_ref ) );
 
