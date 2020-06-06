@@ -63,6 +63,8 @@ sub to_cpp_decl
 
     my @includes;
 
+    push( @includes, "basic_parser/object" );
+
     if( defined $file->{base_prot} && $file->{base_prot} ne '' )
     {
         push( @includes, $file->{base_prot} . "/protocol" );
