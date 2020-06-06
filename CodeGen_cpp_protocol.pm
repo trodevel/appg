@@ -49,9 +49,6 @@ sub to_cpp_decl
 
     my $body = "";
 
-    # protocol object
-    $body = $body . $file->{prot_object}->to_cpp_decl() . "\n";
-
     my @consts    = @{ $file->{consts} };       # consts
     my @enums     = @{ $file->{enums} };        # enums
     my @objs      = @{ $file->{objs} };         # objects

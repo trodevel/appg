@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13193 $ $Date:: 2020-06-04 #$ $Author: serge $
+# $Revision: 13197 $ $Date:: 2020-06-06 #$ $Author: serge $
 # 1.0   - 16b09 - initial version
 
 ############################################################
@@ -39,7 +39,6 @@ sub new
     {
         name      => shift,
         base_prot   => undef, # base protocol
-        prot_object => Object->new( "Object", "apg::Object" ), # protocol base object
         includes  => [],    # includes
         consts    => [],    # constants
         enums     => [],    # enums
@@ -61,14 +60,11 @@ sub set_name($)
     $self->{name}       = $name;
 }
 
-sub set_base_prot
+sub set_base_prot($)
 {
     my ( $self, $elem ) = @_;
 
     $self->{base_prot}   = $elem;
-
-    $self->{prot_object}->set_base_class( $elem . "::Object" );
-    $self->{prot_object}->set_protocol( $self->{name} );
 }
 
 sub has_base_prot()
