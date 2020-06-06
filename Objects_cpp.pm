@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13196 $ $Date:: 2020-06-06 #$ $Author: serge $
+# $Revision: 13198 $ $Date:: 2020-06-06 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -182,7 +182,8 @@ sub to_cpp_decl
 
     my $res =
 "// Object\n" .
-"struct " . $self->{name} . $self->get_optional_base_class_suffix() . "\n";
+#"struct " . $self->{name} . $self->get_optional_base_class_suffix() . "\n";
+"struct " . $self->{name} . "\n";
 
     my @array = @{ $self->{members} };
 
