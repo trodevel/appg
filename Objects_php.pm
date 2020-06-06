@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 12899 $ $Date:: 2020-04-03 #$ $Author: serge $
+# $Revision: 13204 $ $Date:: 2020-06-06 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -35,11 +35,18 @@ sub to_php_decl()
     return '#error not implemented yet';
 }
 
+sub has_base_class_php()
+{
+    my( $self ) = @_;
+
+    die "not defined for object $self->{name}";
+}
+
 sub get_base_class_php()
 {
     my( $self ) = @_;
 
-    return "Object";
+    die "not defined for object $self->{name}";
 }
 
 sub get_full_base_class_php()
@@ -82,13 +89,18 @@ sub get_full_name_apg_php()
     return "\\apg\\" . $self->get_full_name_php();
 }
 
-sub append_base_class_php()
+sub get_optional_base_class_suffix_php($$)
 {
-    my( $self, $body ) = @_;
+    my( $self ) = @_;
 
-    my $base = $self->get_base_class_php();
+    my $base_class = "\\basic_parser\\Object";
 
-    return $body . " extends $base";
+    if( $self->has_base_class_php() )
+    {
+        $base_class = $self->get_base_class_php();
+    }
+
+    return " extends $base_class";
 }
 
 ############################################################
@@ -127,16 +139,35 @@ sub get_full_name_php
 ############################################################
 package ObjectWithMembers;
 
-sub get_base_class_php()
+sub has_base_class_php()
 {
     my( $self ) = @_;
 
     if( defined $self->{base_class} && $self->{base_class} ne '' )
     {
-        return gtphp::convert_namespace_name_to_php( $self->{base_class} );
+        return 1;
     }
 
-    return $self->SUPER::get_base_class_php();
+    return 0;
+}
+
+sub get_base_class_php()
+{
+    my( $self ) = @_;
+
+    if ( $self->has_base_class() == 0 )
+    {
+        my $i = 1;
+        print STDERR "Stack Trace:\n";
+        while ( (my @call_details = (caller($i++))) )
+        {
+            print STDERR $call_details[1].":".$call_details[2]." in function ".$call_details[3]."\n";
+        }
+
+        die "no base class for object $self->{name}";
+    }
+
+    return $self->{base_class};
 }
 
 ############################################################
@@ -148,9 +179,7 @@ sub to_php_decl
 
     my $res =
 "// Object\n" .
-"class " . $self->{name};
-
-    $res = $self->append_base_class_php( $res ) . "\n";
+"class " . $self->{name} . "\n";
 
     my @array = @{ $self->{members} };
 
@@ -172,9 +201,7 @@ sub to_php_decl
 
     my $res =
 "// Base message\n" .
-"class " . $self->{name};
-
-    $res = $self->append_base_class_php( $res ) . "\n";
+"class " . $self->{name} . $self->get_optional_base_class_suffix_php() . "\n";
 
     my @array = @{ $self->{members} };
 
@@ -196,9 +223,7 @@ sub to_php_decl
 
     my $res =
 "// Message\n" .
-"class " . $self->{name};
-
-    $res = $self->append_base_class_php( $res ) . "\n";
+"class " . $self->{name} . $self->get_optional_base_class_suffix_php() . "\n";
 
     my $body =
 
