@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13204 $ $Date:: 2020-06-06 #$ $Author: serge $
+# $Revision: 13205 $ $Date:: 2020-06-06 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -203,11 +203,18 @@ sub to_php_decl
 "// Base message\n" .
 "class " . $self->{name} . $self->get_optional_base_class_suffix_php() . "\n";
 
+    my $body =
+
+"function __construct()\n" .
+"{\n" .
+        ( $self->has_base_class_php() ? "    parent::__construct();\n" : "" ) .
+"}\n" .
+"\n";
     my @array = @{ $self->{members} };
 
-    my $body = gtphp::array_to_decl( $self->{enums} );
+    $body .= gtphp::array_to_decl( $self->{enums} );
 
-    $body = $body . gtphp::array_to_decl( \@array );
+    $body .= gtphp::array_to_decl( \@array );
 
     $res = $res . main::bracketize( $body, 1 );
 
