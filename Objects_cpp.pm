@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13178 $ $Date:: 2020-06-02 #$ $Author: serge $
+# $Revision: 13196 $ $Date:: 2020-06-06 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -93,12 +93,14 @@ sub get_optional_base_class_suffix($$)
 {
     my( $self ) = @_;
 
+    my $base_class = "basic_parser::Object";
+
     if( $self->has_base_class() )
     {
-        return ": public " . $self->get_base_class();
+        $base_class = $self->get_base_class();
     }
 
-    return "";
+    return ": public $base_class";
 }
 
 ############################################################
