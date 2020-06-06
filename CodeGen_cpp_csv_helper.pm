@@ -120,7 +120,7 @@ generate_csv_helper_h_body_4( $file_ref ) .
 "}\n" .
 "\n".
 "// generic\n" .
-"std::ostream & write( std::ostream & os, const generic_protocol::Object & r );\n" .
+"std::ostream & write( std::ostream & os, const basic_parser::Object & r );\n" .
 "\n";
 
     $body = gtcpp::namespacize( 'csv_helper', $body );
@@ -309,7 +309,7 @@ sub generate_csv_helper_cpp__write_message__body($)
 
     my $res =
 
-"std::ostream & write_${name}( std::ostream & os, const generic_protocol::Object & rr )\n" .
+"std::ostream & write_${name}( std::ostream & os, const basic_parser::Object & rr )\n" .
 "{\n" .
 "    auto & r = dynamic_cast< const $name &>( rr );\n".
 "\n" .
@@ -376,9 +376,9 @@ sub generate_csv_helper_cpp($)
 
     generate_csv_helper_cpp__write_message( $file_ref ) .
 "\n" .
-"std::ostream & write( std::ostream & os, const generic_protocol::Object & r )\n" .
+"std::ostream & write( std::ostream & os, const basic_parser::Object & r )\n" .
 "{\n" .
-"    typedef std::ostream & (*PPMF)( std::ostream & os, const generic_protocol::Object & );\n" .
+"    typedef std::ostream & (*PPMF)( std::ostream & os, const basic_parser::Object & );\n" .
 "\n" .
 "#define HANDLER_MAP_ENTRY(_v)       { typeid( _v ),        & write_##_v }\n" .
 "\n" .

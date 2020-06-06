@@ -119,9 +119,9 @@ sub generate_parser_h($)
 
     $body =
 
-"typedef generic_protocol::Object    Object;\n" .
+"typedef basic_parser::Object    Object;\n" .
 "\n" .
-"generic_protocol::Object * to_forward_message( const generic_request::Request & r );\n" .
+"basic_parser::Object * to_forward_message( const generic_request::Request & r );\n" .
 "\n" .
 "request_type_e detect_request_type( const generic_request::Request & r );\n" .
 "\n" .
@@ -346,7 +346,7 @@ sub generate_parser_cpp__to_forward_message($)
 
     my $res =
 
-"generic_protocol::Object* to_forward_message( const generic_request::Request & r )\n" .
+"basic_parser::Object* to_forward_message( const generic_request::Request & r )\n" .
 "{\n" .
 "    auto type = detect_request_type( r );\n" .
 "\n" .
