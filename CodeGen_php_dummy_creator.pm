@@ -223,6 +223,9 @@ sub generate_dummy_creator_php($)
 
     my @includes = ( );
 
+    push( @includes, "basic_parser/dummy_creator" );
+    push( @includes, get_namespace_name( $$file_ref ) . "/object_initializer" );
+
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
     return $res;
