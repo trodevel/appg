@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13184 $ $Date:: 2020-06-04 #$ $Author: serge $
+# $Revision: 13207 $ $Date:: 2020-06-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -56,7 +56,7 @@ sub to_php__to_generic_request_func_name()
     die "#error 'not implemented yet'";
 }
 
-sub to_php__to_dummy_value()
+sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
     die "#error 'not implemented yet'";
@@ -107,6 +107,12 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "\\basic_parser\\to_generic_request__bool";
+}
+
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\create_dummy_value__bool";
 }
 
 sub to_php__to_html_func_name()
@@ -163,6 +169,12 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request__int";
 }
 
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\create_dummy_value__int";
+}
+
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
@@ -213,6 +225,12 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request__float";
 }
 
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\create_dummy_value__float";
+}
+
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
@@ -257,6 +275,12 @@ sub to_php__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "\\basic_parser\\to_generic_request__string";
+}
+
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+    return "\\basic_parser\\create_dummy_value__string";
 }
 
 sub to_php__to_html_func_name()
@@ -318,6 +342,15 @@ sub to_php__to_generic_request_func_name()
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
     return "${pref}to_generic_request__" . $self->{name};
+}
+
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}create_dummy_value__" . $self->{name};
 }
 
 sub to_php__to_html_func_name()
@@ -384,6 +417,15 @@ sub to_php__to_generic_request_func_name()
     return "${pref}to_generic_request__" . $self->{name};
 }
 
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+
+    return "${pref}create_dummy_value__" . $self->{name};
+}
+
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
@@ -437,6 +479,13 @@ sub to_php__to_generic_request_func_name()
     return "\\basic_parser\\to_generic_request__vector";
 }
 
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "\\basic_parser\\create_dummy_value__vector";
+}
+
 sub to_php__to_html_func_name()
 {
     my( $self ) = @_;
@@ -485,6 +534,13 @@ sub to_php__to_generic_request_func_name()
     my( $self ) = @_;
 
     return "\\basic_parser\\to_generic_request__map";
+}
+
+sub to_php__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "\\basic_parser\\create_dummy_value__map";
 }
 
 sub to_php__to_html_func_name()
