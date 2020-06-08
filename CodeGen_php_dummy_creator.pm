@@ -111,7 +111,7 @@ sub generate_dummy_creator_php__to_body__init($)
 
     foreach( @{ $params_ref } )
     {
-        #$res .= ", \$" . $_->{name};
+        $res .= ", " . $_->to_php__create_dummy_value() . "()\n";
     }
 
     return $res;
@@ -123,22 +123,17 @@ sub generate_dummy_creator_php__to_body($$$$)
 
     my $name = $msg->{name};
 
-    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg );
-
-    my $res =
-
-"function $func_name\n" .
-"{\n";
+    my $res = "";
 
     if( $is_enum )
     {
         $res .=
-"    \$res = 0;\n";
+"\$res = 0;\n";
     }
     else
     {
         $res .=
-"    \$res = new ${name};\n";
+"\$res = new ${name};\n";
     }
 
         $res .=
@@ -150,15 +145,23 @@ sub generate_dummy_creator_php__to_body($$$$)
     {
         my @params = $$file_ref->get_obj_params__by_ref( \$msg );
 
-        $res .= "    initialize__${name}( $res\n";
+        $res .= "initialize__${name}( \$res\n";
 
-        $res .= generate_dummy_creator_php__to_body__init( \@params );
+        $res .= main::tabulate( generate_dummy_creator_php__to_body__init( \@params ) );
 
         $res .= "    );\n";
     }
 
     $res .=
-"    return \$res;\n" .
+"return \$res;\n";
+
+    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg );
+
+    $res =
+
+"function $func_name\n" .
+"{\n" .
+        main::tabulate( $res ) .
 "}\n";
 
     return $res;
