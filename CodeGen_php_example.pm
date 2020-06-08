@@ -96,7 +96,7 @@ sub generate_example__to_object__body($$$$$)
 
 "function example_${name}()\n" .
 "{\n" .
-"    \$obj = new \\$namespace\\$name();\n" .
+"    \$obj = \\$namespace\\create_dummy__$name();\n" .
 "\n" .
 "    echo \"$name : STR : \" . \\${namespace}\\to_string( \$obj ) . \"\\n\";\n";
 
@@ -158,6 +158,7 @@ sub generate_example($)
 "<?php\n" .
 "\n" .
 "require_once 'protocol.php';\n" .
+"require_once 'dummy_creator.php';\n" .
 "require_once 'str_helper.php';\n" .
 "require_once 'request_encoder.php';\n" .
 "\n" .
