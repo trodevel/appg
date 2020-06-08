@@ -150,7 +150,11 @@ sub generate_dummy_creator_php__to_body($$$$)
     {
         my @params = $$file_ref->get_obj_params__by_ref( \$msg );
 
+        $res .= "    initialize__${name}( $res\n";
+
         $res .= generate_dummy_creator_php__to_body__init( \@params );
+
+        $res .= "    );\n";
     }
 
     $res .=
