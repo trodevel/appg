@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13207 $ $Date:: 2020-06-08 #$ $Author: serge $
+# $Revision: 13211 $ $Date:: 2020-06-08 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -112,7 +112,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\create_dummy_value__bool";
+    return "\\basic_parser\\create_dummy__bool";
 }
 
 sub to_php__to_html_func_name()
@@ -172,7 +172,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\create_dummy_value__int";
+    return "\\basic_parser\\create_dummy__int";
 }
 
 sub to_php__to_html_func_name()
@@ -228,7 +228,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\create_dummy_value__float";
+    return "\\basic_parser\\create_dummy__float";
 }
 
 sub to_php__to_html_func_name()
@@ -280,7 +280,7 @@ sub to_php__to_generic_request_func_name()
 sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\create_dummy_value__string";
+    return "\\basic_parser\\create_dummy__string";
 }
 
 sub to_php__to_html_func_name()
@@ -350,7 +350,7 @@ sub to_php__create_dummy_value()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}create_dummy_value__" . $self->{name};
+    return "${pref}create_dummy__" . $self->{name};
 }
 
 sub to_php__to_html_func_name()
@@ -423,7 +423,7 @@ sub to_php__create_dummy_value()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}create_dummy_value__" . $self->{name};
+    return "${pref}create_dummy__" . $self->{name};
 }
 
 sub to_php__to_html_func_name()
@@ -483,7 +483,7 @@ sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\create_dummy_value__vector";
+    return "\\basic_parser\\create_dummy__vector";
 }
 
 sub to_php__to_html_func_name()
@@ -540,7 +540,7 @@ sub to_php__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\create_dummy_value__map";
+    return "\\basic_parser\\create_dummy__map";
 }
 
 sub to_php__to_html_func_name()
