@@ -63,6 +63,7 @@ use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
 use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
 use constant DUMMY_CREATOR_FILE                 => 'dummy_creator.php';
 use constant EXAMPLE_FILE                       => 'example.php';
+use constant EXAMPLE_HTML_FILE                  => 'example_html.php';
 
 ###############################################
 
@@ -120,6 +121,8 @@ sub generate($)
     write_to_file( generate_dummy_creator_php( $file_ref ), ${\DUMMY_CREATOR_FILE} );
 
     write_to_file( generate_example( $file_ref, 0 ), ${\EXAMPLE_FILE} );
+
+    write_to_file( generate_example( $file_ref, 1 ), ${\EXAMPLE_HTML_FILE} );
 }
 
 ###############################################
