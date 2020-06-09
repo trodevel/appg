@@ -119,7 +119,7 @@ sub generate($)
 
     write_to_file( generate_dummy_creator_php( $file_ref ), ${\DUMMY_CREATOR_FILE} );
 
-    write_to_file( generate_example( $file_ref ), ${\EXAMPLE_FILE} );
+    write_to_file( generate_example( $file_ref, 0 ), ${\EXAMPLE_FILE} );
 }
 
 ###############################################
