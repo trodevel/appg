@@ -153,15 +153,8 @@ sub generate_example($)
 {
     my ( $file_ref ) = @_;
 
-    my $res =
+    my $body =
 
-"<?php\n" .
-"\n" .
-"require_once 'protocol.php';\n" .
-"require_once 'dummy_creator.php';\n" .
-"require_once 'str_helper.php';\n" .
-"require_once 'request_encoder.php';\n" .
-"\n" .
 #"# enums\n" .
 #"\n" .
 #    generate_example__to_enum( $file_ref ) .
@@ -188,8 +181,17 @@ sub generate_example($)
     generate_example__function_call__message( $file_ref ) .
 "\n" .
 "}\n" .
-"\n" .
-"?>\n";
+"\n"
+;
+
+    my @includes = ( );
+
+    push( @includes, "protocol" );
+    push( @includes, "dummy_creator" );
+    push( @includes, "str_helper" );
+    push( @includes, "request_encoder" );
+
+    my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
     return $res;
 }
