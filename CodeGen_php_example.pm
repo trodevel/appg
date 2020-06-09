@@ -86,9 +86,9 @@ sub generate_example__function_call__message($)
     return generate_example__function_call__core( $file_ref,  $$file_ref->{msgs}, 1 );
 }
 
-sub generate_example__to_object__body($$$$$)
+sub generate_example__to_object__body($$$$$$)
 {
-    my ( $namespace, $msg, $is_message, $is_enum, $protocol ) = @_;
+    my ( $namespace, $msg, $is_message, $is_enum, $protocol, $must_generate_html ) = @_;
 
     my $name = $msg->{name};
 
@@ -114,44 +114,44 @@ sub generate_example__to_object__body($$$$$)
     return $res;
 }
 
-sub generate_example__to_object__core($$$$)
+sub generate_example__to_object__core($$$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message, $is_enum ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_enum, $must_generate_html ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $is_enum, $$file_ref->{name} ) . "\n";
+        $res .= generate_example__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $is_enum, $$file_ref->{name}, $must_generate_html ) . "\n";
     }
 
     return $res;
 }
 
-sub generate_example__to_enum($)
+sub generate_example__to_enum($$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $must_generate_html ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{enums}, 0, 1 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{enums}, 0, 1, $must_generate_html );
 }
 
-sub generate_example__to_object($)
+sub generate_example__to_object($$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $must_generate_html ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0, $must_generate_html );
 }
 
-sub generate_example__to_message($)
+sub generate_example__to_message($$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $must_generate_html ) = @_;
 
-    return generate_example__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
+    return generate_example__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0, $must_generate_html );
 }
 
-sub generate_example($)
+sub generate_example($$)
 {
-    my ( $file_ref ) = @_;
+    my ( $file_ref, $must_generate_html ) = @_;
 
     my $body =
 
@@ -161,16 +161,16 @@ sub generate_example($)
 #"\n" .
 "# objects\n" .
 "\n" .
-    generate_example__to_object( $file_ref ) .
+    generate_example__to_object( $file_ref, $must_generate_html ) .
 "\n" .
 "# messages\n" .
 "\n" .
-    generate_example__to_message( $file_ref ) .
+    generate_example__to_message( $file_ref, $must_generate_html ) .
 "\n" .
 "{\n" .
 #"    // enums\n" .
 #"\n" .
-#    generate_example__function_call__enum( $file_ref ) .
+#    generate_example__function_call__enum( $file_ref, $must_generate_html) .
 #"\n" .
 "    // objects\n" .
 "\n" .
