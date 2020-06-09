@@ -90,7 +90,7 @@ sub generate_html_helper_php__to_enum__body_2($$)
 
 "function to_html__${name}( \$r )\n" .
 "{\n" .
-"    return to_string_${name}( \$r ) . \" (\" . \$r . \")\";\n".
+"    return to_string__${name}( \$r ) . \" (\" . \$r . \")\";\n".
 "}\n";
 
     return $res;
