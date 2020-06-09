@@ -97,10 +97,20 @@ sub generate_example__to_object__body($$$$$$)
 "function example_${name}()\n" .
 "{\n" .
 "    \$obj = \\$namespace\\create_dummy__$name();\n" .
-"\n" .
-"    echo \"$name : STR : \" . \\${namespace}\\to_string( \$obj ) . \"\\n\";\n";
+"\n";
 
-    if( $is_message == 1 )
+    if( $must_generate_html )
+    {
+        $res .=
+"    echo \"$name : HTML : \" . \\${namespace}\\to_html( \$obj ) . \"<br>\\n\";\n";
+    }
+    else
+    {
+        $res .=
+"    echo \"$name : STR : \" . \\${namespace}\\to_string( \$obj ) . \"\\n\";\n";
+    }
+
+    if( $is_message == 1 and $must_generate_html == 0 )
     {
         $res .=
 "\n" .
@@ -188,8 +198,9 @@ sub generate_example($$)
 
     push( @includes, "protocol" );
     push( @includes, "dummy_creator" );
-    push( @includes, "str_helper" );
-    push( @includes, "request_encoder" );
+    push( @includes, "html_helper" ) if( $must_generate_html == 1 );
+    push( @includes, "str_helper" ) if( $must_generate_html == 0 );
+    push( @includes, "request_encoder" ) if( $must_generate_html == 0 );
 
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
