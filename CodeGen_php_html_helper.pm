@@ -247,7 +247,7 @@ sub generate_html_helper_php__to_object__body($$$$)
     {
         if( $msg->has_base_class() )
         {
-            my $base_data = "\n" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html" ). "( \$r )";
+            my $base_data = "\n" . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_html_" ). "( \$r )";
 
             if( $data ne '' )
             {
@@ -428,7 +428,7 @@ sub generate_html_helper_php($)
 
     push( @includes, "basic_parser/html_helper" );
 
-    push( @includes, get_namespace_name( $$file_ref ) . "/str_helper" );
+    push( @includes, "str_helper" );
 
     my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  \@includes, [ ] );
 
