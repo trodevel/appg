@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13050 $ $Date:: 2020-05-15 #$ $Author: serge $
+# $Revision: 13231 $ $Date:: 2020-06-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -86,6 +86,12 @@ sub to_cpp__parse_func_ptr()
     return "static_cast<void (*)( " . $self->to_cpp_decl() . " * , const std::string & , const generic_request::Request & )>( &" . $self->to_cpp__parse_func_name() . " )";
 }
 
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+    die "#error 'not implemented yet'";
+}
+
 ############################################################
 package Boolean;
 
@@ -137,6 +143,12 @@ sub to_cpp__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "::basic_parser::to_generic_request_bool";
+}
+
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+    return "::basic_parser::create_dummy__bool";
 }
 
 sub to_cpp__to_html_func_name()
@@ -205,6 +217,13 @@ sub to_cpp__to_generic_request_func_name()
     return "::basic_parser::to_generic_request_int";
 }
 
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::create_dummy__" . substr( $self->to_cpp_decl(), -2 );
+}
+
 sub to_cpp__to_html_func_name()
 {
     my( $self ) = @_;
@@ -267,6 +286,13 @@ sub to_cpp__to_generic_request_func_name()
     return "::basic_parser::to_generic_request_float";
 }
 
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::create_dummy__" . $self->to_cpp_decl();
+}
+
 sub to_cpp__to_html_func_name()
 {
     my( $self ) = @_;
@@ -323,6 +349,13 @@ sub to_cpp__to_generic_request_func_name()
 {
     my( $self ) = @_;
     return "::basic_parser::to_generic_request_string";
+}
+
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::create_dummy__string";
 }
 
 sub to_cpp__to_html_func_name()
@@ -402,6 +435,15 @@ sub to_cpp__to_generic_request_func_name()
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
     return "${pref}to_generic_request_" . $self->{name};
+}
+
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::" ) : "";
+
+    return "${pref}create_dummy__" . $self->{name};
 }
 
 sub to_cpp__to_html_func_name()
@@ -486,6 +528,15 @@ sub to_cpp__to_generic_request_func_name()
     return "${pref}to_generic_request_" . $self->{name};
 }
 
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::" ) : "";
+
+    return "${pref}create_dummy__" . $self->{name};
+}
+
 sub to_cpp__to_html_func_name()
 {
     my( $self ) = @_;
@@ -553,6 +604,13 @@ sub to_cpp__to_generic_request_func_name()
     return "::basic_parser::to_generic_request_vector";
 }
 
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::create_dummy__vector_t";
+}
+
 sub to_cpp__to_html_func_name()
 {
     my( $self ) = @_;
@@ -615,6 +673,13 @@ sub to_cpp__to_generic_request_func_name()
     my( $self ) = @_;
 
     return "::basic_parser::to_generic_request_map";
+}
+
+sub to_cpp__create_dummy_value()
+{
+    my( $self ) = @_;
+
+    return "::basic_parser::create_dummy__map_t";
 }
 
 sub to_cpp__to_html_func_name()
