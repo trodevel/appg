@@ -170,7 +170,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
 
     $res =
 
-"function $func_name\n" .
+"$func_name\n" .
 "{\n" .
         main::tabulate( $res ) .
 "}\n";
