@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13231 $ $Date:: 2020-06-10 #$ $Author: serge $
+# $Revision: 13237 $ $Date:: 2020-06-10 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -221,7 +221,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__" . substr( $self->to_cpp_decl(), -2 );
+    return "::basic_parser::create_dummy__" . substr( $self->to_cpp_decl(), 0, -2 );
 }
 
 sub to_cpp__to_html_func_name()
