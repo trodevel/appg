@@ -34,6 +34,7 @@ require CodeGen_cpp_parser;
 require CodeGen_cpp_object_initializer;
 require CodeGen_cpp_csv_helper;
 require CodeGen_cpp_str_helper;
+require CodeGen_cpp_dummy_creator;
 require CodeGen_cpp_makefile;
 require CodeGen_cpp_example;
 
@@ -64,6 +65,8 @@ use constant STR_HELPER_CPP_FILE                => 'str_helper.cpp';
 use constant MAKEFILE_LIB_FILE                  => 'Makefile.lib.config';
 use constant MAKEFILE_APP_FILE                  => 'Makefile.app.config';
 use constant MAKEFILE_FILE                      => 'Makefile';
+use constant DUMMY_CREATOR_H_FILE               => 'dummy_creator.h';
+use constant DUMMY_CREATOR_CPP_FILE             => 'dummy_creator.cpp';
 use constant EXAMPLE_FILE                       => 'example.cpp';
 
 ###############################################
@@ -116,6 +119,10 @@ sub generate($$)
     write_to_file( generate_makefile_app( $file_ref ), ${\MAKEFILE_APP_FILE} );
 
     write_to_file( generate_makefile( $file_ref ), ${\MAKEFILE_FILE} );
+
+    write_to_file( generate_dummy_creator_h( $file_ref ), ${\DUMMY_CREATOR_H_FILE} );
+
+    write_to_file( generate_dummy_creator_cpp( $file_ref ), ${\DUMMY_CREATOR_CPP_FILE} );
 
     write_to_file( generate_example( $file_ref ), ${\EXAMPLE_FILE} );
 }
