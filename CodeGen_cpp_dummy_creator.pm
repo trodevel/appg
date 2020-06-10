@@ -139,12 +139,12 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     if( $is_enum )
     {
         $res .=
-"\$res = 0;\n";
+"auto res = static_cast<${name}>( 0 );\n";
     }
     else
     {
         $res .=
-"\$res = new ${name};\n";
+"auto res = new ${name};\n";
     }
 
         $res .=
@@ -156,7 +156,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     {
         my @params = $$file_ref->get_obj_params__by_ref( \$msg );
 
-        $res .= "initialize__${name}( \$res\n";
+        $res .= "initialize__${name}( res\n";
 
         $res .= main::tabulate( generate_dummy_creator_cpp__to_body__init( \@params ) );
 
@@ -164,7 +164,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     }
 
     $res .=
-"return \$res;\n";
+"return res;\n";
 
     my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg );
 
