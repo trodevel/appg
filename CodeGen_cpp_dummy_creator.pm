@@ -46,7 +46,7 @@ sub generate_dummy_creator_h__to_name($$)
 
     my $name = $obj->{name};
 
-    my $res = "create_dummy__${name}()";
+    my $res = "${name} * create_dummy__${name}()";
 
     return $res;
 }
