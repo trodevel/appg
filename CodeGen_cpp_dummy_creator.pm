@@ -65,6 +65,13 @@ sub generate_dummy_creator_h_body_1_core($$)
     return $res;
 }
 
+sub generate_dummy_creator_h_body_1($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{enums} );
+}
+
 sub generate_dummy_creator_h_body_2($)
 {
     my ( $file_ref ) = @_;
@@ -87,6 +94,10 @@ sub generate_dummy_creator_h($)
 
     $body =
 
+"// enums\n".
+"\n" .
+generate_dummy_creator_h_body_1( $file_ref ) .
+"\n" .
 "// objects\n".
 "\n" .
 generate_dummy_creator_h_body_2( $file_ref ) .
