@@ -141,7 +141,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     if( $is_enum )
     {
         $res .=
-"auto res = static_cast<${name}>( 0 );\n";
+"auto res = static_cast<${name}>( ::basic_parser::create_dummy__uint8() );\n";
     }
     else
     {
