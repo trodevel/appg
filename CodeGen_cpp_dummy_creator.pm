@@ -40,26 +40,28 @@ use 5.010;
 
 ###############################################
 
-sub generate_dummy_creator_h__to_name($$)
+sub generate_dummy_creator_h__to_name($$$)
 {
-    my ( $file_ref, $obj ) = @_;
+    my ( $file_ref, $obj, $is_enum ) = @_;
 
     my $name = $obj->{name};
 
-    my $res = "${name} * create_dummy__${name}()";
+    my $prefix = $is_enum ? "" : " *";
+
+    my $res = "${name}${prefix} create_dummy__${name}()";
 
     return $res;
 }
 
-sub generate_dummy_creator_h_body_1_core($$)
+sub generate_dummy_creator_h_body_1_core($$$)
 {
-    my ( $file_ref, $objs_ref ) = @_;
+    my ( $file_ref, $objs_ref, $is_enum ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_dummy_creator_h__to_name( $file_ref, $_ ) . ";\n";
+        $res .= generate_dummy_creator_h__to_name( $file_ref, $_, $is_enum ) . ";\n";
     }
 
     return $res;
@@ -69,21 +71,21 @@ sub generate_dummy_creator_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{enums} );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{enums}, 1 );
 }
 
 sub generate_dummy_creator_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{objs} );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{objs}, 0 );
 }
 
 sub generate_dummy_creator_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{msgs} );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{msgs}, 0 );
 }
 
 sub generate_dummy_creator_h($)
@@ -166,7 +168,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     $res .=
 "return res;\n";
 
-    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg );
+    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg, $is_enum );
 
     $res =
 
