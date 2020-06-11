@@ -40,28 +40,28 @@ use 5.010;
 
 ###############################################
 
-sub generate_dummy_creator_h__to_name($$$)
+sub generate_dummy_creator_h__to_name($$$$)
 {
-    my ( $file_ref, $obj, $is_enum ) = @_;
+    my ( $file_ref, $obj, $is_enum, $is_message ) = @_;
 
     my $name = $obj->{name};
 
-    my $prefix = $is_enum ? "" : " *";
+    my $prefix = ( $is_enum or ( $is_message == 0 ) )? "" : " *";
 
     my $res = "${name}${prefix} create_dummy__${name}()";
 
     return $res;
 }
 
-sub generate_dummy_creator_h_body_1_core($$$)
+sub generate_dummy_creator_h_body_1_core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_enum ) = @_;
+    my ( $file_ref, $objs_ref, $is_enum, $is_message ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_dummy_creator_h__to_name( $file_ref, $_, $is_enum ) . ";\n";
+        $res .= generate_dummy_creator_h__to_name( $file_ref, $_, $is_enum, $is_message ) . ";\n";
     }
 
     return $res;
@@ -71,21 +71,21 @@ sub generate_dummy_creator_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{enums}, 1 );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{enums}, 1, 0 );
 }
 
 sub generate_dummy_creator_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{objs}, 0 );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_dummy_creator_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{msgs}, 0 );
+    return generate_dummy_creator_h_body_1_core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
 sub generate_dummy_creator_h($)
@@ -143,10 +143,15 @@ sub generate_dummy_creator_cpp__to_body($$$$)
         $res .=
 "auto res = static_cast<${name}>( ::basic_parser::create_dummy__uint8() );\n";
     }
-    else
+    elsif( $is_message )
     {
         $res .=
 "auto res = new ${name};\n";
+    }
+    else
+    {
+        $res .=
+"${name} res;\n";
     }
 
         $res .=
@@ -158,7 +163,9 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     {
         my @params = $$file_ref->get_obj_params__by_ref( \$msg );
 
-        $res .= "initialize__${name}( res\n";
+        my $prefix = ( $is_message ) ? "" : "& ";
+
+        $res .= "initialize__${name}( ${prefix}res\n";
 
         $res .= main::tabulate( generate_dummy_creator_cpp__to_body__init( \@params ) );
 
@@ -168,7 +175,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     $res .=
 "return res;\n";
 
-    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg, $is_enum );
+    my $func_name = generate_dummy_creator_h__to_name( $file_ref, $msg, $is_enum, $is_message );
 
     $res =
 
