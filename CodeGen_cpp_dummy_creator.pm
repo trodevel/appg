@@ -162,7 +162,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
 
         $res .= main::tabulate( generate_dummy_creator_cpp__to_body__init( \@params ) );
 
-        $res .= "    );\n";
+        $res .= "    );\n\n";
     }
 
     $res .=
