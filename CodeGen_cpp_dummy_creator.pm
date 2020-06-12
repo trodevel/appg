@@ -48,7 +48,7 @@ sub generate_dummy_creator_h__to_name($$$$)
 
     my $prefix = ( $is_enum or ( $is_message == 0 ) )? "" : " *";
 
-    my $res = "${name}${prefix} create_dummy__${name}()";
+    my $res = "${name}${prefix} create__${name}()";
 
     return $res;
 }
@@ -141,7 +141,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     if( $is_enum )
     {
         $res .=
-"auto res = static_cast<${name}>( ::basic_parser::create_dummy__uint8() );\n";
+"auto res = static_cast<${name}>( ::basic_parser::dummy::create__uint8() );\n";
     }
     elsif( $is_message )
     {
@@ -165,7 +165,7 @@ sub generate_dummy_creator_cpp__to_body($$$$)
 
         my $prefix = ( $is_message ) ? "" : "& ";
 
-        $res .= "initialize__${name}( ${prefix}res\n";
+        $res .= "::" . get_namespace_name( $$file_ref ) . "::initialize( ${prefix}res\n";
 
         $res .= main::tabulate( generate_dummy_creator_cpp__to_body__init( \@params ) );
 
@@ -240,6 +240,8 @@ sub generate_dummy_creator_cpp($)
 "\n" .
     generate_dummy_creator_cpp__to_message( $file_ref )
 ;
+
+    $body = gtcpp::namespacize( 'dummy', $body );
 
     my @includes = ( );
 
