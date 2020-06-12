@@ -82,6 +82,7 @@ sub generate_makefile_lib($)
 "\tobject_initializer.cpp \\\n" .
 "\tparser.cpp \\\n" .
 "\tstr_helper.cpp \\\n" .
+"\tdummy_creator.cpp \\\n" .
 "\n" .
 "LIB_EXT_LIB_NAMES = \\\n" .
 "\tbasic_parser \\\n" .
