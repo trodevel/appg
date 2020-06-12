@@ -95,8 +95,20 @@ sub generate_example__to_object__body($$$$$)
     my $res =
 
 "void example_${name}()\n" .
-"{\n" .
-"    $namespace::$name obj;\n" .
+"{\n";
+
+    if( $is_message == 1 )
+    {
+        $res .=
+"    auto & obj = * ${namespace}::dummy::create__${name}();\n";
+    }
+    else
+    {
+        $res .=
+"    auto obj = ${namespace}::dummy::create__${name}();\n";
+    }
+
+    $res .=
 "\n" .
 "    std::cout << \"$name : STR : \" << ${namespace}::str_helper::to_string( obj ) << std::endl;\n";
 
@@ -106,7 +118,9 @@ sub generate_example__to_object__body($$$$$)
 "\n" .
 "    std::cout << \"$name : CSV : \" << ${namespace}::csv_helper::to_csv( obj ) << std::endl;\n" .
 "\n" .
-"    validate( obj, \"$name\" );\n";
+"    validate( obj, \"$name\" );\n" .
+"\n" .
+"    delete & obj;\n";
     }
 
     $res .=
@@ -183,6 +197,7 @@ sub generate_example($)
 "#include \"protocol.h\"\n" .
 "#include \"str_helper.h\"\n" .
 "#include \"csv_helper.h\"\n" .
+"#include \"dummy_creator.h\"\n" .
 "#include \"validator.h\"\n" .
 "\n" .
 "#include <iostream>       // std::cout\n" .
