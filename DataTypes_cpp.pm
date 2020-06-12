@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13237 $ $Date:: 2020-06-10 #$ $Author: serge $
+# $Revision: 13253 $ $Date:: 2020-06-12 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -148,7 +148,7 @@ sub to_cpp__to_generic_request_func_name()
 sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
-    return "::basic_parser::create_dummy__bool";
+    return "::basic_parser::dummy::create__bool";
 }
 
 sub to_cpp__to_html_func_name()
@@ -221,7 +221,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__" . substr( $self->to_cpp_decl(), 0, -2 );
+    return "::basic_parser::dummy::create__" . substr( $self->to_cpp_decl(), 0, -2 );
 }
 
 sub to_cpp__to_html_func_name()
@@ -290,7 +290,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__" . $self->to_cpp_decl();
+    return "::basic_parser::dummy::create__" . $self->to_cpp_decl();
 }
 
 sub to_cpp__to_html_func_name()
@@ -355,7 +355,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__string";
+    return "::basic_parser::dummy::create__string";
 }
 
 sub to_cpp__to_html_func_name()
@@ -443,7 +443,7 @@ sub to_cpp__create_dummy_value()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::" ) : "";
 
-    return "${pref}create_dummy__" . $self->{name};
+    return "${pref}dummy::create__" . $self->{name};
 }
 
 sub to_cpp__to_html_func_name()
@@ -534,7 +534,7 @@ sub to_cpp__create_dummy_value()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "::" . $self->{namespace} . "::" ) : "";
 
-    return "${pref}create_dummy__" . $self->{name};
+    return "${pref}dummy::create__" . $self->{name};
 }
 
 sub to_cpp__to_html_func_name()
@@ -608,7 +608,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__vector_t";
+    return "::basic_parser::dummy::create__vector_t";
 }
 
 sub to_cpp__to_html_func_name()
@@ -679,7 +679,7 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
 
-    return "::basic_parser::create_dummy__map_t";
+    return "::basic_parser::dummy::create__map_t";
 }
 
 sub to_cpp__to_html_func_name()
