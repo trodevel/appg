@@ -109,6 +109,8 @@ generate_dummy_creator_h_body_2( $file_ref ) .
 generate_dummy_creator_h_body_4( $file_ref ) .
 "\n";
 
+    $body = gtcpp::namespacize( 'dummy', $body );
+
     my $res = to_include_guards( $$file_ref, $body, "", "dummy_creator", 0, 0, [ "protocol" ], [] );
 
     return $res;
