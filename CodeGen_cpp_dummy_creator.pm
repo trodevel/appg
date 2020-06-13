@@ -118,6 +118,17 @@ generate_dummy_creator_h_body_4( $file_ref ) .
 
 ###############################################
 
+sub generate_dummy_creator_cpp__to_body__init_param($)
+{
+    my ( $param ) = @_;
+
+    my $res = "";
+
+    $res .= $param->to_cpp__create_dummy_value() . "()";
+
+    return $res;
+}
+
 sub generate_dummy_creator_cpp__to_body__init($)
 {
     my ( $params_ref ) = @_;
@@ -126,7 +137,7 @@ sub generate_dummy_creator_cpp__to_body__init($)
 
     foreach( @{ $params_ref } )
     {
-        $res .= ", " . $_->to_cpp__create_dummy_value() . "()\n";
+        $res .= ", " . generate_dummy_creator_cpp__to_body__init_param( $_ ) . "\n";
     }
 
     return $res;
