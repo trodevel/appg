@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13253 $ $Date:: 2020-06-12 #$ $Author: serge $
+# $Revision: 13264 $ $Date:: 2020-06-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -90,6 +90,18 @@ sub to_cpp__create_dummy_value()
 {
     my( $self ) = @_;
     die "#error 'not implemented yet'";
+}
+
+sub to_cpp__create_dummy_value_func_ptr()
+{
+    my( $self ) = @_;
+    return "& " . $self->to_cpp__create_dummy_value();
+}
+
+sub to_cpp__create_dummy_value_func_ptr_type()
+{
+    my( $self ) = @_;
+    return $self->to_cpp_decl() . "(*)()";
 }
 
 ############################################################
