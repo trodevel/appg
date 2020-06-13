@@ -120,11 +120,38 @@ generate_dummy_creator_h_body_4( $file_ref ) .
 
 sub generate_dummy_creator_cpp__to_body__init_param($)
 {
-    my ( $param ) = @_;
+    my ( $datatype ) = @_;
 
     my $res = "";
 
-    $res .= $param->to_cpp__create_dummy_value() . "()";
+#    print "DEBUG: type = " . ::blessed( $datatype ). "\n";
+
+    if( ::blessed( $datatype ) and $datatype->isa( 'Vector' ))
+    {
+        $res = $datatype->to_cpp__create_dummy_value() .
+            "<" .
+            $datatype->{value_type}->to_cpp_decl() . ", " .
+            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr_type() .
+            ">( " .
+            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr() . " ) // Array";
+    }
+    elsif( ::blessed( $datatype ) and $datatype->isa( 'Map' ))
+    {
+        $res = $datatype->to_cpp__create_dummy_value() .
+            "<" .
+            $datatype->{key_type}->to_cpp_decl() . ", " .
+            $datatype->{value_type}->to_cpp_decl() . ", " .
+            $datatype->{key_type}->to_cpp__create_dummy_value_func_ptr_type() . ", " .
+            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr_type() .
+            ">( " .
+            $datatype->{key_type}->to_cpp__create_dummy_value_func_ptr() . ", " .
+            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr() .
+            " ) // Map";
+    }
+    else
+    {
+        $res = $datatype->to_cpp__create_dummy_value() . "()";
+    }
 
     return $res;
 }
@@ -148,6 +175,8 @@ sub generate_dummy_creator_cpp__to_body($$$$)
     my ( $file_ref, $msg, $is_enum, $is_message ) = @_;
 
     my $name = $msg->{name};
+
+    print STDERR "generate_dummy_creator_cpp__to_body: name=$name\n";
 
     my $res = "";
 
