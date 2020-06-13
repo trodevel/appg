@@ -86,7 +86,6 @@ sub generate_makefile_lib($)
 "\n" .
 "LIB_EXT_LIB_NAMES = \\\n" .
 "\tbasic_parser \\\n" .
-"\tgeneric_protocol \\\n" .
 "\tgeneric_request \\\n" .
     generate_makefile_lib__to_includes( $file_ref ) .
 "\tutils \\\n" .
@@ -124,7 +123,6 @@ sub generate_makefile_app($)
 "\n" .
 "APP_EXT_LIB_NAMES = \\\n" .
 "\tbasic_parser \\\n" .
-"\tgeneric_protocol \\\n" .
 "\tgeneric_request \\\n" .
     generate_makefile_lib__to_includes( $file_ref ) .
 "\tutils \\\n" .
