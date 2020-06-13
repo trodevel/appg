@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13205 $ $Date:: 2020-06-06 #$ $Author: serge $
+# $Revision: 13262 $ $Date:: 2020-06-13 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Objects;
@@ -167,7 +167,7 @@ sub get_base_class_php()
         die "no base class for object $self->{name}";
     }
 
-    return $self->{base_class};
+    return gtphp::convert_namespace_name_to_php( $self->{base_class} );
 }
 
 ############################################################
