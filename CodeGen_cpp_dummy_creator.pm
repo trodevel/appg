@@ -140,12 +140,12 @@ sub generate_dummy_creator_cpp__to_body__init_param($)
         $res = $datatype->to_cpp__create_dummy_value() .
             "<" .
             $datatype->{key_type}->to_cpp_decl() . ", " .
-            $datatype->{value_type}->to_cpp_decl() . ", " .
+            $datatype->{mapped_type}->to_cpp_decl() . ", " .
             $datatype->{key_type}->to_cpp__create_dummy_value_func_ptr_type() . ", " .
-            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr_type() .
+            $datatype->{mapped_type}->to_cpp__create_dummy_value_func_ptr_type() .
             ">( " .
             $datatype->{key_type}->to_cpp__create_dummy_value_func_ptr() . ", " .
-            $datatype->{value_type}->to_cpp__create_dummy_value_func_ptr() .
+            $datatype->{mapped_type}->to_cpp__create_dummy_value_func_ptr() .
             " ) // Map";
     }
     else
