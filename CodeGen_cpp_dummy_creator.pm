@@ -182,8 +182,16 @@ sub generate_dummy_creator_cpp__to_body($$$$)
 
     if( $is_enum )
     {
-        $res .=
+        if( scalar $msg->{elements} > 0 )
+        {
+            $res .=
+"auto res = $msg->{name}::$msg->{elements}[0]->{name};\n";
+        }
+        else
+        {
+            $res .=
 "auto res = static_cast<${name}>( ::basic_parser::dummy::create__uint8() );\n";
+        }
     }
     elsif( $is_message )
     {
