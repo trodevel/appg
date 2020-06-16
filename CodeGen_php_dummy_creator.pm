@@ -202,6 +202,20 @@ sub generate_dummy_creator_php__to_message($)
     return generate_dummy_creator_php__to_object__core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
+sub generate_dummy_creator_php__to_includes($)
+{
+    my ( $file_ref ) = @_;
+
+    my @res;
+
+    foreach( @{ $$file_ref->{includes} } )
+    {
+        push( @res, $_ . "/dummy_creator" );
+    }
+
+    return @res;
+}
+
 sub generate_dummy_creator_php($)
 {
     my ( $file_ref ) = @_;
@@ -224,6 +238,9 @@ sub generate_dummy_creator_php($)
     my @includes = ( );
 
     push( @includes, "basic_parser/dummy_creator" );
+
+    push( @includes, generate_dummy_creator_php__to_includes( $file_ref ) );
+
     push( @includes, "object_initializer" );
 
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
