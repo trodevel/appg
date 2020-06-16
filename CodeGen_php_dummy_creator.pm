@@ -127,8 +127,16 @@ sub generate_dummy_creator_php__to_body($$$$)
 
     if( $is_enum )
     {
-        $res .=
-"\$res = 0;\n";
+        if( scalar $msg->{elements} > 0 )
+        {
+            $res .=
+"\$res = $msg->{name}_$msg->{elements}[0]->{name};\n";
+        }
+        else
+        {
+            $res .=
+"\$res = \basic_parser\create_dummy__uint();\n";
+        }
     }
     else
     {
