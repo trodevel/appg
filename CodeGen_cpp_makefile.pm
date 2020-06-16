@@ -125,7 +125,14 @@ sub generate_makefile_app($)
 "\tbasic_parser \\\n" .
 "\tgeneric_request \\\n" .
     generate_makefile_lib__to_includes( $file_ref ) .
-"\tutils \\\n" .
+"\tutils \\\n";
+
+    if( $$file_ref->has_base_prot() )
+    {
+        $res .= "\t" . $$file_ref->{base_prot} . " \\\n";
+    }
+
+    $res .=
 "\n";
 
     return $res;
