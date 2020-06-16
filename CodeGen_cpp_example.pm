@@ -216,8 +216,13 @@ sub generate_example($)
 "\n" .
     generate_example__to_message( $file_ref ) .
 "\n" .
-"int main()\n" .
+"int main( int argc, char ** argv )\n" .
 "{\n" .
+"    if( argc > 1 )\n" .
+"    {\n" .
+"        std::srand( std::stoi( std::string( argv[1] ) ) );\n" .
+"    }\n" .
+"\n" .
 "    // enums\n" .
 "\n" .
     generate_example__function_call__enum( $file_ref ) .
