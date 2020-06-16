@@ -135,7 +135,7 @@ sub generate_dummy_creator_php__to_body($$$$)
         else
         {
             $res .=
-"\$res = \basic_parser\create_dummy__uint();\n";
+"\$res = \basic_parser\create_dummy__int();\n";
         }
     }
     else
