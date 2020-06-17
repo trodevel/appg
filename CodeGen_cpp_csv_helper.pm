@@ -396,7 +396,9 @@ sub generate_csv_helper_cpp($)
 "    if( it != funcs.end() )\n" .
 "        return it->second( os, r );\n" .
 "\n" .
-"    return ::generic_protocol::csv_helper::write( os, r );\n" .
+    ( $$file_ref->has_base_prot() ? 
+"    return ::$$file_ref->{base_prot}::csv_helper::write( os, r );\n" :
+"    return os;\n" ) .
 "}\n" .
 "\n"
 ;
