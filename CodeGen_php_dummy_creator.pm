@@ -130,7 +130,7 @@ sub generate_dummy_creator_php__to_body($$$$)
         if( scalar $msg->{elements} > 0 )
         {
             $res .=
-"\$res = $msg->{name}_$msg->{elements}[0]->{name};\n";
+"\$res = $msg->{name}__$msg->{elements}[0]->{name};\n";
         }
         else
         {

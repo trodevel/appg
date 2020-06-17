@@ -46,7 +46,7 @@ sub generate_html_helper_php__to_enum__body__init_members__body($$)
 {
     my ( $enum_name, $name ) = @_;
 
-    return "${enum_name}_${name} => '$name',";
+    return "${enum_name}__${name} => '$name',";
 }
 
 sub generate_html_helper_php__to_enum__body__init_members($)

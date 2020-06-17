@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13015 $ $Date:: 2020-05-12 #$ $Author: serge $
+# $Revision: 13290 $ $Date:: 2020-06-17 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -33,10 +33,10 @@ sub to_php_decl($)
 
     if( defined $self->{value} && $self->{value} ne '' )
     {
-        return sprintf( "const %s_%-20s = %s;", $enum_name, $self->{name}, $self->{value} );
+        return sprintf( "const %s__%-20s = %s;", $enum_name, $self->{name}, $self->{value} );
     }
 
-    return sprintf( "const %s_%-20s = 0;", $enum_name, $self->{name} );
+    return sprintf( "const %s__%-20s = 0;", $enum_name, $self->{name} );
 }
 
 ############################################################
