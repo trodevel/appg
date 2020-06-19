@@ -50,7 +50,7 @@ sub generate_parser_php__to_enum__body($$)
 
     my $res =
 
-"function parse_${name}( & \$csv_arr, & \$offset )\n" .
+"function parse__${name}( & \$csv_arr, & \$offset )\n" .
 "{\n" .
 "    \$res = \\basic_parser\\parse_int( \$csv_arr, \$offset );\n" .
 "\n" .
@@ -139,7 +139,7 @@ sub generate_parser_php__to_object__body($$$$$)
 
     my $res =
 
-"function parse_${name}( ${extra_param_1}& \$csv_arr${extra_param} )\n" .
+"function parse__${name}( ${extra_param_1}& \$csv_arr${extra_param} )\n" .
 "{\n";
 
     if( $is_base_msg == 0 )
@@ -223,7 +223,7 @@ sub generate_parser_php__write__body($$)
 {
     my ( $namespace, $name ) = @_;
 
-    return "'$namespace\\$name'         => 'parse_${name}'";
+    return "'$namespace\\$name'         => 'parse__${name}'";
 }
 
 sub generate_parser_php__write($$)
