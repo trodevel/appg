@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13211 $ $Date:: 2020-06-08 #$ $Author: serge $
+# $Revision: 13298 $ $Date:: 2020-06-19 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -100,7 +100,7 @@ sub to_php__to_string_func_name()
 sub to_php__parse_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\parse_bool";
+    return "\\basic_parser\\parse__bool";
 }
 
 sub to_php__to_generic_request_func_name()
@@ -160,7 +160,7 @@ sub to_php__to_string_func_name()
 sub to_php__parse_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\parse_int";
+    return "\\basic_parser\\parse__int";
 }
 
 sub to_php__to_generic_request_func_name()
@@ -216,7 +216,7 @@ sub to_php__to_string_func_name()
 sub to_php__parse_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\parse_float";
+    return "\\basic_parser\\parse__float";
 }
 
 sub to_php__to_generic_request_func_name()
@@ -268,7 +268,7 @@ sub to_php__to_string_func_name()
 sub to_php__parse_func_name()
 {
     my( $self ) = @_;
-    return "\\basic_parser\\parse_string";
+    return "\\basic_parser\\parse__string";
 }
 
 sub to_php__to_generic_request_func_name()
@@ -332,7 +332,7 @@ sub to_php__parse_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}parse_" . $self->{name};
+    return "${pref}parse__" . $self->{name};
 }
 
 sub to_php__to_generic_request_func_name()
@@ -405,7 +405,7 @@ sub to_php__parse_func_name()
 
     my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
 
-    return "${pref}parse_" . $self->{name};
+    return "${pref}parse__" . $self->{name};
 }
 
 sub to_php__to_generic_request_func_name()
@@ -469,7 +469,7 @@ sub to_php__parse_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\parse_vector";
+    return "\\basic_parser\\parse__vector";
 }
 
 sub to_php__to_generic_request_func_name()
@@ -526,7 +526,7 @@ sub to_php__parse_func_name()
 {
     my( $self ) = @_;
 
-    return "\\basic_parser\\parse_map";
+    return "\\basic_parser\\parse__map";
 }
 
 sub to_php__to_generic_request_func_name()

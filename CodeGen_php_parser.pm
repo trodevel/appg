@@ -52,7 +52,7 @@ sub generate_parser_php__to_enum__body($$)
 
 "function parse__${name}( & \$csv_arr, & \$offset )\n" .
 "{\n" .
-"    \$res = \\basic_parser\\parse_int( \$csv_arr, \$offset );\n" .
+"    \$res = \\basic_parser\\parse__int( \$csv_arr, \$offset );\n" .
 "\n" .
 "    return \$res;\n" .
 "}\n";
