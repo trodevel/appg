@@ -103,6 +103,33 @@ generate_dummy_creator_h_body_4( $file_ref ) .
 
 ###############################################
 
+sub generate_dummy_creator_php__to_body__init_param($)
+{
+    my ( $datatype ) = @_;
+
+    my $res = "";
+
+#    print "DEBUG: type = " . ::blessed( $datatype ). "\n";
+
+    if( ::blessed( $datatype ) and $datatype->isa( 'Vector' ))
+    {
+        $res = $datatype->to_php__create_dummy_value() . "( '" .
+            $datatype->{value_type}->to_php__create_dummy_value() . "' ) // Array";
+    }
+    elsif( ::blessed( $datatype ) and $datatype->isa( 'Map' ))
+    {
+        $res = $datatype->to_php__create_dummy_value() . "(" .
+            " '" . $datatype->{key_type}->to_php__create_dummy_value() . "', " .
+            " '" . $datatype->{mapped_type}->to_php__create_dummy_value() . "' ) // Map";
+    }
+    else
+    {
+        $res = $datatype->to_php__create_dummy_value() . "()";
+    }
+
+    return $res;
+}
+
 sub generate_dummy_creator_php__to_body__init($)
 {
     my ( $params_ref ) = @_;
@@ -111,7 +138,7 @@ sub generate_dummy_creator_php__to_body__init($)
 
     foreach( @{ $params_ref } )
     {
-        $res .= ", " . $_->to_php__create_dummy_value() . "()\n";
+        $res .= ", " . generate_dummy_creator_php__to_body__init_param( $_ ) . "\n";
     }
 
     return $res;
