@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13298 $ $Date:: 2020-06-19 #$ $Author: serge $
+# $Revision: 13307 $ $Date:: 2020-06-24 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -29,43 +29,43 @@ package Generic;
 sub to_php_decl()
 {
     my( $self ) = @_;
-    return "#error 'not implemented yet'";
+    die "#error 'not implemented yet'";
 }
 
 sub to_php_func_param()
 {
     my( $self ) = @_;
-    return "#error 'not implemented yet'";
-}
-
-sub to_php__to_string_func_name()
-{
-    my( $self ) = @_;
-    return "#error 'not implemented yet'";
-}
-
-sub to_php__parse_func_name()
-{
-    my( $self ) = @_;
-    return "#error 'not implemented yet'";
-}
-
-sub to_php__to_generic_request_func_name()
-{
-    my( $self ) = @_;
     die "#error 'not implemented yet'";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     die "#error 'not implemented yet'";
 }
 
-#sub to_php__to_html_func_name()
+sub to_php__parse_func_name($)
+{
+    my( $self, $namespace ) = @_;
+    die "#error 'not implemented yet'";
+}
+
+sub to_php__to_generic_request_func_name($)
+{
+    my( $self, $namespace ) = @_;
+    die "#error 'not implemented yet'";
+}
+
+sub to_php__create_dummy_value($)
+{
+    my( $self, $namespace ) = @_;
+    die "#error 'not implemented yet'";
+}
+
+#sub to_php__to_html_func_name($)
 #{
-#    my( $self ) = @_;
-#    return "#error 'not implemented yet'";
+#    my( $self, $namespace ) = @_;
+#    die "#error 'not implemented yet'";
 #}
 
 ############################################################
@@ -91,33 +91,33 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_string__bool";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\parse__bool";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_generic_request__bool";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\create_dummy__bool";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_html__bool";
 }
 
@@ -151,33 +151,33 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_string__int";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\parse__int";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_generic_request__int";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\create_dummy__int";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_html__int";
 }
 
@@ -207,33 +207,33 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_string__float";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\parse__float";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_generic_request__float";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\create_dummy__float";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_html__float";
 }
 
@@ -259,33 +259,33 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_string__string";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\parse__string";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_generic_request__string";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\create_dummy__string";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
     return "\\basic_parser\\to_html__string";
 }
 
@@ -317,47 +317,47 @@ sub to_php__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_string__" . $self->{name};
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}parse__" . $self->{name};
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_generic_request__" . $self->{name};
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}create_dummy__" . $self->{name};
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_html__" . $self->{name};
 }
@@ -390,47 +390,47 @@ sub to_php__to_parse_function_name()
     return "${pref}get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_string__" . $self->{name};
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}parse__" . $self->{name};
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_generic_request__" . $self->{name};
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}create_dummy__" . $self->{name};
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
-    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : "";
+    my $pref = ( $self->{namespace} ne '' ) ? ( "\\" . $self->{namespace} . "\\" ) : ( (defined $namespace) ? ( "\\" . $namespace . "\\" ) : "" );
 
     return "${pref}to_html__" . $self->{name};
 }
@@ -458,37 +458,37 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\to_string__vector";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\parse__vector";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\to_generic_request__vector";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\create_dummy__vector";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\to_html__vector";
 }
@@ -515,37 +515,37 @@ sub to_php__to_parse_function_name()
     return "basic_parser::get_value_or_throw";
 }
 
-sub to_php__to_string_func_name()
+sub to_php__to_string_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "to_string__map";
 }
 
-sub to_php__parse_func_name()
+sub to_php__parse_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\parse__map";
 }
 
-sub to_php__to_generic_request_func_name()
+sub to_php__to_generic_request_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\to_generic_request__map";
 }
 
-sub to_php__create_dummy_value()
+sub to_php__create_dummy_value($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\create_dummy__map";
 }
 
-sub to_php__to_html_func_name()
+sub to_php__to_html_func_name($)
 {
-    my( $self ) = @_;
+    my( $self, $namespace ) = @_;
 
     return "\\basic_parser\\to_html__map";
 }

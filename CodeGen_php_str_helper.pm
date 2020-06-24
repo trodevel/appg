@@ -107,9 +107,9 @@ sub generate_str_helper_php__to_enum($)
     return $res;
 }
 
-sub generate_str_helper_php__to_object__body__init_members__body($)
+sub generate_str_helper_php__to_object__body__init_members__body($$)
 {
-    my ( $obj ) = @_;
+    my ( $obj, $namespace ) = @_;
 
     my $res;
 
@@ -119,32 +119,32 @@ sub generate_str_helper_php__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_string_func_name() . "' ); // Array";
+        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_string_func_name( $namespace ) . "' ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() .
             "( \$r->${name}, '" .
-            $obj->{data_type}->{key_type}->to_php__to_string_func_name() . "', '" .
-            $obj->{data_type}->{mapped_type}->to_php__to_string_func_name() . "' ); // Map";
+            $obj->{data_type}->{key_type}->to_php__to_string_func_name( $namespace ) . "', '" .
+            $obj->{data_type}->{mapped_type}->to_php__to_string_func_name( $namespace ) . "' ); // Map";
     }
     else
     {
-        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name() . "( \$r->${name} );";
+        $res = "    \$res .= \" ${name}=\" . " . $obj->{data_type}->to_php__to_string_func_name( undef ) . "( \$r->${name} );";
     }
 
     return $res;
 }
 
-sub generate_str_helper_php__to_object__body__init_members($)
+sub generate_str_helper_php__to_object__body__init_members($$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $namespace ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_str_helper_php__to_object__body__init_members__body( $_ ) . "\n";
+        $res = $res . generate_str_helper_php__to_object__body__init_members__body( $_, $namespace ) . "\n";
     }
 
     return $res;
@@ -184,7 +184,7 @@ sub generate_str_helper_php__to_object__body($$$$)
     }
 
     $res .=
-    generate_str_helper_php__to_object__body__init_members( $msg ) .
+    generate_str_helper_php__to_object__body__init_members( $msg, $namespace ) .
 "\n";
 
     if( $is_message == 0 )

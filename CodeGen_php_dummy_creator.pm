@@ -103,9 +103,9 @@ generate_dummy_creator_h_body_4( $file_ref ) .
 
 ###############################################
 
-sub generate_dummy_creator_php__to_body__init_param($)
+sub generate_dummy_creator_php__to_body__init_param($$)
 {
-    my ( $datatype ) = @_;
+    my ( $datatype, $namespace ) = @_;
 
     my $res = "";
 
@@ -114,31 +114,31 @@ sub generate_dummy_creator_php__to_body__init_param($)
     if( ::blessed( $datatype ) and $datatype->isa( 'Vector' ))
     {
         $res = $datatype->to_php__create_dummy_value() . "( '" .
-            $datatype->{value_type}->to_php__create_dummy_value() . "' ) // Array";
+            $datatype->{value_type}->to_php__create_dummy_value( $namespace ) . "' ) // Array";
     }
     elsif( ::blessed( $datatype ) and $datatype->isa( 'Map' ))
     {
         $res = $datatype->to_php__create_dummy_value() . "(" .
-            " '" . $datatype->{key_type}->to_php__create_dummy_value() . "', " .
-            " '" . $datatype->{mapped_type}->to_php__create_dummy_value() . "' ) // Map";
+            " '" . $datatype->{key_type}->to_php__create_dummy_value( $namespace ) . "', " .
+            " '" . $datatype->{mapped_type}->to_php__create_dummy_value( $namespace ) . "' ) // Map";
     }
     else
     {
-        $res = $datatype->to_php__create_dummy_value() . "()";
+        $res = $datatype->to_php__create_dummy_value( undef ) . "()";
     }
 
     return $res;
 }
 
-sub generate_dummy_creator_php__to_body__init($)
+sub generate_dummy_creator_php__to_body__init($$)
 {
-    my ( $params_ref ) = @_;
+    my ( $params_ref, $namespace ) = @_;
 
     my $res = "";
 
     foreach( @{ $params_ref } )
     {
-        $res .= ", " . generate_dummy_creator_php__to_body__init_param( $_ ) . "\n";
+        $res .= ", " . generate_dummy_creator_php__to_body__init_param( $_, $namespace ) . "\n";
     }
 
     return $res;
@@ -182,7 +182,7 @@ sub generate_dummy_creator_php__to_body($$$$)
 
         $res .= "initialize__${name}( \$res\n";
 
-        $res .= main::tabulate( generate_dummy_creator_php__to_body__init( \@params ) );
+        $res .= main::tabulate( generate_dummy_creator_php__to_body__init( \@params, get_namespace_name( $$file_ref ) ) );
 
         $res .= "    );\n";
     }

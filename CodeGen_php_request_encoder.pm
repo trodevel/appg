@@ -74,9 +74,9 @@ sub generate_request_encoder_php__to_enum($)
     return $res;
 }
 
-sub generate_request_encoder_php__to_object__body__init_members__body($$$)
+sub generate_request_encoder_php__to_object__body__init_members__body($$$$)
 {
-    my ( $is_message, $is_base_msg, $obj ) = @_;
+    my ( $is_message, $is_base_msg, $obj, $namespace ) = @_;
 
     my $res;
 
@@ -90,32 +90,32 @@ sub generate_request_encoder_php__to_object__body__init_members__body($$$)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() . "( $full_key_name, \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_generic_request_func_name() . "' ); // Array";
+        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() . "( $full_key_name, \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_generic_request_func_name( $namespace ) . "' ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() .
             "( $full_key_name, \$r->${name}, '" .
-            $obj->{data_type}->{key_type}->to_php__to_generic_request_func_name() . "', '" .
-            $obj->{data_type}->{mapped_type}->to_php__to_generic_request_func_name() . "' ); // Map";
+            $obj->{data_type}->{key_type}->to_php__to_generic_request_func_name( $namespace ) . "', '" .
+            $obj->{data_type}->{mapped_type}->to_php__to_generic_request_func_name( $namespace ) . "' ); // Map";
     }
     else
     {
-        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name() . "( $full_key_name, \$r->${name} );";
+        $res = "    \$res .= \"&\" . " . $obj->{data_type}->to_php__to_generic_request_func_name( undef ) . "( $full_key_name, \$r->${name} );";
     }
 
     return $res;
 }
 
-sub generate_request_encoder_php__to_object__body__init_members($$$)
+sub generate_request_encoder_php__to_object__body__init_members($$$$)
 {
-    my ( $is_message, $is_base_msg, $msg ) = @_;
+    my ( $is_message, $is_base_msg, $msg, $namespace ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_request_encoder_php__to_object__body__init_members__body( $is_message, $is_base_msg, $_ ) . "\n";
+        $res = $res . generate_request_encoder_php__to_object__body__init_members__body( $is_message, $is_base_msg, $_, $namespace ) . "\n";
     }
 
     return $res;
@@ -163,7 +163,7 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 
 
     $res .=
-    generate_request_encoder_php__to_object__body__init_members( $is_message, $is_base_msg, $msg ) .
+    generate_request_encoder_php__to_object__body__init_members( $is_message, $is_base_msg, $msg, $namespace ) .
 "\n";
 
     $res .=

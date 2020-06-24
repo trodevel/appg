@@ -74,9 +74,9 @@ sub generate_parser_php__to_enum($)
     return $res;
 }
 
-sub generate_parser_php__to_object__body__init_members__body($)
+sub generate_parser_php__to_object__body__init_members__body($$)
 {
-    my ( $obj ) = @_;
+    my ( $obj, $namespace ) = @_;
 
     my $res;
 
@@ -86,32 +86,32 @@ sub generate_parser_php__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() . "( \$csv_arr, \$offset, '" . $obj->{data_type}->{value_type}->to_php__parse_func_name() . "' ); // Array";
+        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() . "( \$csv_arr, \$offset, '" . $obj->{data_type}->{value_type}->to_php__parse_func_name( $namespace ) . "' ); // Array";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() .
             "( \$csv_arr, \$offset, '" .
-            $obj->{data_type}->{key_type}->to_php__parse_func_name() . "', '" .
-            $obj->{data_type}->{mapped_type}->to_php__parse_func_name() . "' ); // Map";
+            $obj->{data_type}->{key_type}->to_php__parse_func_name( $namespace ) . "', '" .
+            $obj->{data_type}->{mapped_type}->to_php__parse_func_name( $namespace ) . "' ); // Map";
     }
     else
     {
-        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name() . "( \$csv_arr, \$offset );";
+        $res = "    \$res->${name} = " . $obj->{data_type}->to_php__parse_func_name( undef ) . "( \$csv_arr, \$offset );";
     }
 
     return $res;
 }
 
-sub generate_parser_php__to_object__body__init_members($)
+sub generate_parser_php__to_object__body__init_members($$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $namespace ) = @_;
 
     my $res = "";
 
     foreach( @{ $msg->{members} } )
     {
-        $res = $res . generate_parser_php__to_object__body__init_members__body( $_ ) . "\n";
+        $res = $res . generate_parser_php__to_object__body__init_members__body( $_, $namespace ) . "\n";
     }
 
     return $res;
@@ -168,7 +168,7 @@ sub generate_parser_php__to_object__body($$$$$)
     }
 
     $res .=
-    generate_parser_php__to_object__body__init_members( $msg ) .
+    generate_parser_php__to_object__body__init_members( $msg, $namespace ) .
 "\n";
 
     if( $is_base_msg == 0 )

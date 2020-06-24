@@ -150,9 +150,9 @@ sub generate_html_helper_php__to_object__body__init_headers($)
     return $res;
 }
 
-sub generate_html_helper_php__to_object__body__init_members__body($)
+sub generate_html_helper_php__to_object__body__init_members__body($$)
 {
-    my ( $obj ) = @_;
+    my ( $obj, $namespace ) = @_;
 
     my $res;
 
@@ -162,26 +162,26 @@ sub generate_html_helper_php__to_object__body__init_members__body($)
 
     if( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Vector' ))
     {
-        $res = $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_html_func_name() . "' )";
+        $res = $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name}, '" . $obj->{data_type}->{value_type}->to_php__to_html_func_name( $namespace ) . "' )";
     }
     elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'Map' ))
     {
         $res = $obj->{data_type}->to_php__to_html_func_name() .
             "( \$r->${name}, '" .
-            $obj->{data_type}->{key_type}->to_php__to_html_func_name() . "', '" .
-            $obj->{data_type}->{mapped_type}->to_php__to_html_func_name() . "' )";
+            $obj->{data_type}->{key_type}->to_php__to_html_func_name( $namespace ) . "', '" .
+            $obj->{data_type}->{mapped_type}->to_php__to_html_func_name( $namespace ) . "' )";
     }
     else
     {
-        $res = $obj->{data_type}->to_php__to_html_func_name() . "( \$r->${name} )";
+        $res = $obj->{data_type}->to_php__to_html_func_name( undef ) . "( \$r->${name} )";
     }
 
     return $res;
 }
 
-sub generate_html_helper_php__to_object__body__init_members($)
+sub generate_html_helper_php__to_object__body__init_members($$)
 {
-    my ( $msg ) = @_;
+    my ( $msg, $namespace ) = @_;
 
     my $res = "";
 
@@ -196,7 +196,7 @@ sub generate_html_helper_php__to_object__body__init_members($)
             $res .= "\n";
         }
 
-        $res .= generate_html_helper_php__to_object__body__init_members__body( $_ );
+        $res .= generate_html_helper_php__to_object__body__init_members__body( $_, $namespace );
     }
 
     return $res;
@@ -241,7 +241,7 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     $res .= "    \$data = array(";
 
-    my $data = generate_html_helper_php__to_object__body__init_members( $msg );
+    my $data = generate_html_helper_php__to_object__body__init_members( $msg, $namespace );
 
     if( $is_message )
     {
