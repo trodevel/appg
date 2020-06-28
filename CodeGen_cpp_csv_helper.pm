@@ -40,22 +40,24 @@ use 5.010;
 
 ###############################################
 
-sub generate_csv_helper_h__to_obj_name($)
+sub generate_csv_helper_h__to_obj_name($$)
 {
-    my ( $name ) = @_;
+    my ( $name, $is_enum ) = @_;
 
-    return "std::ostream & write( std::ostream & os, const $name & r );";
+    my $prefix = $is_enum ? "" : "& ";
+
+    return "std::ostream & write( std::ostream & os, const $name ${prefix}r );";
 }
 
-sub generate_csv_helper_h_body_1_core($)
+sub generate_csv_helper_h_body_1_core($$)
 {
-    my ( $objs_ref ) = @_;
+    my ( $objs_ref, $is_enum ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_csv_helper_h__to_obj_name( $_->{name} ) . "\n";
+        $res .= generate_csv_helper_h__to_obj_name( $_->{name}, $is_enum ) . "\n";
     }
 
     return $res;
@@ -65,28 +67,28 @@ sub generate_csv_helper_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( $$file_ref->{enums} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{enums}, 1 );
 }
 
 sub generate_csv_helper_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( $$file_ref->{objs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{objs}, 0 );
 }
 
 sub generate_csv_helper_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( $$file_ref->{base_msgs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{base_msgs}, 0 );
 }
 
 sub generate_csv_helper_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_h_body_1_core( $$file_ref->{msgs} );
+    return generate_csv_helper_h_body_1_core( $$file_ref->{msgs}, 0 );
 }
 
 sub generate_csv_helper_h($)
@@ -159,7 +161,7 @@ sub generate_csv_helper_cpp__to_enum__body($)
 
     my $res =
 
-"std::ostream & write( std::ostream & os, const $name & r )\n" .
+"std::ostream & write( std::ostream & os, const $name r )\n" .
 "{\n" .
 "    write( os, static_cast<unsigned>( r ) );\n" .
 "\n" .
