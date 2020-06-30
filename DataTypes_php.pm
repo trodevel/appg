@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13307 $ $Date:: 2020-06-24 #$ $Author: serge $
+# $Revision: 13322 $ $Date:: 2020-06-30 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -519,7 +519,7 @@ sub to_php__to_string_func_name($)
 {
     my( $self, $namespace ) = @_;
 
-    return "to_string__map";
+    return "\\basic_parser\\to_string__map";
 }
 
 sub to_php__parse_func_name($)
