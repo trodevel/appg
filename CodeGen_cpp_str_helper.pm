@@ -160,7 +160,7 @@ sub generate_str_helper_cpp__to_enum__body($)
 
     my $res =
 
-"std::ostream & write( std::ostream & os, const $name & r )\n" .
+"std::ostream & write( std::ostream & os, const $name r )\n" .
 "{\n" .
 "    typedef $name Type;\n" .
 "    static const std::map< Type, std::string > m =\n" .
