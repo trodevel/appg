@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13315 $ $Date:: 2020-06-25 #$ $Author: serge $
+# $Revision: 13325 $ $Date:: 2020-06-30 #$ $Author: serge $
 
 ############################################################
 
@@ -65,7 +65,8 @@ enum_end
 
 obj SomeObject
 
-    uint8 is_ready
+    bool is_ready
+    uint8 mask
     int16 min
     int16 max
 
