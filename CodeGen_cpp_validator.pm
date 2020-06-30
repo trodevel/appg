@@ -208,6 +208,15 @@ sub generate_validator_cpp__to_object__body__init_members__body($$$)
             $obj->{data_type}->{key_type}->to_cpp__validate_func_ptr() . ", " .
             $obj->{data_type}->{mapped_type}->to_cpp__validate_func_ptr() . "$valid_range_or_size ); // Map";
     }
+    elsif( ::blessed( $obj->{data_type} ) and $obj->{data_type}->isa( 'String' ))
+    {
+        if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
+        {
+            $valid_range_or_size = ", " . $obj->{valid_range_or_size}->to_cpp_func_params( "std::size_t" );
+        }
+
+        $res = "    " . $obj->{data_type}->to_cpp__validate_func_name() . "( $full_key_name, r.${name}$valid_range_or_size ); // String";
+    }
     else
     {
         if( defined $obj->{valid_range_or_size} && $obj->{valid_range_or_size} ne '' )
