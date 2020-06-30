@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13322 $ $Date:: 2020-06-30 #$ $Author: serge $
+# $Revision: 13331 $ $Date:: 2020-06-30 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 ############################################################
@@ -172,7 +172,7 @@ sub to_php__to_generic_request_func_name($)
 sub to_php__create_dummy_value($)
 {
     my( $self, $namespace ) = @_;
-    return "\\basic_parser\\create_dummy__int";
+    return "\\basic_parser\\create_dummy__int" . $self->{bit_width};
 }
 
 sub to_php__to_html_func_name($)
