@@ -1,0 +1,197 @@
+############################################################
+#
+# Example Protocol
+#
+# Copyright (C) 2019 Sergey Kolevatov
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+# $Revision: 13326 $ $Date:: 2020-06-30 #$ $Author: serge $
+
+############################################################
+
+protocol example
+
+############################################################
+
+const uint32 HTTP_PORT = 80
+
+const double PI = 3.141592
+
+############################################################
+
+enum Color
+
+    RED
+    GREEN
+    BLUE
+
+enum_end
+
+############################################################
+
+enum ConnectionState
+
+    UNDEF        = 0
+    DISCONNECTED = 1
+    CONNECTING   = 2
+    CONNECTED    = 3
+
+enum_end
+
+############################################################
+
+enum Gender : uint8
+
+    UNDEF        = 0
+    MALE         = 1
+    FEMALE       = 2
+
+enum_end
+
+############################################################
+
+obj SomeObject
+
+    bool is_ready
+    uint8 mask
+    int16 min
+    int16 max
+
+    int16 a : (10, 15)
+    int16 b : (10, 15]
+    int16 c : [10, 15)
+    int16 d : [10, 15]
+    int16 e : (10,)
+    int16 f : [10,)
+    int16 g : (, 15)
+    int16 h : (, 15]
+    int16 i : [0.5, 1.5]
+
+    bool  is_enabled
+
+    float factor : (, 2.0]
+
+    double price : (0,)
+
+    string name
+
+    string id : (1,)
+
+    string product_description : [0,256)
+
+obj_end
+
+############################################################
+
+obj EmptyObject
+
+obj_end
+
+############################################################
+
+obj AnotherObject
+
+    int16 id
+
+    o SomeObject some_object
+
+    o EmptyObject empty
+
+    e Color       color
+
+obj_end
+
+############################################################
+
+base_msg GenericRequest
+
+    uint32      user_id : [1, 32768)
+
+base_msg_end
+
+############################################################
+
+base_msg DerivedRequest
+
+    e Color     color
+
+base_msg_end
+
+############################################################
+
+msg DummyRequest
+
+msg_end
+
+############################################################
+
+msg Request1
+
+msg_end
+
+############################################################
+
+msg Request2
+
+    uint8 pass_range : [1, 100]
+
+msg_end
+
+############################################################
+
+obj ContainerTest
+
+    array < uint16 > user_ids
+
+    array < string >    user_names
+
+    array < float >     coeffs
+
+    array < e Color >   color_codes
+
+    array < o AnotherObject >   collection
+
+    array < int16 >     mandatory_ids : [1,256)
+
+obj_end
+
+############################################################
+
+obj AnotherContainerTest
+
+    map < uint16, uint16 >      map_id_to_id
+
+    map < string, uint32 >      map_str_to_id
+
+    map < uint32, string >      map_id_to_str
+
+    map < e Color, string >     map_color_to_name
+
+    map < uint16, o AnotherObject >   map_id_to_object
+
+    map < uint32, int16 >       map_mandatory_ids : [1,256)
+
+obj_end
+
+############################################################
+
+msg RequestWithContainer
+
+    o ContainerTest c
+
+msg_end
+
+############################################################
