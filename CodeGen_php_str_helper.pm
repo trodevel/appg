@@ -161,13 +161,16 @@ sub generate_str_helper_php__to_object__body($$$$)
 "function to_string__${name}( & \$r )\n" .
 "{\n";
 
+    $res .=
+"    \$res = \"\";";
+
     if( $is_message )
     {
         if( $msg->has_base_class() )
         {
             $res .=
 "    // base class\n" .
-"    \$res = " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string_" ). "( \$r );\n" .
+"    \$res .= " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "to_string_" ). "( \$r );\n" .
 "\n";
         }
         else
@@ -180,7 +183,7 @@ sub generate_str_helper_php__to_object__body($$$$)
 
     if( $is_message == 0 )
     {
-        $res .= "    \$res = \"(\";\n\n";
+        $res .= "    \$res .= \"(\";\n\n";
     }
 
     $res .=
