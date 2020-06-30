@@ -40,24 +40,26 @@ use 5.010;
 
 ###############################################
 
-sub generate_validator_h__to_obj_name($$$)
+sub generate_validator_h__to_obj_name($$$$)
 {
-    my ( $name, $is_message, $is_base_msg ) = @_;
+    my ( $name, $is_message, $is_base_msg, $is_enum ) = @_;
 
     my $prefix = ( ( $is_message == 1 ) || ( $is_base_msg == 1 ) ) ? "" : "const std::string & prefix, ";
 
-    return "bool validate( ${prefix}const $name & r );";
+    my $prefix2 = $is_enum ? "" : "& ";
+
+    return "bool validate( ${prefix}const $name ${prefix2}r );";
 }
 
-sub generate_validator_h_body_1_core($$$)
+sub generate_validator_h_body_1_core($$$$)
 {
-    my ( $objs_ref, $is_message, $is_base_msg ) = @_;
+    my ( $objs_ref, $is_message, $is_base_msg, $is_enum ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_validator_h__to_obj_name( $_->{name}, $is_message, $is_base_msg ) . "\n";
+        $res .= generate_validator_h__to_obj_name( $_->{name}, $is_message, $is_base_msg, $is_enum ) . "\n";
     }
 
     return $res;
@@ -67,28 +69,28 @@ sub generate_validator_h_body_1($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{enums}, 0, 0 );
+    return generate_validator_h_body_1_core( $$file_ref->{enums}, 0, 0, 1 );
 }
 
 sub generate_validator_h_body_2($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{objs}, 0, 0 );
+    return generate_validator_h_body_1_core( $$file_ref->{objs}, 0, 0, 0 );
 }
 
 sub generate_validator_h_body_3($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{base_msgs}, 0, 1 );
+    return generate_validator_h_body_1_core( $$file_ref->{base_msgs}, 0, 1, 0 );
 }
 
 sub generate_validator_h_body_4($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_validator_h_body_1_core( $$file_ref->{msgs}, 1, 0 );
+    return generate_validator_h_body_1_core( $$file_ref->{msgs}, 1, 0, 0 );
 }
 
 sub generate_validator_h($)
@@ -147,7 +149,7 @@ sub generate_validator_cpp__to_enum__body($)
 
     my $res =
 
-"bool validate( const std::string & prefix, const $name & r )\n" .
+"bool validate( const std::string & prefix, const $name r )\n" .
 "{\n" .
 "    validate( prefix, static_cast<$type>( r )${extra_params} );\n" .
 "\n" .
