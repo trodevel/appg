@@ -376,6 +376,13 @@ sub generate_object_initializer_php__to_message($)
     return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{msgs}, 0, 1 );
 }
 
+sub generate_object_initializer_php__to_object_ctor($)
+{
+    my ( $file_ref ) = @_;
+
+    return generate_object_initializer_php__to_object__core( $file_ref, $$file_ref->{objs}, 1, 0 );
+}
+
 sub generate_object_initializer_php__to_message_ctor($)
 {
     my ( $file_ref ) = @_;
@@ -400,6 +407,9 @@ sub generate_object_initializer_php($)
 "// messages\n" .
 "\n" .
     generate_object_initializer_php__to_message( $file_ref ) .
+"// objects (constructors)\n" .
+"\n" .
+    generate_object_initializer_php__to_object_ctor( $file_ref ) .
 "// messages (constructors)\n" .
 "\n" .
     generate_object_initializer_php__to_message_ctor( $file_ref )
