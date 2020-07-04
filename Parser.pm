@@ -674,25 +674,25 @@ sub parse($$)
 
             parse_extern( $array_ref, $file_ref, $size, \$i, $line );
         }
-        elsif ( $line =~ /${\KW_ENUM} (${\REGEXP_ID_NAME})/ )
+        elsif ( $line =~ /${\KW_ENUM}\s+(${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: enum $1\n";
 
             parse_enum( $array_ref, $file_ref, $size, \$i, $line );
         }
-        elsif ( $line =~ /obj (${\REGEXP_ID_NAME})/ )
+        elsif ( $line =~ /obj\s+(${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: obj $1\n";
 
             parse_obj( $array_ref, $file_ref, $size, \$i, $line );
         }
-        elsif ( $line =~ /${\KW_BASE_MSG} (${\REGEXP_ID_NAME})/ )
+        elsif ( $line =~ /${\KW_BASE_MSG}\s+(${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: base_msg $1\n";
 
             parse_base_msg( $array_ref, $file_ref, $size, \$i, $line );
         }
-        elsif ( $line =~ /${\KW_MSG} (${\REGEXP_ID_NAME})/ )
+        elsif ( $line =~ /${\KW_MSG}\s+(${\REGEXP_ID_NAME})/ )
         {
             print STDERR "DEBUG: msg $1\n";
 
