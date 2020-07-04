@@ -221,22 +221,22 @@ sub generate_parser_php__to_message($)
 
 sub generate_parser_php__write__body($$)
 {
-    my ( $namespace, $name ) = @_;
+    my ( $prefix, $name ) = @_;
 
-    return "'$namespace\\$name'         => 'parse__${name}'";
+    return "'$prefix/$name'         => 'parse__${name}'";
 }
 
 sub generate_parser_php__write($$)
 {
     my ( $file_ref, $objs_ref ) = @_;
 
-    my $namespace = get_namespace_name( $$file_ref );
+    my $prefix = $$file_ref->{name};
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res = $res . generate_parser_php__write__body( $namespace, $_->{name} ) . ",\n";
+        $res .= generate_parser_php__write__body( $prefix, $_->{name} ) . ",\n";
     }
 
     return main::tabulate( main::tabulate( $res ) );
