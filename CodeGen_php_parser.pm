@@ -283,10 +283,10 @@ sub generate_parser_php__parse($)
 "    if( array_key_exists( \$type, \$handler_map ) )\n" .
 "    {\n" .
 "        \$func = '\\\\" . get_namespace_name( $$file_ref ) . "\\\\' . \$handler_map[ \$type ];\n" .
-"        return \$func( \$obj );\n" .
+"        return \$func( \$csv_arr[0] );\n" .
 "    }\n" .
 "\n" .
-"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\Parser::parse_csv_array( \$obj )" ) : "NULL" ) . ";\n" .
+"    return " . ( $$file_ref->has_base_prot() ? ( "\\". $$file_ref->{base_prot} . "\\Parser::parse_csv_array( \$csv_arr )" ) : "NULL" ) . ";\n" .
 "}\n" .
 "\n" .
 "}\n" .
