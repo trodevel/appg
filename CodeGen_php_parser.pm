@@ -157,7 +157,7 @@ sub generate_parser_php__to_object__body($$$$$)
 "    \$offset = 1;\n" .
 "\n".
 "    // base class\n" .
-"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "parse" ). "( \$res, \$csv_arr, \$offset );\n" .
+"    " . gtphp::to_function_call_with_namespace( $msg->get_base_class(), "parse_" ). "( \$res, \$csv_arr, \$offset );\n" .
 "\n";
         }
         else
