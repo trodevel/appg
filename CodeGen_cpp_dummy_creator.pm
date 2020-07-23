@@ -307,7 +307,9 @@ sub generate_dummy_creator_cpp($)
 
     $body = gtcpp::namespacize( 'dummy', $body );
 
-    my @includes = ( );
+    my @includes = ( "dummy_creator" );
+
+    push( @includes, $$file_ref->{base_prot} . "/dummy_creator" ) if $$file_ref->has_base_prot();
 
     push( @includes, "basic_parser/dummy_creator" );
 
