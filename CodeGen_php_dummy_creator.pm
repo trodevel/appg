@@ -272,6 +272,8 @@ sub generate_dummy_creator_php($)
 
     my @includes = ( );
 
+    push( @includes, $$file_ref->{base_prot} . "/dummy_creator" ) if $$file_ref->has_base_prot();
+
     push( @includes, "basic_parser/dummy_creator" );
 
     push( @includes, generate_dummy_creator_php__to_includes( $file_ref ) );
