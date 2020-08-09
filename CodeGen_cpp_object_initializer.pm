@@ -383,6 +383,20 @@ sub generate_object_initializer_cpp__to_message_ctor($)
     return generate_object_initializer_cpp__to_object__core( $file_ref, $$file_ref->{msgs}, 1, 1 );
 }
 
+sub generate_object_initializer__to_includes($)
+{
+    my ( $file_ref ) = @_;
+
+    my @res;
+
+    foreach( @{ $$file_ref->{includes} } )
+    {
+        push( @res, $_ . "/object_initializer" );
+    }
+
+    return @res;
+}
+
 sub generate_object_initializer_cpp($)
 {
     my ( $file_ref ) = @_;
@@ -408,6 +422,8 @@ sub generate_object_initializer_cpp($)
     my @includes = ( "object_initializer" );
 
     push( @includes, $$file_ref->{base_prot} . "/object_initializer" ) if $$file_ref->has_base_prot();
+
+    push( @includes, generate_object_initializer__to_includes( $file_ref ) );
 
     my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
 
