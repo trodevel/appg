@@ -111,6 +111,9 @@ generate_csv_helper_h_body_3( $file_ref ) .
 "// messages\n" .
 generate_csv_helper_h_body_4( $file_ref ) .
 "\n".
+"// generic\n" .
+"std::ostream & write( std::ostream & os, const basic_parser::Object & r );\n" .
+"\n".
 "template<class T>\n" .
 "std::string to_csv( const T & l )\n" .
 "{\n" .
@@ -120,9 +123,6 @@ generate_csv_helper_h_body_4( $file_ref ) .
 "\n" .
 "    return os.str();\n" .
 "}\n" .
-"\n".
-"// generic\n" .
-"std::ostream & write( std::ostream & os, const basic_parser::Object & r );\n" .
 "\n";
 
     $body = gtcpp::namespacize( 'csv_helper', $body );
