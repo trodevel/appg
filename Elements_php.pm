@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13290 $ $Date:: 2020-06-17 #$ $Author: serge $
+# $Revision: 13552 $ $Date:: 2020-08-23 #$ $Author: serge $
 # 1.0   - 16b04 - initial version
 
 require Elements;
@@ -65,8 +65,8 @@ sub to_php_comment
 {
     my( $self ) = @_;
 
-    my $from = "-inf";
-    my $to   = "+inf";
+    my $from = "(-inf";
+    my $to   = "+inf)";
 
     my $prefix = "";
     my $suffix = "";
