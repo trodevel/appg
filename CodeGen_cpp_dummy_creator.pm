@@ -182,10 +182,27 @@ sub generate_dummy_creator_cpp__to_body($$$$)
 
     if( $is_enum )
     {
-        if( scalar $msg->{elements} > 0 )
+
+        my @elements = @{ $msg->{elements} };
+
+        my $size = scalar @elements;
+
+        if( $size > 0 )
         {
+
+            my $all_elements = "";
+
+            foreach( @elements )
+            {
+                $all_elements .= "$msg->{name}::" . $_->{name} . ", ";
+            }
+
             $res .=
-"auto res = $msg->{name}::$msg->{elements}[0]->{name};\n";
+"static const unsigned SIZE = $size;\n" .
+"\n".
+"static const $msg->{name} values[SIZE] = { $all_elements };\n" .
+"\n".
+"auto res = values[ ::basic_parser::dummy::create__uint32() % SIZE ];\n";
         }
         else
         {
