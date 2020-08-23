@@ -154,15 +154,32 @@ sub generate_dummy_creator_php__to_body($$$$)
 
     if( $is_enum )
     {
-        if( scalar $msg->{elements} > 0 )
+
+        my @elements = @{ $msg->{elements} };
+
+        my $size = scalar @elements;
+
+        if( $size > 0 )
         {
+
+            my $all_elements = "";
+
+            foreach( @elements )
+            {
+                $all_elements .= "$msg->{name}__" . $_->{name} . ", ";
+            }
+
             $res .=
-"\$res = $msg->{name}__$msg->{elements}[0]->{name};\n";
+"\$SIZE = $size;\n" .
+"\n".
+"\$values = array( $all_elements );\n" .
+"\n".
+"\$res = \$values[ \\basic_parser\\create_dummy__int32() % \$SIZE ];\n";
         }
         else
         {
             $res .=
-"\$res = \basic_parser\create_dummy__int();\n";
+"\$res = \\basic_parser\\create_dummy__int8();\n";
         }
     }
     else
