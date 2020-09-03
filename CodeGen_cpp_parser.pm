@@ -368,7 +368,7 @@ sub generate_parser_cpp__to_forward_message($)
 "    if( it != funcs.end() )\n" .
 "        return it->second( r );\n" .
 "\n" .
-"    return nullptr;\n" .
+"    return " . ( $$file_ref->has_base_prot()  ? ( $$file_ref->{base_prot} . "::parser::to_forward_message( r )" ) : "nullptr" ) . ";\n" .
 "}\n";
 
     return $res;
