@@ -247,7 +247,7 @@ sub generate_parser_cpp__to_body($$$$)
 "void get_value_or_throw( ${name} * res, ${prefix}const generic_request::Request & r )\n" .
 "{\n";
 
-    if( $is_message )
+    if( $is_message || $is_base_msg )
     {
         if( $msg->has_base_class() )
         {
