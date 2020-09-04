@@ -202,9 +202,9 @@ sub generate_html_helper_php__to_object__body__init_members($$)
     return $res;
 }
 
-sub generate_html_helper_php__to_object__body($$$$)
+sub generate_html_helper_php__to_object__body($$$$$)
 {
-    my ( $namespace, $msg, $is_message, $protocol ) = @_;
+    my ( $namespace, $msg, $is_message, $is_base_msg, $protocol ) = @_;
 
     my $name = $msg->{name};
 
@@ -217,7 +217,7 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     my $headers = generate_html_helper_php__to_object__body__init_headers( $msg );
 
-    if( $is_message )
+    if( $is_message || $is_base_msg )
     {
         if( $msg->has_base_class() )
         {
@@ -243,7 +243,7 @@ sub generate_html_helper_php__to_object__body($$$$)
 
     my $data = generate_html_helper_php__to_object__body__init_members( $msg, $namespace );
 
-    if( $is_message )
+    if( $is_message || $is_base_msg )
     {
         if( $msg->has_base_class() )
         {
@@ -276,15 +276,15 @@ sub generate_html_helper_php__to_object__body($$$$)
     return $res;
 }
 
-sub generate_html_helper_php__to_object__core($$$)
+sub generate_html_helper_php__to_object__core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_html_helper_php__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_html_helper_php__to_object__body( get_namespace_name( $$file_ref ), $_, $is_message, $is_base_msg, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -294,21 +294,21 @@ sub generate_html_helper_php__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_html_helper_php__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_html_helper_php__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_html_helper_php__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_html_helper_php__write__body($$)
