@@ -228,9 +228,9 @@ sub generate_csv_helper_cpp__to_object__body__init_members($)
     return $res;
 }
 
-sub generate_csv_helper_cpp__to_object__body($$$)
+sub generate_csv_helper_cpp__to_object__body($$$$)
 {
-    my ( $msg, $is_message, $protocol ) = @_;
+    my ( $msg, $is_message, $is_base_msg, $protocol ) = @_;
 
     my $name = $msg->{name};
 
@@ -244,7 +244,10 @@ sub generate_csv_helper_cpp__to_object__body($$$)
         $res .=
 "    write( os, std::string( \"$protocol/$name\" ) );\n".
 "\n";
+    }
 
+    if( $is_message || $is_base_msg )
+    {
         if( $msg->has_base_class() )
         {
             $res .=
@@ -268,15 +271,15 @@ sub generate_csv_helper_cpp__to_object__body($$$)
     return $res;
 }
 
-sub generate_csv_helper_cpp__to_object__core($$$)
+sub generate_csv_helper_cpp__to_object__core($$$$)
 {
-    my ( $file_ref, $objs_ref, $is_message ) = @_;
+    my ( $file_ref, $objs_ref, $is_message, $is_base_msg ) = @_;
 
     my $res = "";
 
     foreach( @{ $objs_ref } )
     {
-        $res .= generate_csv_helper_cpp__to_object__body( $_, $is_message, $$file_ref->{name} ) . "\n";
+        $res .= generate_csv_helper_cpp__to_object__body( $_, $is_message, $is_base_msg, $$file_ref->{name} ) . "\n";
     }
 
     return $res;
@@ -286,21 +289,21 @@ sub generate_csv_helper_cpp__to_object($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0 );
+    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{objs}, 0, 0 );
 }
 
 sub generate_csv_helper_cpp__to_base_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0 );
+    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{base_msgs}, 0, 1 );
 }
 
 sub generate_csv_helper_cpp__to_message($)
 {
     my ( $file_ref ) = @_;
 
-    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1 );
+    return generate_csv_helper_cpp__to_object__core( $file_ref,  $$file_ref->{msgs}, 1, 0 );
 }
 
 sub generate_csv_helper_cpp__write_message__body($)
