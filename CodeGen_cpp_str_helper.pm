@@ -252,6 +252,11 @@ sub generate_str_helper_cpp__to_object__body($$$$)
 "std::ostream & write( std::ostream & os, const $name & r )\n" .
 "{\n";
 
+    if( $is_message == 0 )
+    {
+        $res .= "    os << \"(\";\n\n";
+    }
+
     if( $is_message || $is_base_msg )
     {
         if( $msg->has_base_class() )
@@ -266,12 +271,6 @@ sub generate_str_helper_cpp__to_object__body($$$$)
             $res .=
 "    // no base class\n";
         }
-    }
-
-
-    if( $is_message == 0 )
-    {
-        $res .= "    os << \"(\";\n\n";
     }
 
     $res .=
