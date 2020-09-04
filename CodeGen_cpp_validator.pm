@@ -259,7 +259,7 @@ sub generate_validator_cpp__to_object__body($$$$)
 "bool validate( ${prefix}const $name & r )\n" .
 "{\n";
 
-    if( $is_message )
+    if( $is_message || $is_base_msg )
     {
         if( $msg->has_base_class() )
         {
