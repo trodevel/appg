@@ -134,16 +134,21 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 "function to_generic_request__${name}( $prefix& \$r )\n" .
 "{\n";
 
-    if( $is_message || $is_base_msg )
+    if( $is_message )
     {
-        if( $is_message )
-        {
-            $res .=
+        $res .=
 "    // name\n" .
 "    \$res = \\basic_parser\\to_generic_request__string( \"CMD\", \"$protocol/$name\" );\n" .
 "\n";
-        }
+    }
+    else
+    {
+        $res .=
+"    \$res = \"\";\n";
+    }
 
+    if( $is_message || $is_base_msg )
+    {
         if( $msg->has_base_class() )
         {
             $res .=
@@ -157,12 +162,6 @@ sub generate_request_encoder_php__to_object__body($$$$$)
 "    // no base class\n";
         }
     }
-    else
-    {
-        $res .=
-"    \$res = \"\";\n";
-    }
-
 
     $res .=
     generate_request_encoder_php__to_object__body__init_members( $is_message, $is_base_msg, $msg, $namespace ) .
