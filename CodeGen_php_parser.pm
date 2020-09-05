@@ -276,7 +276,7 @@ sub generate_parser_php__parse($)
 "protected static function parse_csv_array( \$csv_arr )\n" .
 "{\n" .
 "    if( sizeof( \$csv_arr ) < 1 )\n" .
-"        return self::create_parse_error();\n" .
+"        return NULL;\n" .
 "\n" .
 "    \$handler_map = array(\n" .
 "        // messages\n".
