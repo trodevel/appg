@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13213 $ $Date:: 2020-06-09 #$ $Author: serge $
+# $Revision: 13962 $ $Date:: 2020-10-15 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 #use Data::Printer; # DEBUG
@@ -26,6 +26,15 @@
 package gtphp;
 
 require "gen_tools.pl";
+
+############################################################
+
+sub to_protocol_name($)
+{
+    my ( $name ) = @_;
+
+    return $name . "_protocol";
+}
 
 ############################################################
 sub ifndef_define
@@ -203,28 +212,23 @@ sub array_to_string_decl
     return $res;
 }
 ############################################################
-sub to_include($$)
+sub to_include($)
 {
-    my( $name, $is_system ) = @_;
+    my( $name ) = @_;
 
-    if( index( $name, "/" ) == -1 )
-    {
-        return "require_once '$name.php';";
-    }
-
-    return "require_once __DIR__.'/../".  $name . ".php';";
+    return "require_once '$name.php';";
 }
 ############################################################
-sub array_to_include($$)
+sub array_to_include($)
 {
-    my( $array_ref, $is_system ) = @_;
+    my( $array_ref ) = @_;
 
     my @array = @{ $array_ref };
 
     my $res = "";
     foreach( @array )
     {
-        $res = $res . to_include(  $_, $is_system ) . "\n";
+        $res .= to_include(  $_ ) . "\n";
     }
 
     return $res;
@@ -239,7 +243,7 @@ sub array_to_include_ext($)
     my $res = "";
     foreach( @array )
     {
-        $res = $res . to_include(  $_ . '/protocol', 0 ) . "\n";
+        $res .= to_include(  $_ . '/protocol' ) . "\n";
     }
 
     return $res;
