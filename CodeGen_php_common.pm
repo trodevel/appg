@@ -89,7 +89,7 @@ sub to_include_guards($$$$$$$$)
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
         $body =
-            gtphp::to_include( $file->{name}, 0 ) . "    // self\n\n" . $body;
+            gtphp::to_include( gtphp::to_protocol_name( $file->{name} ) . "/protocol" ) . "    // self\n\n" . $body;
     }
 
     if( defined $must_include_userdef && $must_include_userdef == 1 )
@@ -103,13 +103,13 @@ sub to_include_guards($$$$$$$$)
     if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
     {
         $body = "// includes\n" .
-            gtphp::array_to_include( $other_incl_ref, 0 ) . "\n" . $body;
+            gtphp::array_to_include( $other_incl_ref ) . "\n" . $body;
     }
 
     if( defined $system_incl_ref && scalar @$system_incl_ref > 0 )
     {
         $body = "// system includes\n" .
-            gtphp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
+            gtphp::array_to_include( $system_incl_ref ) . "\n" . $body;
     }
 
     my $res = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
@@ -128,13 +128,13 @@ sub to_body($$$$$)
     if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
     {
         $body = "// includes\n" .
-            gtphp::array_to_include( $other_incl_ref, 0 ) . "\n" . $body;
+            gtphp::array_to_include( $other_incl_ref ) . "\n" . $body;
     }
 
     if( defined $system_incl_ref && scalar @$system_incl_ref > 0 )
     {
         $body = "// system includes\n" .
-            gtphp::array_to_include( $system_incl_ref, 1 ) . "\n" . $body;
+            gtphp::array_to_include( $system_incl_ref ) . "\n" . $body;
     }
 
     my $res = ( $alternative_namespace ne '' ) ? gtphp::namespacize( $alternative_namespace, $body ) : namespacize( $file, $body );
