@@ -415,11 +415,7 @@ sub generate_object_initializer_php($)
     generate_object_initializer_php__to_message_ctor( $file_ref )
 ;
 
-    my @includes = ( "protocol" );
-
-    push( @includes, $$file_ref->{base_prot} . "/object_initializer" ) if $$file_ref->has_base_prot();
-
-    my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, "", "object_initializer", [ "protocol" ], [ ] );
 
     return $res;
 }

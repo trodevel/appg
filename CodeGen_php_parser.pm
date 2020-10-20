@@ -341,13 +341,11 @@ sub generate_parser_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/parser" ) if $$file_ref->has_base_prot();
-
     push( @includes, generate_parser_php__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/parser" );
 
-    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  "parser", [ ], \@includes );
 
     return $res;
 }

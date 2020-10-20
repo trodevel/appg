@@ -348,13 +348,11 @@ sub generate_str_helper_php($)
 
     my @includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/str_helper" ) if $$file_ref->has_base_prot();
-
     push( @includes, generate_str_helper_php__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/str_helper" );
 
-    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ), "str_helper",  [ ], \@includes );
 
     return $res;
 }

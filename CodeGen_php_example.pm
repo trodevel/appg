@@ -194,15 +194,15 @@ sub generate_example($$)
 "\n"
 ;
 
-    my @includes = ( );
+    my @own_includes = ( );
 
-    push( @includes, "protocol" );
-    push( @includes, "dummy_creator" );
-    push( @includes, "html_helper" ) if( $must_generate_html == 1 );
-    push( @includes, "str_helper" ) if( $must_generate_html == 0 );
-    push( @includes, "request_encoder" ) if( $must_generate_html == 0 );
+    push( @own_includes, "protocol" );
+    push( @own_includes, "dummy_creator" );
+    push( @own_includes, "html_helper" ) if( $must_generate_html == 1 );
+    push( @own_includes, "str_helper" ) if( $must_generate_html == 0 );
+    push( @own_includes, "request_encoder" ) if( $must_generate_html == 0 );
 
-    my $res = to_body( $$file_ref, $body, "", \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, "", "", \@own_includes, [ ] );
 
     return $res;
 }

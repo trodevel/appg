@@ -420,17 +420,17 @@ sub generate_html_helper_php($)
     generate_html_helper_php__to_html( $file_ref )
 ;
 
-    my @includes;
+    my @own_includes;
 
-    push( @includes, $$file_ref->{base_prot} . "/html_helper" ) if $$file_ref->has_base_prot();
+    push( @own_includes, "str_helper" );
+
+    my @includes;
 
     push( @includes, generate_html_helper_php__to_includes( $file_ref ) );
 
     push( @includes, "basic_parser/html_helper" );
 
-    push( @includes, "str_helper" );
-
-    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  \@includes, [ ] );
+    my $res = to_body( $$file_ref, $body, get_namespace_name( $$file_ref ),  "html_helper", \@own_includes, \@includes );
 
     return $res;
 }
