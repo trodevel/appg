@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13962 $ $Date:: 2020-10-15 #$ $Author: serge $
+# $Revision: 13973 $ $Date:: 2020-10-20 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 #use Data::Printer; # DEBUG
@@ -216,7 +216,14 @@ sub to_include($)
 {
     my( $name ) = @_;
 
-    return "require_once '$name.php';";
+    return "require_once __DIR__.'/../$name.php';";
+}
+############################################################
+sub to_include_w_path($$)
+{
+    my( $path, $name ) = @_;
+
+    return "require_once __DIR__.'/../$path/$name.php';";
 }
 ############################################################
 sub array_to_include($)
@@ -229,6 +236,21 @@ sub array_to_include($)
     foreach( @array )
     {
         $res .= to_include(  $_ ) . "\n";
+    }
+
+    return $res;
+}
+############################################################
+sub array_to_include_w_path($$)
+{
+    my( $path, $array_ref ) = @_;
+
+    my @array = @{ $array_ref };
+
+    my $res = "";
+    foreach( @array )
+    {
+        $res .= to_include_w_path(  $path, $_ ) . "\n";
     }
 
     return $res;
