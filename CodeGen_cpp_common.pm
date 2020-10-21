@@ -44,7 +44,7 @@ sub get_namespace_name($)
 {
     my( $file ) = @_;
 
-    return $file->{name} . "_protocol";
+    return $file->{name};
 }
 
 ###############################################

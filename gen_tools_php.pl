@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# $Revision: 13973 $ $Date:: 2020-10-20 #$ $Author: serge $
+# $Revision: 13983 $ $Date:: 2020-10-20 #$ $Author: serge $
 # 1.0   - 16b14 - initial version
 
 #use Data::Printer; # DEBUG
@@ -29,14 +29,6 @@ require "gen_tools.pl";
 
 ############################################################
 
-sub to_protocol_name($)
-{
-    my ( $name ) = @_;
-
-    return $name . "_protocol";
-}
-
-############################################################
 sub ifndef_define
 {
     my ( $guard, $body ) = @_;
@@ -59,7 +51,7 @@ sub namespacize
 "namespace $name;\n" .
 "\n\n" .
 $body .
-"# namespace_end $name\n\n";
+"// namespace_end $name\n\n";
 
     return $res;
 }

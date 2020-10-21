@@ -44,7 +44,7 @@ sub get_namespace_name($)
 {
     my( $file ) = @_;
 
-    return $file->{name} . "_protocol";
+    return $file->{name};
 }
 
 ###############################################
@@ -89,7 +89,7 @@ sub to_include_guards($$$$$$$$)
     if( defined $must_include_myself && $must_include_myself == 1 )
     {
         $body =
-            gtphp::to_include( gtphp::to_protocol_name( $file->{name} ) . "/protocol" ) . "    // self\n\n" . $body;
+            gtphp::to_include( $file->{name} . "/protocol" ) . "    // self\n\n" . $body;
     }
 
     if( defined $must_include_userdef && $must_include_userdef == 1 )
@@ -128,7 +128,7 @@ sub to_body($$$$$$)
     if( defined $own_incl_ref && scalar @$own_incl_ref > 0 )
     {
         $body = "// own includes\n" .
-            gtphp::array_to_include_w_path( gtphp::to_protocol_name( $file->{name} ), $own_incl_ref ) . "\n" . $body;
+            gtphp::array_to_include_w_path( $file->{name}, $own_incl_ref ) . "\n" . $body;
     }
 
     if( defined $other_incl_ref && scalar @$other_incl_ref > 0 )
